@@ -1,0 +1,25 @@
+# Kubernetes/Talos sensitive files (just in case they reappear)
+kubeconfig
+talosconfig
+*.enc.yaml.dec
+_out/
+
+# DevPod / DevContainer
+.devcontainer/.devpod-internal/
+
+# Terraform
+*.tfstate
+*.tfstate.backup
+.terraform/
+*.tfvars
+*.tfvars.json
+
+# OS/Editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~
+
+# Backup folder
+legacy-backup/

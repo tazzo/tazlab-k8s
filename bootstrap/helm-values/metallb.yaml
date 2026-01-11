@@ -1,0 +1,24 @@
+# Configurazione MetalLB per Talos/Proxmox
+
+# Configurazione Speaker (il componente che annuncia l'IP)
+speaker:
+  # Permettiamo allo speaker di girare su TUTTI i nodi, inclusi i Control Plane.
+  # Questo è essenziale per la ridondanza e perché il nostro traffico attualmente atterra lì.
+  tolerations:
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
+    - key: "node-role.kubernetes.io/master"
+      operator: "Exists"
+      effect: "NoSchedule"
+
+# Configurazione Controller (il cervello che assegna gli IP)
+controller:
+  # Anche il controller può girare ovunque
+  tolerations:
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
+    - key: "node-role.kubernetes.io/master"
+      operator: "Exists"
+      effect: "NoSchedule"
