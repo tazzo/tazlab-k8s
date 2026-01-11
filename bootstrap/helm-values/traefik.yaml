@@ -1,0 +1,67 @@
+# Traefik v19 - CORRECTED INIT-CONTAINER PERMISSIONS
+deployment:
+  kind: Deployment
+  replicas: 1
+  initContainers:
+    - name: volume-permissions
+      image: busybox:latest
+      command: ["sh", "-c", "chown -R 65532:65532 /data && chmod 600 /data/acme.json"]
+      securityContext:
+        runAsUser: 0 # FORZATO ROOT per poter fare chown
+        runAsNonRoot: false
+        readOnlyRootFilesystem: false
+        allowPrivilegeEscalation: true
+      volumeMounts:
+        - name: data
+          mountPath: /data
+
+podSecurityContext:
+  fsGroup: 65532
+  # Queste impostazioni si applicano di default a tutti i container se non sovrascritte
+  runAsGroup: 65532
+  runAsUser: 65532
+  runAsNonRoot: true
+
+hostNetwork: false
+
+additionalArguments:
+  - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+  - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+  - "--certificatesresolvers.myresolver.acme.email=admin@tazlab.net"
+  - "--certificatesresolvers.myresolver.acme.storage=/data/acme.json"
+  - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+
+ports:
+  web:
+    port: 8000
+    expose:
+      default: true
+    exposedPort: 80
+  websecure:
+    port: 8443
+    expose:
+      default: true
+    exposedPort: 443
+
+service:
+  enabled: true
+  type: LoadBalancer
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: 192.168.1.240
+
+persistence:
+  enabled: true
+  name: data
+  accessMode: ReadWriteOnce
+  size: 128Mi
+  storageClass: "longhorn"
+  path: /data
+
+securityContext:
+  capabilities:
+    drop: [ALL]
+    add: [NET_BIND_SERVICE]
+  readOnlyRootFilesystem: true
+  runAsGroup: 65532
+  runAsUser: 65532
+  runAsNonRoot: true

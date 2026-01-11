@@ -1,0 +1,4 @@
+cluster:
+  proxy:
+    extraArgs:
+      strict-arp: "true"

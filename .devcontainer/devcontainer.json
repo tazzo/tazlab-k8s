@@ -1,0 +1,22 @@
+{
+    "name": "TazLab K8s Dev",
+    "image": "mcr.microsoft.com/devcontainers/base:debian",
+    "features": {
+        "ghcr.io/devcontainers/features/git:1": {},
+        "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {},
+        "ghcr.io/devcontainers/features/python:1": {}
+    },
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "bash"
+            }
+        }
+    },
+    "remoteUser": "vscode",
+    "mounts": [
+        "source=/home/taz/kubernetes/tazlab-configs,target=/home/vscode/.cluster-configs,type=bind,consistency=cached",
+        "source=/home/taz/kubernetes/tazlab-gemini,target=/home/vscode/.gemini,type=bind,consistency=cached"
+    ],
+    "postCreateCommand": "bash .devcontainer/install-extras.sh"
+}

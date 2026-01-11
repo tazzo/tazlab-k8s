@@ -1,0 +1,14 @@
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: longhorn-traefik-backup
+provisioner: driver.longhorn.io
+allowVolumeExpansion: true
+reclaimPolicy: Retain # Importante: se cancelli il PVC, il volume (e i dati) restano su Longhorn
+parameters:
+  numberOfReplicas: "2"
+  staleReplicaTimeout: "2880" # 48 ore
+  fromBackup: ""
+  fsType: "ext4"
+  # Qui la magia della 1.10: assegniamo il job di backup alla nascita
+  recurringJobSelector: '[{"name":"nightly-s3-backup", "isGroup":true}]'

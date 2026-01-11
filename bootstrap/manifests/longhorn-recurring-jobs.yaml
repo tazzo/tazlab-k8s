@@ -1,0 +1,16 @@
+# longhorn-automation.yaml
+apiVersion: longhorn.io/v1beta2
+kind: RecurringJob
+metadata:
+  name: nightly-s3-backup
+  namespace: longhorn-system
+spec:
+  name: nightly-s3-backup
+  task: backup # Crea un backup su S3 (include lo snapshot)
+  cron: "0 3 * * *" # Ogni notte alle 03:00
+  retain: 7 # Mantieni gli ultimi 7 backup
+  concurrency: 1
+  groups:
+    - traefik-only # Solo i volumi in questo gruppo verranno salvati
+  labels:
+    automation: nightly-backup
