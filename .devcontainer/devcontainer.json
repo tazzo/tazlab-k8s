@@ -18,5 +18,10 @@
         "source=/home/taz/kubernetes/tazlab-configs,target=/home/vscode/.cluster-configs,type=bind,consistency=cached",
         "source=/home/taz/kubernetes/tazlab-gemini,target=/home/vscode/.gemini,type=bind,consistency=cached"
     ],
+    "runArgs": [
+        "--network=host",
+        "--cap-add=NET_RAW",
+        "--cap-add=NET_ADMIN"
+    ],
     "postCreateCommand": "bash .devcontainer/install-extras.sh"
 }
