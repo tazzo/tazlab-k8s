@@ -1,11 +1,6 @@
 {
     "name": "TazLab K8s Dev",
-    "image": "mcr.microsoft.com/devcontainers/base:debian",
-    "features": {
-        "ghcr.io/devcontainers/features/git:1": {},
-        "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {},
-        "ghcr.io/devcontainers/features/python:1": {}
-    },
+    "image": "tazzo/tazlab.net:devpod",
     "customizations": {
         "vscode": {
             "settings": {
@@ -23,5 +18,5 @@
         "--cap-add=NET_RAW",
         "--cap-add=NET_ADMIN"
     ],
-    "postCreateCommand": "bash .devcontainer/install-extras.sh"
+    "postCreateCommand": "bash .devcontainer/setup-runtime.sh"
 }
