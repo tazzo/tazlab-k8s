@@ -1,6 +1,8 @@
 {
     "name": "TazLab K8s Dev",
-    "image": "tazzo/tazlab.net:devpod",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
     "customizations": {
         "vscode": {
             "settings": {
