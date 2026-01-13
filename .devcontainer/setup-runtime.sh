@@ -3,9 +3,7 @@
 echo "--- TazLab Runtime Setup Start ---"
 
 # 1. Configurazione PATH
-if ! grep -q "export PATH=\"
-$HOME/.local/bin:\
-$PATH\"" ~/.bashrc; then
+if ! grep -q "export PATH=\"\$HOME/.local/bin:\$PATH\"" ~/.bashrc; then
     echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
 fi
 mkdir -p "$HOME/.local/bin"
