@@ -1,5 +1,0 @@
-FROM tazzo/tazlab.net:devpod-base
-
-# Aggiunge Gemini CLI allo strato intermedio
-USER vscode
-RUN . "$NVM_DIR/nvm.sh" && npm install -g @google/gemini-cli@latest
