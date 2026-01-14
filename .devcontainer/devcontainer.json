@@ -12,11 +12,11 @@
     },
     "remoteUser": "vscode",
     "containerEnv": {
-        "KUBECONFIG": "/home/vscode/.cluster-configs/kubeconfig",
-        "TALOSCONFIG": "/home/vscode/.cluster-configs/talosconfig"
+        "KUBECONFIG": "/tmp/kubeconfig",
+        "TALOSCONFIG": "/tmp/talosconfig",
+        "SOPS_AGE_KEY_FILE": "/tmp/age.key"
     },
     "mounts": [
-        "source=/home/taz/kubernetes/tazlab-configs,target=/home/vscode/.cluster-configs,type=bind,consistency=cached",
         "source=/home/taz/kubernetes/tazlab-gemini,target=/home/vscode/.gemini,type=bind,consistency=cached"
     ],
     "runArgs": [
