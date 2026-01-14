@@ -40,4 +40,9 @@ if [ -d "$DOTFILES_DIR" ] && command -v stow &> /dev/null; then
     git checkout . 2>/dev/null
 fi
 
-echo "--- TazLab Runtime Setup Completed! ---"
+# 4. Starship Preset (Tokyo Night)
+echo "Applicazione preset Starship: Tokyo Night..."
+mkdir -p "$HOME/.config"
+starship preset tokyo-night -o "$HOME/.config/starship.toml"
+
+echo "--- Runtime Ready! ---"
