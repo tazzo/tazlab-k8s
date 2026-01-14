@@ -7,6 +7,8 @@ echo "--- TazLab Static Runtime Setup Start ---"
 
 # 1. Configurazione PATH
 mkdir -p "$HOME/.local/bin"
+# Aggiungiamo ~/.local/bin al PATH corrente per lo script
+export PATH="$HOME/.local/bin:$PATH"
 
 # 2. Gestione Dotfiles
 DOTFILES_DIR="$HOME/.dotfiles"
@@ -22,6 +24,7 @@ if command -v stow > /dev/null; then
     cd "$DOTFILES_DIR"
     for package in *; do
         if [ -d "$package" ] && [ "$package" != ".git" ]; then
+            # Pulizia preventiva per Neovim
             [ "$package" == "nvim" ] && [ -d "$HOME/.config/nvim" ] && [ ! -L "$HOME/.config/nvim" ] && rm -rf "$HOME/.config/nvim"
             
             TARGET_DIR="$HOME"
@@ -33,8 +36,14 @@ if command -v stow > /dev/null; then
     git checkout . 2>/dev/null
 fi
 
-# 3. Starship
-echo "🚀 Configurazione Starship (Tokyo Night)..."
+# 3. Starship (Installazione + Configurazione)
+if ! command -v starship > /dev/null; then
+    echo "🚀 Installazione Starship..."
+    # Installiamo in ~/.local/bin per non richiedere sudo
+    curl -sS https://starship.rs/install.sh | sh -s -- -y -b "$HOME/.local/bin" > /dev/null
+fi
+
+echo "🎨 Configurazione Starship (Tokyo Night)..."
 mkdir -p "$HOME/.config"
 starship preset tokyo-night -o "$HOME/.config/starship.toml"
 
