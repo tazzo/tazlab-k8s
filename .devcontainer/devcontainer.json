@@ -11,11 +11,6 @@
         }
     },
     "remoteUser": "vscode",
-    "containerEnv": {
-        "KUBECONFIG": "/tmp/kubeconfig",
-        "TALOSCONFIG": "/tmp/talosconfig",
-        "SOPS_AGE_KEY_FILE": "/tmp/age.key"
-    },
     "mounts": [
         "source=/home/taz/kubernetes/tazlab-gemini,target=/home/vscode/.gemini,type=bind,consistency=cached"
     ],

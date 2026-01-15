@@ -1,7 +1,7 @@
-FROM tazzo/tazlab.net:devpod-base-gemini
+FROM devpod-base:local
 
-# Immagine finale per il progetto tazlab-k8s.
-# Eredita tutto dalla Golden Image aggiornata (incluse fix ping, clipboard e Infisical).
+# Immagine specifica per il progetto tazlab-k8s.
+# Eredita dalla Zero-Trust Developer Base.
 
 USER vscode
 WORKDIR /home/vscode
