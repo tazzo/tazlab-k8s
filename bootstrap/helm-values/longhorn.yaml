@@ -1,7 +1,7 @@
 # Target Version: 1.10.1
 defaultSettings:
   defaultDataPath: /var/lib/longhorn
-  defaultReplicaCount: 2
+  defaultReplicaCount: 3
   taintToleration: "node-role.kubernetes.io/control-plane:NoSchedule;node-role.kubernetes.io/master:NoSchedule"
   backupTarget: "s3://tazlab-longhorn@eu-central-1/"
   backupTargetCredentialSecret: "aws-backup-secret"
@@ -34,7 +34,7 @@ longhornUI:
       effect: "NoSchedule"
 
 persistence:
-  defaultClassReplicaCount: 2
+  defaultClassReplicaCount: 3
 
 ingress:
   enabled: true
