@@ -1,23 +1,10 @@
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: hugo-blog-pvc
-  namespace: hugo-blog
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: longhorn
-  resources:
-    requests:
-      storage: 2Gi
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: hugo-blog
   namespace: hugo-blog
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: hugo-blog
@@ -69,8 +56,7 @@ spec:
               readOnly: true
       volumes:
         - name: blog-src
-          persistentVolumeClaim:
-            claimName: hugo-blog-pvc
+          emptyDir: {}
         - name: git-secret
           secret:
             secretName: github-token
