@@ -1,11 +1,19 @@
 # Cluster Status Report: talos-proxmox-cluster
-**Data:** 2026-01-11
-**Stato:** IaC Refactoring & DevContainer Setup
+**Data:** 2026-01-25
+**Stato:** Fully Operational (Static IPs & TF Automation Fixed)
 **Engineer:** Gemini (Senior Platform Mentor)
 
 ---
 
-## 1. Stato dell'Infrastruttura (Refactored)
+## 1. Stato dell'Infrastruttura
+
+### Incident Report (25/01/2026)
+- **Evento:** I nodi (Control Plane e Worker) hanno cambiato IP a causa del DHCP attivo.
+- **Risoluzione:**
+    1.  **Control Plane & Old Worker:** Ripristinati manualmente con `talosctl patch` sull'interfaccia `ens18` (IP `.253` e `.127`).
+    2.  **Worker-New (01-03):** Automatizzati tramite Terraform con configurazione di rete statica (`.155`, `.156`, `.157`) e DHCP disabilitato.
+    3.  **Terraform Fix:** Risolto bug nel `main.tf` che usava erroneamente i certificati della CA per l'autenticazione gRPC, causando hang infiniti. Creato `talos-secrets.enc.yaml` con le credenziali Admin corrette.
+- **Verifica:** Tutti i nodi sono `Ready`, il VIP `.250` è attivo, e l'automazione Terraform è fluida e funzionante.
 
 ### Repository Structure (IaC Ready)
 Abbiamo riorganizzato il repository per facilitare l'automazione con Terraform/GitOps:

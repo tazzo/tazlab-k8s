@@ -77,8 +77,8 @@ resource "talos_machine_configuration_apply" "worker_config" {
 
   client_configuration = {
     ca_certificate     = local.cluster_secrets.ca_crt_b64
-    client_certificate = local.cluster_secrets.ca_crt_b64
-    client_key         = local.cluster_secrets.ca_key_b64
+    client_certificate = local.cluster_secrets.admin_crt_b64
+    client_key         = local.cluster_secrets.admin_key_b64
   }
 
   # USE THE REFERENCE FILE DIRECTLY AS INPUT, but remove unknown keys
@@ -87,11 +87,24 @@ resource "talos_machine_configuration_apply" "worker_config" {
   node = each.value.ip_address
   
   config_patches = [
-    # Override hostname and hardware
+    # Override hostname, network and hardware
     yamlencode({
       machine = {
         network = {
             hostname = each.key
+            interfaces = [
+                {
+                    interface = "ens18"
+                    dhcp = false
+                    addresses = ["${each.value.ip_address}/24"]
+                    routes = [
+                        {
+                            network = "0.0.0.0/0"
+                            gateway = var.gateway
+                        }
+                    ]
+                }
+            ]
         }
         install = {
             image = "factory.talos.dev/installer/e187c9b90f773cd8c84e5a3265c5554ee787b2fe67b508d9f955e90e7ae8c96c:v1.12.0"
@@ -115,8 +128,8 @@ resource "talos_machine_configuration_apply" "worker_config" {
         kernel = {
             modules = [
                 { name = "iscsi_tcp" },
-                { name = "nbd" },
                 { name = "iscsi_generic" },
+                { name = "nbd" },
                 { name = "configfs" }
             ]
         }
@@ -125,9 +138,11 @@ resource "talos_machine_configuration_apply" "worker_config" {
   ]
   
   lifecycle {
-    # Once the node has joined, don't try to re-apply config as it will fail auth
-    # and we don't want to accidentally reboot/reconfigure a running node.
-    ignore_changes = all
+    # We ignore machine_configuration_input to avoid massive drifts from the reference file
+    # but we allow patches to be updated.
+    ignore_changes = [
+      machine_configuration_input
+    ]
   }
 
   depends_on = [proxmox_virtual_environment_vm.worker_nodes]
