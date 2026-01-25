@@ -1,0 +1,12 @@
+machine:
+  network:
+    interfaces:
+      - interface: ens18
+        dhcp: false
+        addresses:
+          - 192.168.1.253/24
+        routes:
+          - network: 0.0.0.0/0
+            gateway: 192.168.1.1
+        vip:
+          ip: 192.168.1.250
