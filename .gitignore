@@ -18,8 +18,11 @@ _out/
 .DS_Store
 .idea/
 .vscode/
+.gemini/
 *.swp
 *~
 
 # Backup folder
 legacy-backup/
+.zt-vault/
+terraform.tfvars
