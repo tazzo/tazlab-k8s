@@ -1,0 +1,3 @@
+# TazPod sensitive data
+vault/
+.gemini/
