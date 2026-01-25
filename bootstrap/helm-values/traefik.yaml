@@ -5,7 +5,7 @@ deployment:
   initContainers:
     - name: volume-permissions
       image: busybox:latest
-      command: ["sh", "-c", "chown -R 65532:65532 /data && chmod 600 /data/acme.json"]
+      command: ["sh", "-c", "chown -R 65532:65532 /data && if [ -f /data/acme.json ]; then chmod 600 /data/acme.json; fi"]
       securityContext:
         runAsUser: 0 # FORZATO ROOT per poter fare chown
         runAsNonRoot: false
