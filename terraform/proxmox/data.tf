@@ -10,11 +10,11 @@ data "sops_file" "talos_secrets" {
 
 # Decrypt existing reference configs
 data "sops_file" "controlplane_secrets" {
-  source_file = "../talos/controlplane-reference.yaml"
+  source_file = "../../talos/proxmox/controlplane-reference.yaml"
 }
 
 data "sops_file" "worker_secrets" {
-  source_file = "../talos/worker-reference.yaml"
+  source_file = "../../talos/proxmox/worker-reference.yaml"
 }
 
 locals {
