@@ -20,8 +20,7 @@ spec:
     spec:
       containers:
         - name: blog
-          image: tazzo/tazlab.net:blog
-          imagePullPolicy: Always
+          image: tazzo/tazlab.net:blog-2f0349c
           ports:
             - containerPort: 80
 ---
