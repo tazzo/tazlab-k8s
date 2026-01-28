@@ -4,3 +4,4 @@ resources:
   - backup-target.yaml
   - recurring-jobs.yaml
   - storageclasses.yaml
+  - aws-external-secret.yaml
