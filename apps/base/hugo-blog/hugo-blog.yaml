@@ -4,7 +4,7 @@ metadata:
   name: hugo-blog
   namespace: hugo-blog
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: hugo-blog
@@ -13,53 +13,11 @@ spec:
       labels:
         app: hugo-blog
     spec:
-      securityContext:
-        fsGroup: 1000
-        runAsUser: 1000 # Forziamo l'utente 1000 per tutto il pod
       containers:
-        # Container 1: Hugo Server
-        - name: hugo
-          image: hugomods/hugo:exts-non-root
-          args:
-            - server
-            - --bind=0.0.0.0
-            - --buildDrafts
-            - --buildFuture
-            - --watch
-            - --baseURL=https://blog.tazlab.net/
-            - --appendPort=false
-            - --source=/src/current
+        - name: blog
+          image: tazzo/tazlab.net:blog
           ports:
-            - containerPort: 1313
-          volumeMounts:
-            - name: blog-src
-              mountPath: /src
-        
-        # Container 2: Git-Sync Sidecar
-        - name: git-sync
-          image: registry.k8s.io/git-sync/git-sync:v4.2.3
-          args:
-            - --repo=https://github.com/tazzo/blog.tazlab.net.git
-            - --ref=master
-            - --period=60s
-            - --root=/src
-            - --link=current
-            - --add-user
-            - --username=tazzo
-            - --password-file=/etc/git-secret/token
-            - --group-write # Permette al gruppo (1000) di scrivere
-          volumeMounts:
-            - name: blog-src
-              mountPath: /src
-            - name: git-secret
-              mountPath: /etc/git-secret
-              readOnly: true
-      volumes:
-        - name: blog-src
-          emptyDir: {}
-        - name: git-secret
-          secret:
-            secretName: github-token
+            - containerPort: 80
 ---
 apiVersion: v1
 kind: Service
@@ -69,7 +27,7 @@ metadata:
 spec:
   ports:
     - port: 80
-      targetPort: 1313
+      targetPort: 80
   selector:
     app: hugo-blog
 ---
@@ -79,12 +37,15 @@ metadata:
   name: hugo-blog-ingress
   namespace: hugo-blog
   annotations:
-    traefik.ingress.kubernetes.io/router.tls.certresolver: myresolver
+    cert-manager.io/cluster-issuer: letsencrypt-issuer
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
 spec:
   ingressClassName: traefik
   tls:
     - hosts:
         - blog.tazlab.net
+      secretName: blog-tazlab-net-tls
   rules:
     - host: blog.tazlab.net
       http:
