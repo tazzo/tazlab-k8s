@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: blog
-          image: tazzo/tazlab.net:blog-611405d
+          image: tazzo/tazlab.net:blog-6109b9b
           ports:
             - containerPort: 80
 ---
