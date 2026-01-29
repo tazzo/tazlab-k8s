@@ -53,9 +53,20 @@ spec:
         - blog.tazlab.net
         - tazlab.net
         - www.tazlab.net
+        - lab.tazlab.net
       secretName: blog-tazlab-net-tls
   rules:
     - host: blog.tazlab.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: hugo-blog
+                port:
+                  number: 80
+    - host: lab.tazlab.net
       http:
         paths:
           - path: /
