@@ -45,14 +45,37 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-issuer
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.middlewares: hugo-blog-redirect-to-blog@kubernetescrd
 spec:
   ingressClassName: traefik
   tls:
     - hosts:
         - blog.tazlab.net
+        - tazlab.net
+        - www.tazlab.net
       secretName: blog-tazlab-net-tls
   rules:
     - host: blog.tazlab.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: hugo-blog
+                port:
+                  number: 80
+    - host: tazlab.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: hugo-blog
+                port:
+                  number: 80
+    - host: www.tazlab.net
       http:
         paths:
           - path: /
