@@ -5,6 +5,3 @@ resources:
   - ../base/longhorn
   - ../base/traefik
   - ../base/cert-manager
-  - ./metallb
-  - ./longhorn
-  - ./cert-manager
