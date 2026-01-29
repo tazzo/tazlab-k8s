@@ -23,7 +23,10 @@ spec:
   values:
     defaultSettings:
       defaultDataPath: /var/lib/longhorn
+      defaultReplicaCount: 1
       taintToleration: "node-role.kubernetes.io/control-plane:NoSchedule"
+      backupTarget: "s3://tazlab-longhorn@eu-central-1/"
+      backupTargetCredentialSecret: "aws-backup-secret"
     longhornManager:
       tolerations:
         - key: "node-role.kubernetes.io/control-plane"
@@ -39,3 +42,5 @@ spec:
         - key: "node-role.kubernetes.io/control-plane"
           operator: "Exists"
           effect: "NoSchedule"
+    persistence:
+      defaultClassReplicaCount: 1
