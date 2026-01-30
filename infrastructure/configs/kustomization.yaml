@@ -2,3 +2,4 @@ resources:
   - ./metallb
   - ./cert-manager
   - ./longhorn
+  - ./wildcard-tls
