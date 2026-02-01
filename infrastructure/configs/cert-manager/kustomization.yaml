@@ -1,2 +1,3 @@
 resources:
   - issuer.yaml
+  - cloudflare-external-secret.yaml
