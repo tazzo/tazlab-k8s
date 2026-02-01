@@ -1,3 +1,4 @@
 resources:
   - ./cert-manager
   - ./wildcard-tls
+  - github-external-secret.yaml
