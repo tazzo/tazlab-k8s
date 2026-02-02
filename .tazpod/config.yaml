@@ -1,8 +1,0 @@
-# TazPod Configuration
-version: 1.0
-image: "tazzo/tazlab.net:tazpod-gemini"
-container_name: "tazpod-tazlab-k8s-1693912"
-user: "tazpod"
-features:
-  ghost_mode: true
-  debug: true
