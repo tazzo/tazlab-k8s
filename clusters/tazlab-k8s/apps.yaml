@@ -13,3 +13,7 @@ spec:
     kind: GitRepository
     name: flux-system
   timeout: 5m
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-vars

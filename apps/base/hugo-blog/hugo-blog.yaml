@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: blog
-          image: tazzo/tazlab.net:blog-0fef4e5
+          image: tazzo/${domain}:blog-0fef4e5
           ports:
             - containerPort: 80
 ---
@@ -50,13 +50,13 @@ spec:
   ingressClassName: traefik
   tls:
     - hosts:
-        - blog.tazlab.net
-        - tazlab.net
-        - www.tazlab.net
-        - lab.tazlab.net
-      secretName: blog-tazlab-net-tls
+        - blog.${domain}
+        - ${domain}
+        - www.${domain}
+        - lab.${domain}
+      secretName: blog-${domain}-tls
   rules:
-    - host: blog.tazlab.net
+    - host: blog.${domain}
       http:
         paths:
           - path: /
@@ -66,7 +66,7 @@ spec:
                 name: hugo-blog
                 port:
                   number: 80
-    - host: lab.tazlab.net
+    - host: lab.${domain}
       http:
         paths:
           - path: /
@@ -76,7 +76,7 @@ spec:
                 name: hugo-blog
                 port:
                   number: 80
-    - host: tazlab.net
+    - host: ${domain}
       http:
         paths:
           - path: /
@@ -86,7 +86,7 @@ spec:
                 name: hugo-blog
                 port:
                   number: 80
-    - host: www.tazlab.net
+    - host: www.${domain}
       http:
         paths:
           - path: /
