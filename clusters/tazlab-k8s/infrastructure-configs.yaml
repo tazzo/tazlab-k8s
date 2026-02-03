@@ -7,9 +7,13 @@ spec:
   dependsOn:
     - name: infrastructure
   interval: 1h
-  path: ./infrastructure/configs
+  path: ../../infrastructure/configs
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
   timeout: 5m
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-vars

@@ -1,22 +1,18 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: blog-tazlab-net-tls
+  name: blog-${domain}-tls
   namespace: hugo-blog
 spec:
-  secretName: blog-tazlab-net-tls
+  secretName: blog-${domain}-tls
   issuerRef:
     name: letsencrypt-issuer
     kind: ClusterIssuer
+  # Allineato al certificato Wildcard del Vault
+  commonName: ${domain}
   dnsNames:
-    - blog.tazlab.net
-    - tazlab.net
-    - www.tazlab.net
-    - lab.tazlab.net
-  # Enterprise Fallback Strategy:
-  # If ESO injects a key, cert-manager will only overwrite it if expired.
-  # We use 'rotationPolicy: Always' to allow cert-manager to recover 
-  # if the vault key is invalid for any reason.
+    - ${domain}
+    - "*.${domain}"
   privateKey:
     rotationPolicy: Always
     algorithm: RSA
