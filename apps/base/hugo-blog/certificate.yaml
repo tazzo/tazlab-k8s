@@ -1,0 +1,17 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: blog-tazlab-net-tls
+  namespace: hugo-blog
+spec:
+  secretName: blog-tazlab-net-tls
+  issuerRef:
+    name: letsencrypt-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - blog.tazlab.net
+    - tazlab.net
+    - www.tazlab.net
+    - lab.tazlab.net
+  privateKey:
+    rotationPolicy: Always
