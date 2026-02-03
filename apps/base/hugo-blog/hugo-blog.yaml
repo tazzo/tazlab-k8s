@@ -42,6 +42,7 @@ metadata:
   name: hugo-blog-ingress
   namespace: hugo-blog
   annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-issuer
     traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
     traefik.ingress.kubernetes.io/router.middlewares: hugo-blog-redirect-to-blog@kubernetescrd
