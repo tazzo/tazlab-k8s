@@ -3,4 +3,4 @@ kind: Kustomization
 resources:
   - hugo-blog.yaml
   - redirect-middleware.yaml
-- certificate.yaml
+  - certificate.yaml
