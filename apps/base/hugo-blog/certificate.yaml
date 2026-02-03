@@ -13,5 +13,11 @@ spec:
     - tazlab.net
     - www.tazlab.net
     - lab.tazlab.net
+  # Enterprise Fallback Strategy:
+  # If ESO injects a key, cert-manager will only overwrite it if expired.
+  # We use 'rotationPolicy: Always' to allow cert-manager to recover 
+  # if the vault key is invalid for any reason.
   privateKey:
     rotationPolicy: Always
+    algorithm: RSA
+    size: 2048
