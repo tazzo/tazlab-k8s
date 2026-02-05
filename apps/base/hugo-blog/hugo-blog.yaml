@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: blog
-          image: tazzo/${domain}:blog-0fef4e5
+          image: tazzo/${domain}:blog-981533d
           ports:
             - containerPort: 80
 ---
@@ -36,6 +36,7 @@ spec:
   selector:
     app: hugo-blog
 ---
+# MAIN INGRESS (No redirect)
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -45,15 +46,11 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-issuer
     traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
-    traefik.ingress.kubernetes.io/router.middlewares: hugo-blog-redirect-to-blog@kubernetescrd
 spec:
   ingressClassName: traefik
   tls:
     - hosts:
         - blog.${domain}
-        - ${domain}
-        - www.${domain}
-        - lab.${domain}
       secretName: blog-${domain}-tls
   rules:
     - host: blog.${domain}
@@ -66,6 +63,27 @@ spec:
                 name: hugo-blog
                 port:
                   number: 80
+---
+# REDIRECT INGRESS (With middleware)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hugo-blog-redirect-ingress
+  namespace: hugo-blog
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-issuer
+    traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.middlewares: hugo-blog-redirect-to-blog@kubernetescrd
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - ${domain}
+        - www.${domain}
+        - lab.${domain}
+      secretName: blog-redirect-tls
+  rules:
     - host: lab.${domain}
       http:
         paths:
