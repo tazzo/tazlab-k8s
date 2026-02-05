@@ -1,0 +1,10 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: hugo-blog-redirect-to-blog
+  namespace: hugo-blog
+spec:
+  redirectRegex:
+    regex: ^https?://(www\.)?tazlab\.net/(.*)
+    replacement: https://blog.tazlab.net/${2}
+    permanent: true
