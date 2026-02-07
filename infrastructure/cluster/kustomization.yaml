@@ -4,3 +4,4 @@ resources:
   - ../base/traefik
   - ../base/cert-manager
   - ../base/postgres-operator
+  - ../base/networking/metallb-config.yaml
