@@ -18,7 +18,7 @@ spec:
             storage: 10Gi
   backups:
     pgbackrest:
-      image: registry.developers.crunchydata.com/crunchydata/postgres-pgbackrest:2.51-0
+      image: registry.developers.crunchydata.com/crunchydata/postgres-pgbackrest:16-2.51-0
       repos:
       - name: repo1
         volume:
@@ -31,7 +31,7 @@ spec:
                 storage: 10Gi
   proxy:
     pgBouncer:
-      image: registry.developers.crunchydata.com/crunchydata/postgres-pgbouncer:1.22-0
+      image: registry.developers.crunchydata.com/crunchydata/postgres-pgbouncer:16-1.22-0
       replicas: 1
   users:
     - name: mnemosyne
