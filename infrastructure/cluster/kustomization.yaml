@@ -4,4 +4,3 @@ resources:
   - ../base/traefik
   - ../base/cert-manager
   - ../base/postgres-operator
-  - ../base/mnemosyne-db
