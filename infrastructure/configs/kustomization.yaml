@@ -2,4 +2,4 @@ resources:
   - ./cert-manager
   - ./wildcard-tls
   - github-external-secret.yaml
-  - ../base/mnemosyne-db
+  - ../base/tazlab-db

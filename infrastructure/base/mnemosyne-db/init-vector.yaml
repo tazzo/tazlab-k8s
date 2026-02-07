@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: mnemosyne-db-init-sql
-  namespace: mnemosyne-db
-data:
-  init.sql: |
-    \c tazlab_memory
-    CREATE EXTENSION IF NOT EXISTS vector;
