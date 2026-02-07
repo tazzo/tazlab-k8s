@@ -6,4 +6,4 @@ resources:
   - cert-manager
   - networking/metallb-config.yaml
   - postgres-operator
-  - mnemosyne-db
+  - tazlab-db

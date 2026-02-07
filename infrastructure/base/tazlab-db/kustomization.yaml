@@ -5,4 +5,4 @@ resources:
   - namespace.yaml
   - cluster.yaml
   - service.yaml
-  - init-vector.yaml
+  - init-sql.yaml

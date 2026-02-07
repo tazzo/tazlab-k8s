@@ -1,16 +1,12 @@
 apiVersion: postgres-operator.crunchydata.com/v1beta1
 kind: PostgresCluster
 metadata:
-  name: mnemosyne
-  namespace: mnemosyne-db
+  name: tazlab-db
+  namespace: tazlab-db
 spec:
-  # Rimuovendo 'image' lasciamo che l'operatore scelga l'immagine corretta
-  # Se pgvector è necessario, di solito l'operatore Crunchy ha immagini che lo includono
-  # o dobbiamo usare un'annotazione/configurazione specifica.
-  # Ma per ora puntiamo a far partire il cluster.
   postgresVersion: 16
   databaseInitSQL:
-    name: mnemosyne-db-init-sql
+    name: tazlab-db-init-sql
     key: init.sql
   instances:
     - name: instance1
@@ -24,9 +20,13 @@ spec:
             storage: 10Gi
   backups:
     pgbackrest:
-      # Rimuoviamo l'immagine esplicita
       repos:
-      - name: repo1
+      - name: repo1 # S3 Storage (Immortality)
+        s3:
+          bucket: "tazlab-backups"
+          endpoint: "s3.amazonaws.com" # Cambieremo questo con il tuo provider S3
+          region: "us-east-1"
+      - name: repo2 # Local Storage (Fast recovery)
         volume:
           volumeClaimSpec:
             storageClassName: longhorn-postgres
@@ -37,9 +37,11 @@ spec:
                 storage: 10Gi
   proxy:
     pgBouncer:
-      # Rimuoviamo l'immagine esplicita
       replicas: 1
   users:
     - name: mnemosyne
       databases:
         - tazlab_memory
+    - name: tazlab_admin
+      databases:
+        - tazlab_test

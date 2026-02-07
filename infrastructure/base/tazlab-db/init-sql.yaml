@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tazlab-db-init-sql
+  namespace: tazlab-db
+data:
+  init.sql: |
+    -- Setup Mnemosyne Memory DB
+    \c tazlab_memory
+    CREATE EXTENSION IF NOT EXISTS vector;
+
+    -- Setup Dummy Test DB for Rebirth Validation
+    \c tazlab_test
+    CREATE TABLE IF NOT EXISTS rebirth_test (
+        id SERIAL PRIMARY KEY,
+        test_val TEXT NOT NULL,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );
+    INSERT INTO rebirth_test (test_val) VALUES ('Data Immortality Test - ' || NOW());
