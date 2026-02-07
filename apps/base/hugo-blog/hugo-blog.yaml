@@ -73,7 +73,7 @@ metadata:
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
-    traefik.ingress.kubernetes.io/router.middlewares: hugo-blog-redirect-to-blog@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: hugo-blog-hugo-blog-redirect-to-blog@kubernetescrd
 spec:
   ingressClassName: traefik
   tls:
