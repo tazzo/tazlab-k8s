@@ -1,5 +1,7 @@
 resources:
   - ./cert-manager
   - ./wildcard-tls
+  - ./tazlab-db
+  - ./storage
   - github-external-secret.yaml
   - ../base/tazlab-db
