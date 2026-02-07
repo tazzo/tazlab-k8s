@@ -43,7 +43,7 @@ metadata:
   name: hugo-blog-ingress
   namespace: hugo-blog
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-issuer
+    # Usiamo il wildcard di Infisical, non serve Cert-Manager qui
     traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
 spec:
@@ -71,7 +71,6 @@ metadata:
   name: hugo-blog-redirect-ingress
   namespace: hugo-blog
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-issuer
     traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
     traefik.ingress.kubernetes.io/router.middlewares: hugo-blog-redirect-to-blog@kubernetescrd
@@ -82,7 +81,8 @@ spec:
         - ${domain}
         - www.${domain}
         - lab.${domain}
-      secretName: blog-redirect-tls
+      # Uniformiamo tutto sul wildcard di Infisical
+      secretName: blog-${domain}-tls
   rules:
     - host: lab.${domain}
       http:
