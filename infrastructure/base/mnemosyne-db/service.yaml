@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mnemosyne-external
+  namespace: mnemosyne-db
+  annotations:
+    # Chiediamo a MetalLB un IP specifico per Mnemosyne
+    metallb.universe.tf/loadBalancerIPs: 192.168.1.241
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 5432
+      targetPort: 5432
+      name: postgres
+  selector:
+    # Puntiamo al primary gestito dall'operatore
+    postgres-operator.crunchydata.com/cluster: mnemosyne
+    postgres-operator.crunchydata.com/role: master
