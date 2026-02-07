@@ -5,4 +5,5 @@ metadata:
   namespace: mnemosyne-db
 data:
   init.sql: |
+    \c tazlab_memory
     CREATE EXTENSION IF NOT EXISTS vector;
