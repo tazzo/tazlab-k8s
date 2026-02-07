@@ -9,6 +9,9 @@ spec:
   # o dobbiamo usare un'annotazione/configurazione specifica.
   # Ma per ora puntiamo a far partire il cluster.
   postgresVersion: 16
+  databaseInitSQL:
+    name: mnemosyne-db-init-sql
+    key: init.sql
   instances:
     - name: instance1
       replicas: 1
