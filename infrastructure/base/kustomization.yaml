@@ -5,3 +5,5 @@ resources:
   - traefik
   - cert-manager
   - networking/metallb-config.yaml
+  - postgres-operator
+  - mnemosyne-db

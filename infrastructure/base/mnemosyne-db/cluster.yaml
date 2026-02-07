@@ -1,0 +1,39 @@
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PostgresCluster
+metadata:
+  name: mnemosyne
+  namespace: mnemosyne-db
+spec:
+  image: registry.developers.crunchydata.com/crunchydata/postgres-pgvector:16-3.2-0
+  postgresVersion: 16
+  instances:
+    - name: instance1
+      replicas: 1
+      dataVolumeClaimSpec:
+        storageClassName: longhorn-postgres
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Gi
+  backups:
+    pgbackrest:
+      image: registry.developers.crunchydata.com/crunchydata/postgres-pgbackrest:2.51-0
+      repos:
+      - name: repo1
+        volume:
+          volumeClaimSpec:
+            storageClassName: longhorn-postgres
+            accessModes:
+            - ReadWriteOnce
+            resources:
+              requests:
+                storage: 10Gi
+  proxy:
+    pgBouncer:
+      image: registry.developers.crunchydata.com/crunchydata/postgres-pgbouncer:1.22-0
+      replicas: 1
+  users:
+    - name: mnemosyne
+      databases:
+        - tazlab_memory
