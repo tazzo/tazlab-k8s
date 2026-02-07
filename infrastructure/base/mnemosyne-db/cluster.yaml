@@ -4,7 +4,10 @@ metadata:
   name: mnemosyne
   namespace: mnemosyne-db
 spec:
-  image: registry.developers.crunchydata.com/crunchydata/postgres-pgvector:16-3.2-0
+  # Rimuovendo 'image' lasciamo che l'operatore scelga l'immagine corretta
+  # Se pgvector è necessario, di solito l'operatore Crunchy ha immagini che lo includono
+  # o dobbiamo usare un'annotazione/configurazione specifica.
+  # Ma per ora puntiamo a far partire il cluster.
   postgresVersion: 16
   instances:
     - name: instance1
@@ -18,7 +21,7 @@ spec:
             storage: 10Gi
   backups:
     pgbackrest:
-      image: registry.developers.crunchydata.com/crunchydata/postgres-pgbackrest:16-2.51-0
+      # Rimuoviamo l'immagine esplicita
       repos:
       - name: repo1
         volume:
@@ -31,7 +34,7 @@ spec:
                 storage: 10Gi
   proxy:
     pgBouncer:
-      image: registry.developers.crunchydata.com/crunchydata/postgres-pgbouncer:16-1.22-0
+      # Rimuoviamo l'immagine esplicita
       replicas: 1
   users:
     - name: mnemosyne
