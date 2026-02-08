@@ -5,3 +5,5 @@ resources:
   - ../base/cert-manager
   - ../base/postgres-operator
   - ../base/networking/metallb-config.yaml
+  - ../base/tazlab-db
+  - ../automation/hugo-blog
