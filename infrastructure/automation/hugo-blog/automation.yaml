@@ -1,0 +1,45 @@
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: hugo-blog
+  namespace: flux-system
+spec:
+  image: tazzo/tazlab.net
+  interval: 1m
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: hugo-blog
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: hugo-blog
+  policy:
+    alphabetical:
+      order: asc # Sceglierà il tag "più alto" alfabeticamente (blog-sha)
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImageUpdateAutomation
+metadata:
+  name: hugo-blog
+  namespace: flux-system
+spec:
+  interval: 1m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  git:
+    checkout:
+      ref:
+        branch: master
+    commit:
+      author:
+        email: fluxcdbot@tazlab.net
+        name: fluxcdbot
+      messageTemplate: 'chore: self-update hugo-blog image to {{ .SelectedTarget.Tag }} [skip ci]'
+    push:
+      branch: master
+  update:
+    path: ./apps/base/hugo-blog
+    strategy: Setters

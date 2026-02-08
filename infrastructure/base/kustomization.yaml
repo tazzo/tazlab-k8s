@@ -7,3 +7,4 @@ resources:
   - networking/metallb-config.yaml
   - postgres-operator
   - tazlab-db
+  - ../automation/hugo-blog
