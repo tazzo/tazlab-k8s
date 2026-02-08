@@ -18,6 +18,8 @@ spec:
   policy:
     alphabetical:
       order: asc
+  filter:
+    pattern: '^blog-[a-f0-9]+'
 ---
 apiVersion: image.toolkit.fluxcd.io/v1
 kind: ImageUpdateAutomation
