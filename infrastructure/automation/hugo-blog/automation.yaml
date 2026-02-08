@@ -4,7 +4,7 @@ metadata:
   name: hugo-blog
   namespace: flux-system
 spec:
-  image: tazzo/tazlab.net
+  image: tazzo/tazlab-blog
   interval: 1m
 ---
 apiVersion: image.toolkit.fluxcd.io/v1
@@ -17,9 +17,7 @@ spec:
     name: hugo-blog
   policy:
     alphabetical:
-      order: asc
-  filter:
-    pattern: '^blog-[a-f0-9]+'
+      order: desc # Ora prenderà l'ultimo tag caricato (alfabeticamente blog-...)
 ---
 apiVersion: image.toolkit.fluxcd.io/v1
 kind: ImageUpdateAutomation
