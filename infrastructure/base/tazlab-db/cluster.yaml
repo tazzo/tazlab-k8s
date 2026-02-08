@@ -44,7 +44,7 @@ spec:
   users:
     - name: mnemosyne
       databases:
-        - tazlab_memory
+        - mnemosyne
     - name: tazlab-admin
       databases:
-        - tazlab_test
+        - tazlab-test
