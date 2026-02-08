@@ -1,4 +1,4 @@
-apiVersion: image.toolkit.fluxcd.io/v1beta2
+apiVersion: image.toolkit.fluxcd.io/v1
 kind: ImageRepository
 metadata:
   name: hugo-blog
@@ -7,7 +7,7 @@ spec:
   image: tazzo/tazlab.net
   interval: 1m
 ---
-apiVersion: image.toolkit.fluxcd.io/v1beta2
+apiVersion: image.toolkit.fluxcd.io/v1
 kind: ImagePolicy
 metadata:
   name: hugo-blog
@@ -17,9 +17,9 @@ spec:
     name: hugo-blog
   policy:
     alphabetical:
-      order: asc # Sceglierà il tag "più alto" alfabeticamente (blog-sha)
+      order: asc
 ---
-apiVersion: image.toolkit.fluxcd.io/v1beta1
+apiVersion: image.toolkit.fluxcd.io/v1
 kind: ImageUpdateAutomation
 metadata:
   name: hugo-blog
