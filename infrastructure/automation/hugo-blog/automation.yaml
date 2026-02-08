@@ -37,7 +37,7 @@ spec:
       author:
         email: fluxcdbot@tazlab.net
         name: fluxcdbot
-      messageTemplate: 'chore: self-update hugo-blog image to {{ .SelectedTarget.Tag }} [skip ci]'
+      messageTemplate: 'chore: self-update hugo-blog image [skip ci]'
     push:
       branch: master
   update:
