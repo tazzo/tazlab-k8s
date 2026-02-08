@@ -6,11 +6,18 @@ metadata:
 data:
   init.sql: |
     -- Setup Mnemosyne Memory DB
-    \c tazlab_memory
+    \c mnemosyne
     CREATE EXTENSION IF NOT EXISTS vector;
+    CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+    CREATE TABLE IF NOT EXISTS memories (
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        timestamp TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+        content TEXT NOT NULL,
+        embedding VECTOR(768)
+    );
 
     -- Setup Dummy Test DB for Rebirth Validation
-    \c tazlab_test
+    \c tazlab-test
     CREATE TABLE IF NOT EXISTS rebirth_test (
         id SERIAL PRIMARY KEY,
         test_val TEXT NOT NULL,
