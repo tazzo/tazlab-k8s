@@ -19,7 +19,7 @@ spec:
     name: hugo-blog
   policy:
     alphabetical:
-      order: desc # Ora prenderà l'ultimo tag caricato (alfabeticamente blog-...)
+      order: desc
 ---
 apiVersion: image.toolkit.fluxcd.io/v1
 kind: ImageUpdateAutomation
