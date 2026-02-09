@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: tazlab-issuer
+spec:
+  acme:
+    email: admin@tazlab.net
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: tazlab-issuer-account-key
+    solvers:
+    - http01:
+        ingress:
+          ingressClassName: tazlab-ingress
