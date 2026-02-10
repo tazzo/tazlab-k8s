@@ -10,8 +10,6 @@ spec:
       stanza: db
       repo:
         name: repo1
-      options:
-        - --type=immediate
   databaseInitSQL:
     name: tazlab-db-init-sql
     key: init.sql
@@ -27,6 +25,9 @@ spec:
             storage: 10Gi
   backups:
     pgbackrest:
+      global:
+        repo1-path: /pgbackrest/repo1
+        repo1-retention-full: "2"
       configuration:
         - secret:
             name: s3-backrest-creds
