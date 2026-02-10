@@ -14,6 +14,8 @@ spec:
           bucket: "tazlab-longhorn"
           endpoint: "s3.amazonaws.com"
           region: "eu-central-1"
+          s3Credentials:
+            name: s3-backrest-creds
   databaseInitSQL:
     name: tazlab-db-init-sql
     key: init.sql
