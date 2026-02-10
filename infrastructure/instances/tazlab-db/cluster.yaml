@@ -39,16 +39,6 @@ spec:
           bucket: "tazlab-longhorn"
           endpoint: "s3.amazonaws.com"
           region: "eu-central-1"
-        path: /pgbackrest/repo1
-      - name: repo2 # Local Storage (Fast recovery)
-        volume:
-          volumeClaimSpec:
-            storageClassName: tazlab-storage
-            accessModes:
-            - ReadWriteOnce
-            resources:
-              requests:
-                storage: 10Gi
   proxy:
     pgBouncer:
       replicas: 1
