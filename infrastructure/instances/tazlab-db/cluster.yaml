@@ -28,8 +28,6 @@ spec:
       global:
         repo1-path: /pgbackrest/repo1
         repo1-retention-full: "2"
-        repo1-s3-key: $(AWS_ACCESS_KEY_ID)
-        repo1-s3-key-secret: $(AWS_SECRET_ACCESS_KEY)
       configuration:
         - secret:
             name: s3-backrest-creds
