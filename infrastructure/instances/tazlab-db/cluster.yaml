@@ -8,6 +8,9 @@ spec:
   dataSource:
     pgbackrest:
       stanza: db
+      configuration:
+        - secret:
+            name: s3-backrest-creds
       repo:
         name: repo1
         s3:
