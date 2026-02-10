@@ -29,7 +29,6 @@ spec:
   backups:
     pgbackrest:
       global:
-        repo1-path: /pgbackrest/repo1
         repo1-retention-full: "2"
       configuration:
         - secret:
@@ -40,6 +39,7 @@ spec:
           bucket: "tazlab-longhorn"
           endpoint: "s3.amazonaws.com"
           region: "eu-central-1"
+        path: /pgbackrest/repo1
       - name: repo2 # Local Storage (Fast recovery)
         volume:
           volumeClaimSpec:
