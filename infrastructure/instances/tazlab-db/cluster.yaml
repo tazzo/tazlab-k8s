@@ -28,22 +28,12 @@ spec:
             storage: 10Gi
   backups:
     pgbackrest:
-      global:
-        repo1-path: /pgbackrest/repo1
-        repo1-type: s3
-        repo1-s3-bucket: "tazlab-longhorn"
-        repo1-s3-endpoint: "s3.amazonaws.com"
-        repo1-s3-region: "eu-central-1"
-        repo1-retention-full: "2"
       configuration:
         - secret:
             name: s3-backrest-creds
       repos:
       - name: repo1
-        s3:
-          bucket: "tazlab-longhorn"
-          endpoint: "s3.amazonaws.com"
-          region: "eu-central-1"
+        # No 's3:' block here to avoid operator interference
   proxy:
     pgBouncer:
       replicas: 1
