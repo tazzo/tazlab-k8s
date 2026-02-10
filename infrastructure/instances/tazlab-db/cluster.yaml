@@ -31,8 +31,6 @@ spec:
     pgbackrest:
       global:
         repo1-retention-full: "2"
-        # Il percorso deve essere vuoto per usare la root del bucket dove abbiamo spostato i dati
-        repo1-path: / 
       configuration:
         - secret:
             name: s3-backrest-creds
