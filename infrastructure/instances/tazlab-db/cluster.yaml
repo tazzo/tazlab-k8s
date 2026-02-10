@@ -10,6 +10,10 @@ spec:
       stanza: db
       repo:
         name: repo1
+        s3:
+          bucket: "tazlab-longhorn"
+          endpoint: "s3.amazonaws.com"
+          region: "eu-central-1"
       options:
         - --type=immediate
         - --delta
@@ -29,7 +33,7 @@ spec:
   backups:
     pgbackrest:
       global:
-        repo1-path: /pgbackrest/repo1
+        repo1-path: pgbackrest/repo1
         repo1-type: s3
       configuration:
         - secret:
