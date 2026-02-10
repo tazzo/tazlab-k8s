@@ -5,14 +5,6 @@ metadata:
   namespace: tazlab-db
 spec:
   postgresVersion: 16
-  dataSource:
-    pgbackrest:
-      stanza: db
-      repo:
-        name: repo1
-      options:
-        - --type=immediate
-        - --delta
   databaseInitSQL:
     name: tazlab-db-init-sql
     key: init.sql
