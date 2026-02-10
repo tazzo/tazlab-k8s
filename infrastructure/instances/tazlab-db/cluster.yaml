@@ -31,6 +31,7 @@ spec:
     pgbackrest:
       global:
         repo1-retention-full: "2"
+        repo1-type: s3
       configuration:
         - secret:
             name: s3-backrest-creds
