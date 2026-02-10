@@ -4,3 +4,6 @@ resources:
   - cert-manager
   - postgres-operator
   - traefik
+  - tazlab-db-namespace.yaml
+  - hugo-blog-namespace.yaml
+  - hugo-blog-namespace.yaml
