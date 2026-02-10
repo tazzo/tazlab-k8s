@@ -18,7 +18,6 @@ spec:
           endpoint: "s3.amazonaws.com"
           region: "eu-central-1"
       options:
-        - --type=immediate
         - --delta
   databaseInitSQL:
     name: tazlab-db-init-sql
