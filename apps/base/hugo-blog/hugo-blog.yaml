@@ -43,17 +43,16 @@ metadata:
   name: hugo-blog-ingress
   namespace: hugo-blog
   annotations:
-    # Usiamo il wildcard di Infisical, non serve Cert-Manager qui
     traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
 spec:
-  ingressClassName: traefik
+  ingressClassName: tazlab-ingress
   tls:
     - hosts:
-        - blog.${domain}
-      secretName: blog-${domain}-tls
+        - blog.tazlab.net
+      secretName: wildcard-tls
   rules:
-    - host: blog.${domain}
+    - host: blog.tazlab.net
       http:
         paths:
           - path: /
@@ -75,16 +74,15 @@ metadata:
     traefik.ingress.kubernetes.io/router.tls: "true"
     traefik.ingress.kubernetes.io/router.middlewares: hugo-blog-hugo-blog-redirect-to-blog@kubernetescrd
 spec:
-  ingressClassName: traefik
+  ingressClassName: tazlab-ingress
   tls:
     - hosts:
-        - ${domain}
-        - www.${domain}
-        - lab.${domain}
-      # Uniformiamo tutto sul wildcard di Infisical
-      secretName: blog-${domain}-tls
+        - tazlab.net
+        - www.tazlab.net
+        - lab.tazlab.net
+      secretName: wildcard-tls
   rules:
-    - host: lab.${domain}
+    - host: lab.tazlab.net
       http:
         paths:
           - path: /
@@ -94,7 +92,7 @@ spec:
                 name: hugo-blog
                 port:
                   number: 80
-    - host: ${domain}
+    - host: tazlab.net
       http:
         paths:
           - path: /
@@ -104,7 +102,7 @@ spec:
                 name: hugo-blog
                 port:
                   number: 80
-    - host: www.${domain}
+    - host: www.tazlab.net
       http:
         paths:
           - path: /

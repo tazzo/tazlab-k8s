@@ -1,18 +1,17 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: blog-${domain}-tls
+  name: blog-tazlab.net-tls
   namespace: hugo-blog
 spec:
-  secretName: blog-${domain}-tls
+  secretName: blog-tazlab.net-tls
   issuerRef:
-    name: letsencrypt-issuer
+    name: tazlab-issuer
     kind: ClusterIssuer
-  # Allineato al certificato Wildcard del Vault
-  commonName: ${domain}
+  commonName: tazlab.net
   dnsNames:
-    - ${domain}
-    - "*.${domain}"
+    - tazlab.net
+    - "*.tazlab.net"
   privateKey:
     rotationPolicy: Always
     algorithm: RSA

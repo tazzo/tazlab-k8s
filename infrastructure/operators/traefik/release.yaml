@@ -40,5 +40,7 @@ spec:
     service:
       enabled: true
       type: LoadBalancer
+      annotations:
+        metallb.universe.tf/loadBalancerIPs: 192.168.1.240
     persistence:
       enabled: false

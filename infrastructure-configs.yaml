@@ -5,7 +5,7 @@ metadata:
   namespace: flux-system
 spec:
   dependsOn:
-    - name: infrastructure-instances
+    - name: infrastructure-operators
   interval: 1h
   path: ./infrastructure/configs
   prune: true
