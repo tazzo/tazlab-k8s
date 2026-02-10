@@ -30,6 +30,10 @@ spec:
     pgbackrest:
       global:
         repo1-path: /pgbackrest/repo1
+        repo1-type: s3
+        repo1-s3-bucket: "tazlab-longhorn"
+        repo1-s3-endpoint: "s3.amazonaws.com"
+        repo1-s3-region: "eu-central-1"
         repo1-retention-full: "2"
       configuration:
         - secret:
