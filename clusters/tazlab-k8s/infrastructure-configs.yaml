@@ -5,15 +5,11 @@ metadata:
   namespace: flux-system
 spec:
   dependsOn:
-    - name: infrastructure
+    - name: infrastructure-operators
   interval: 1h
-  path: ../../infrastructure/configs
+  path: ./infrastructure/configs
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
   timeout: 5m
-  postBuild:
-    substituteFrom:
-      - kind: ConfigMap
-        name: cluster-vars
