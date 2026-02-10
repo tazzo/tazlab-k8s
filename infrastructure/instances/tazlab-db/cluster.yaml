@@ -5,6 +5,15 @@ metadata:
   namespace: tazlab-db
 spec:
   postgresVersion: 16
+  # Riattiviamo il restore automatico (Point-In-Time)
+  dataSource:
+    pgbackrest:
+      stanza: db
+      repo:
+        name: repo1
+      options:
+        - --type=immediate
+        - --delta
   databaseInitSQL:
     name: tazlab-db-init-sql
     key: init.sql
@@ -22,6 +31,8 @@ spec:
     pgbackrest:
       global:
         repo1-retention-full: "2"
+        # Il percorso deve essere vuoto per usare la root del bucket dove abbiamo spostato i dati
+        repo1-path: / 
       configuration:
         - secret:
             name: s3-backrest-creds
