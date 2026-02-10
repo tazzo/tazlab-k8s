@@ -28,6 +28,9 @@ spec:
             storage: 10Gi
   backups:
     pgbackrest:
+      global:
+        repo1-path: /pgbackrest/repo1
+        repo1-type: s3
       configuration:
         - secret:
             name: s3-backrest-creds
