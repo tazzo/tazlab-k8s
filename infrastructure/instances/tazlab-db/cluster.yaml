@@ -28,10 +28,6 @@ spec:
             storage: 10Gi
   backups:
     pgbackrest:
-      global:
-        repo1-type: s3
-        repo1-path: /pgbackrest/tazlab-db
-        repo1-s3-key-type: shared
       configuration:
         - secret:
             name: s3-backrest-creds
