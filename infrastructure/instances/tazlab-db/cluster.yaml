@@ -8,7 +8,8 @@ spec:
   dataSource:
     pgbackrest:
       stanza: db
-      repoName: repo1
+      repo:
+        name: repo1
       options:
         - --type=immediate
   databaseInitSQL:
@@ -32,7 +33,7 @@ spec:
       repos:
       - name: repo1 # S3 Storage (Immortality)
         s3:
-          bucket: "tazlab-backup-bucket"
+          bucket: "tazlab-longhorn"
           endpoint: "s3.amazonaws.com"
           region: "eu-central-1"
       - name: repo2 # Local Storage (Fast recovery)
