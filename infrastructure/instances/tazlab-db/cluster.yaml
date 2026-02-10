@@ -47,4 +47,5 @@ spec:
         - mnemosyne
     - name: tazlab-admin
       databases:
+        - tazlab
         - tazlab-test

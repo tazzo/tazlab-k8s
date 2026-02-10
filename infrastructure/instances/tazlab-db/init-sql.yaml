@@ -7,17 +7,35 @@ data:
   init.sql: |
     -- Setup Mnemosyne Memory DB
     \c mnemosyne
+    GRANT ALL ON SCHEMA public TO mnemosyne;
+    ALTER SCHEMA public OWNER TO mnemosyne;
     CREATE EXTENSION IF NOT EXISTS vector;
     CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
     CREATE TABLE IF NOT EXISTS memories (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         timestamp TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
         content TEXT NOT NULL,
-        embedding VECTOR(768)
+        embedding VECTOR(768),
+        metadata JSONB,
+        tags JSONB
+    );
+
+    -- Setup Main Tazlab DB
+    \c tazlab
+    GRANT ALL ON SCHEMA public TO "tazlab-admin";
+    ALTER SCHEMA public OWNER TO "tazlab-admin";
+    CREATE TABLE IF NOT EXISTS memories (
+        id SERIAL PRIMARY KEY,
+        content TEXT NOT NULL,
+        metadata JSONB,
+        tags JSONB,
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
     );
 
     -- Setup Dummy Test DB for Rebirth Validation
     \c tazlab-test
+    GRANT ALL ON SCHEMA public TO "tazlab-admin";
+    ALTER SCHEMA public OWNER TO "tazlab-admin";
     CREATE TABLE IF NOT EXISTS rebirth_test (
         id SERIAL PRIMARY KEY,
         test_val TEXT NOT NULL,
