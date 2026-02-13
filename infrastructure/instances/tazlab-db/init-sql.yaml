@@ -15,10 +15,15 @@ data:
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         timestamp TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
         content TEXT NOT NULL,
-        embedding VECTOR(768),
-        metadata JSONB,
-        tags JSONB
+        embedding VECTOR(3072)
     );
+    CREATE TABLE IF NOT EXISTS archived_files (
+        id SERIAL PRIMARY KEY,
+        filename TEXT UNIQUE NOT NULL,
+        archived_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+    );
+    GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO mnemosyne;
+    GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO mnemosyne;
 
     -- Setup Main Tazlab DB
     \c tazlab
