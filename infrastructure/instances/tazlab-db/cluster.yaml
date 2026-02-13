@@ -57,3 +57,7 @@ spec:
       databases:
         - tazlab
         - tazlab-test
+  config:
+    pg_hba:
+      - host mnemosyne mnemosyne 0.0.0.0/0 md5
+      - host tazlab-admin all 0.0.0.0/0 md5
