@@ -18,7 +18,7 @@ spec:
   policy:
     numerical:
       order: desc
-  filter:
+  filterTags:
     pattern: '^blog-(?P<value>[0-9]+)-.*$'
     extract: '$value'
 ---
