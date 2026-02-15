@@ -35,7 +35,7 @@ spec:
   backups:
     pgbackrest:
       global:
-        repo1-path: pgbackrest/repo1
+        repo1-path: /pgbackrest/repo1
         repo1-type: s3
       configuration:
         - secret:
