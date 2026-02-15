@@ -16,7 +16,7 @@ spec:
   imageRepositoryRef:
     name: hugo-blog
   policy:
-    alphabetical:
+    numerical:
       order: desc
 ---
 apiVersion: image.toolkit.fluxcd.io/v1
