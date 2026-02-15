@@ -14,7 +14,7 @@ spec:
       repo:
         name: repo1
         s3:
-          bucket: "tazlab-longhorn"
+          bucket: "tazlab-storage"
           endpoint: "s3.amazonaws.com"
           region: "eu-central-1"
       options:
@@ -43,7 +43,7 @@ spec:
       repos:
       - name: repo1
         s3:
-          bucket: "tazlab-longhorn"
+          bucket: "tazlab-storage"
           endpoint: "s3.amazonaws.com"
           region: "eu-central-1"
   proxy:
