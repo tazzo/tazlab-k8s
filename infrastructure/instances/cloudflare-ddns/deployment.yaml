@@ -23,11 +23,13 @@ spec:
                   name: cloudflare-api-token
                   key: api-token
             - name: DOMAINS
-              value: "*.tazlab.net"
+              value: "tazlab.net"
             - name: PROXIED
               value: "false"
             - name: IP4_PROVIDER
               value: "cloudflare.trace"
+            - name: IP6_PROVIDER
+              value: "none"
           resources:
             requests:
               cpu: 10m
