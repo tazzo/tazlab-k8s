@@ -18,6 +18,9 @@ spec:
   policy:
     numerical:
       order: desc
+  filter:
+    pattern: '^blog-(?P<value>[0-9]+)-.*$'
+    extract: '$value'
 ---
 apiVersion: image.toolkit.fluxcd.io/v1
 kind: ImageUpdateAutomation
