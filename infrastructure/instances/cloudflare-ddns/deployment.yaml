@@ -17,7 +17,7 @@ spec:
         - name: cloudflare-ddns
           image: favonia/cloudflare-ddns:latest
           env:
-            - name: CF_API_TOKEN
+            - name: CLOUDFLARE_API_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: cloudflare-api-token
@@ -27,7 +27,7 @@ spec:
             - name: PROXIED
               value: "false"
             - name: IP4_PROVIDER
-              value: "cloudflare.dig"
+              value: "cloudflare.trace"
           resources:
             requests:
               cpu: 10m
