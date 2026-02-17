@@ -42,6 +42,10 @@ spec:
                   key: password
             - name: PGADMIN_CONFIG_SERVER_MODE
               value: "False"
+            - name: PGADMIN_CONFIG_PROXY_X_HOST_COUNT
+              value: "1"
+            - name: SCRIPT_NAME
+              value: /pgadmin
           ports:
             - containerPort: 80
               name: http
@@ -85,13 +89,12 @@ metadata:
   namespace: tazlab-db
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web
-spec:
-  ingressClassName: tazlab-ingress
+    traefik.ingress.kubernetes.io/rewrite.target: /$2
   rules:
     - http:
         paths:
-          - path: /
-            pathType: Prefix
+          - path: /pgadmin(/|$)(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: pgadmin
