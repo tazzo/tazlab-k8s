@@ -76,6 +76,13 @@ spec:
         app: homepage
     spec:
       serviceAccountName: homepage
+      initContainers:
+        - name: create-logs-dir
+          image: busybox
+          command: ["sh", "-c", "mkdir -p /app/config/logs && chown -R 1000:1000 /app/config"]
+          volumeMounts:
+            - mountPath: /app/config
+              name: config
       containers:
         - name: homepage
           image: ghcr.io/gethomepage/homepage:latest
