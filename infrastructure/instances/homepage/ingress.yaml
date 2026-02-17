@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: homepage-ingress
+  namespace: homepage
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/name: "Homepage"
+    gethomepage.dev/group: "Developer"
+    gethomepage.dev/icon: "homepage.png"
+spec:
+  ingressClassName: tazlab-ingress
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: homepage
+                port:
+                  number: 3000
