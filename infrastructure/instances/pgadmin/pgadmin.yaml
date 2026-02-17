@@ -29,6 +29,9 @@ spec:
       containers:
         - name: pgadmin
           image: dpage/pgadmin4:8.10
+          securityContext:
+            runAsUser: 5050
+            fsGroup: 5050
           env:
             - name: PGADMIN_DEFAULT_EMAIL
               value: "admin@pgadmin.tazlab.net"
