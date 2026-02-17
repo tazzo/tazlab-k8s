@@ -58,6 +58,7 @@ data:
   bookmarks.yaml: ""
   custom.css: ""
   widgets.yaml: ""
+  logs: ""
 ---
 apiVersion: apps/v1
 kind: Deployment
