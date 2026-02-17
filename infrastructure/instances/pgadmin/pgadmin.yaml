@@ -89,12 +89,13 @@ metadata:
   namespace: tazlab-db
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web
-    traefik.ingress.kubernetes.io/rewrite.target: /$2
+spec:
+  ingressClassName: tazlab-ingress
   rules:
     - http:
         paths:
-          - path: /pgadmin(/|$)(.*)
-            pathType: ImplementationSpecific
+          - path: /pgadmin
+            pathType: Prefix
             backend:
               service:
                 name: pgadmin
