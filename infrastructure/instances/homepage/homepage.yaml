@@ -55,20 +55,9 @@ data:
             icon: hugo.png
             href: "http://192.168.1.240/"
             description: "Blog personale"
-            widget:
-              type: kubernetes
-              kubernetes:
-                labelSelector: "app=hugo-blog"
-                namespace: "hugo-blog"
-        - PostgreSQL:
-            icon: postgresql.png
-            href: "http://192.168.1.241:5432/"
-            description: "Database PostgreSQL"
-            widget:
-              type: kubernetes
-              kubernetes:
-                labelSelector: "postgres-operator.crunchydata.com/cluster=tazlab-db"
-                namespace: "tazlab-db"
+  bookmarks.yaml: ""
+  custom.css: ""
+  widgets.yaml: ""
 ---
 apiVersion: apps/v1
 kind: Deployment
