@@ -69,31 +69,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: pgadmin
+  name: pgadmin-http
   namespace: tazlab-db
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: 192.168.1.242
 spec:
+  type: LoadBalancer
+  selector:
+    app: pgadmin
   ports:
     - port: 80
       targetPort: 80
-  selector:
-    app: pgadmin
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: pgadmin-ingress
-  namespace: tazlab-db
-  annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: web
-spec:
-  ingressClassName: tazlab-ingress
-  rules:
-    - http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: pgadmin
-                port:
-                  number: 80
