@@ -41,6 +41,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: tazlab-db-pguser-pgadmin
+                  namespace: tazlab-db
                   key: password
             - name: PGADMIN_CONFIG_SERVER_MODE
               value: "False"
