@@ -42,10 +42,6 @@ spec:
                   key: password
             - name: PGADMIN_CONFIG_SERVER_MODE
               value: "False"
-            - name: PGADMIN_CONFIG_PROXY_X_HOST_COUNT
-              value: "1"
-            - name: SCRIPT_NAME
-              value: /pgadmin
           ports:
             - containerPort: 80
               name: http
@@ -94,7 +90,7 @@ spec:
   rules:
     - http:
         paths:
-          - path: /pgadmin
+          - path: /
             pathType: Prefix
             backend:
               service:
