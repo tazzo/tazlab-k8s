@@ -50,6 +50,9 @@ spec:
     pgBouncer:
       replicas: 1
   users:
+    - name: pgadmin
+      databases:
+        - postgres
     - name: mnemosyne
       databases:
         - mnemosyne
