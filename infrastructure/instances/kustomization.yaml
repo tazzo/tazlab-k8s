@@ -4,3 +4,6 @@ resources:
   - tazlab-db
   - cloudflare-ddns
   - pgadmin
+  - homepage
+  - longhorn
+  - traefik

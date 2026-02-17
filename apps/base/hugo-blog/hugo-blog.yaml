@@ -40,6 +40,10 @@ metadata:
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/name: "Blog"
+    gethomepage.dev/group: "Developer"
+    gethomepage.dev/icon: "hugo.png"
 spec:
   ingressClassName: tazlab-ingress
   tls:

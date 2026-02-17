@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
         - name: pgadmin
-          image: dpage/pgadmin4:8.10
+          image: dpage/pgadmin4:9.12
           securityContext:
             runAsUser: 0
             runAsGroup: 0
@@ -69,14 +69,36 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: pgadmin-http
+  name: pgadmin
   namespace: tazlab-db
-  annotations:
-    metallb.universe.tf/loadBalancerIPs: 192.168.1.242
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: pgadmin
   ports:
     - port: 80
       targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pgadmin-ingress
+  namespace: tazlab-db
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/name: "pgAdmin"
+    gethomepage.dev/group: "Database"
+    gethomepage.dev/icon: "postgresql.png"
+spec:
+  ingressClassName: tazlab-ingress
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: pgadmin
+                port:
+                  number: 80
