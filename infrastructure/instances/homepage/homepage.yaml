@@ -44,6 +44,7 @@ data:
     mode: cluster
     ingress: true
     traefik: true
+  docker.yaml: ""
   settings.yaml: |
     title: "TazLab"
     headerStyle: "boxed"
@@ -71,7 +72,6 @@ data:
     - Infrastructure:
         - PostgreSQL:
             icon: postgresql.png
-            href: "http://192.168.1.241:5432/"
             description: "Main database"
             widget:
               type: kubernetes
