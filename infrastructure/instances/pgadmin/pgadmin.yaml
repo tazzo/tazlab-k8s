@@ -73,6 +73,11 @@ metadata:
   namespace: tazlab-db
   annotations:
     metallb.universe.tf/loadBalancerIPs: 192.168.1.240
+    metallb.universe.tf/allow-shared-ip: "tazlab-internal-dashboard"
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/name: "pgAdmin"
+    gethomepage.dev/group: "Database"
+    gethomepage.dev/icon: "postgresql.png"
 spec:
   type: LoadBalancer
   selector:
