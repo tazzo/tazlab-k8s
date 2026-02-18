@@ -88,7 +88,10 @@ data:
               namespace: "tazlab-db"
   bookmarks.yaml: ""
   custom.css: ""
-  widgets.yaml: ""
+  widgets.yaml: |
+    - greeting:
+        text: "TazLab Dashboard"
+        help: true
   logs: ""
 ---
 apiVersion: apps/v1
