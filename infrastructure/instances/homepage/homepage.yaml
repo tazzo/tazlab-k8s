@@ -43,6 +43,7 @@ data:
   kubernetes.yaml: |
     mode: cluster
     ingress: true
+    services: true
     traefik: true
   docker.yaml: ""
   proxmox.yaml: ""
@@ -71,6 +72,10 @@ data:
             href: "http://192.168.1.240:8003/"
             description: "Ingress statistics"
     - Infrastructure:
+        - Proxmox:
+            icon: proxmox.png
+            href: "https://192.168.1.200:8006/"
+            description: "Virtualization management"
         - PostgreSQL:
             icon: postgresql.png
             description: "Main database"
