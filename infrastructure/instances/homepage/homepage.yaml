@@ -52,7 +52,7 @@ data:
     title: "TazLab Dashboard"
     background: https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop
     greeting: "TazLab Dashboard"
-    headerStyle: "boxed"
+    headerStyle: "default"
     iconStyle: "silhouette"
     defaultColor: "slate"
   services.yaml: |
