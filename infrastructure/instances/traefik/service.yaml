@@ -5,6 +5,11 @@ metadata:
   namespace: traefik
   annotations:
     metallb.universe.tf/loadBalancerIPs: 192.168.1.240
+    metallb.universe.tf/allow-shared-ip: "tazlab-internal-dashboard"
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/name: "Traefik"
+    gethomepage.dev/group: "Infrastructure"
+    gethomepage.dev/icon: "traefik.png"
 spec:
   type: LoadBalancer
   selector:
