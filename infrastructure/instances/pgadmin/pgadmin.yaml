@@ -76,7 +76,7 @@ metadata:
     metallb.universe.tf/allow-shared-ip: "tazlab-internal-dashboard"
     gethomepage.dev/enabled: "true"
     gethomepage.dev/name: "pgAdmin"
-    gethomepage.dev/group: "Database"
+    gethomepage.dev/group: "Management"
     gethomepage.dev/icon: "postgresql.png"
 spec:
   type: LoadBalancer
