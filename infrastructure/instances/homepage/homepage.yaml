@@ -45,6 +45,7 @@ data:
     ingress: true
     traefik: true
   docker.yaml: ""
+  proxmox.yaml: ""
   settings.yaml: |
     title: "TazLab"
     headerStyle: "boxed"
