@@ -47,6 +47,7 @@ data:
     traefik: true
   docker.yaml: ""
   proxmox.yaml: ""
+  custom.js: ""
   settings.yaml: |
     title: "TazLab"
     headerStyle: "boxed"
@@ -81,7 +82,7 @@ data:
             description: "Main database"
             widget:
               type: kubernetes
-              labelSelector: "postgres-operator.crunchydata.com/cluster=tazlab-db"
+              selector: "postgres-operator.crunchydata.com/cluster=tazlab-db"
               namespace: "tazlab-db"
   bookmarks.yaml: ""
   custom.css: ""
