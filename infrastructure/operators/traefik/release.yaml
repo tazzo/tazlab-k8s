@@ -24,6 +24,8 @@ spec:
     podSecurityContext:
       fsGroup: 65532
     additionalArguments:
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
       - "--entrypoints.web.address=:8000"
       - "--entrypoints.websecure.address=:8443"
     ports:
