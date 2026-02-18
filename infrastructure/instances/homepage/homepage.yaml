@@ -55,6 +55,28 @@ data:
             icon: hugo.png
             href: "http://192.168.1.240/"
             description: "Blog personale"
+    - Management:
+        - pgAdmin:
+            icon: postgresql.png
+            href: "http://192.168.1.240:8001/"
+            description: "Database management"
+        - Longhorn:
+            icon: longhorn.png
+            href: "http://192.168.1.240:8002/"
+            description: "Storage management"
+        - Traefik:
+            icon: traefik.png
+            href: "http://192.168.1.240:8003/"
+            description: "Ingress statistics"
+    - Infrastructure:
+        - PostgreSQL:
+            icon: postgresql.png
+            href: "http://192.168.1.241:5432/"
+            description: "Main database"
+            widget:
+              type: kubernetes
+              labelSelector: "postgres-operator.crunchydata.com/cluster=tazlab-db"
+              namespace: "tazlab-db"
   bookmarks.yaml: ""
   custom.css: ""
   widgets.yaml: ""
