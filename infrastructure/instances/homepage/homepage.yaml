@@ -51,9 +51,9 @@ data:
   settings.yaml: |
     title: "TazLab Dashboard"
     background: https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop
-    greeting: "TazLab Dashboard"
     headerStyle: "boxed"
-    showGreeting: true
+    showGreeting: false
+    logo: "https://raw.githubusercontent.com/tazzo/tazlab-k8s/master/infrastructure/instances/homepage/homepage.png"
     iconStyle: "silhouette"
     defaultColor: "slate"
   services.yaml: |
@@ -88,11 +88,26 @@ data:
               selector: "postgres-operator.crunchydata.com/cluster=tazlab-db"
               namespace: "tazlab-db"
   bookmarks.yaml: ""
-  custom.css: ""
+  custom.css: |
+    .greeting {
+      font-size: 3.5rem;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+      background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+    }
   widgets.yaml: |
     - greeting:
-        text: "TazLab Dashboard"
+        text: "TAZLAB"
         help: true
+    - datetime:
+        text_size: xl
+        format:
+          dateStyle: long
+          timeStyle: short
   logs: ""
 ---
 apiVersion: apps/v1
