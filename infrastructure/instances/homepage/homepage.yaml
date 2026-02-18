@@ -108,6 +108,12 @@ data:
         format:
           dateStyle: long
           timeStyle: short
+    - kubernetes:
+        cluster:
+          show: true
+          cpu: true
+          memory: true
+          nodes: true
   logs: ""
 ---
 apiVersion: apps/v1
