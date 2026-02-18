@@ -69,7 +69,7 @@ data:
             description: "Storage management"
         - Traefik:
             icon: traefik.png
-            href: "http://192.168.1.240:8003/"
+            href: "http://192.168.1.240:8003/dashboard/"
             description: "Ingress statistics"
     - Infrastructure:
         - Proxmox:
