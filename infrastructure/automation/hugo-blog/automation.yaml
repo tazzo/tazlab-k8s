@@ -17,7 +17,7 @@ spec:
     name: hugo-blog
   policy:
     numerical:
-      order: desc
+      order: asc
   filterTags:
     pattern: '^blog-(?P<value>[0-9]+)-.*$'
     extract: '$value'
