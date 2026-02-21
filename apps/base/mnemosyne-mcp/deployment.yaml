@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mnemosyne-mcp
+  namespace: tazlab-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mnemosyne-mcp
+  template:
+    metadata:
+      labels:
+        app: mnemosyne-mcp
+    spec:
+      containers:
+        - name: server
+          image: tazzo/mnemosyne-mcp:latest # {"$imagepolicy": "flux-system:mnemosyne-mcp"}
+          env:
+            - name: DB_HOST
+              value: "tazlab-db-rw.tazlab-db.svc.cluster.local"
+            - name: DB_NAME
+              value: "mnemosyne"
+            - name: DB_USER
+              value: "mnemosyne"
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: mnemosyne-mcp-secrets
+                  key: DB_PASS
+            - name: GEMINI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mnemosyne-mcp-secrets
+                  key: GEMINI_API_KEY
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 50m
+              memory: 128Mi

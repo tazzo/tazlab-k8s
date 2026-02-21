@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - ../instances
   - ../automation/hugo-blog
+  - ../automation/mnemosyne-mcp

@@ -1,0 +1,48 @@
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageRepository
+metadata:
+  name: mnemosyne-mcp
+  namespace: flux-system
+spec:
+  image: tazzo/mnemosyne-mcp
+  interval: 1m
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImagePolicy
+metadata:
+  name: mnemosyne-mcp
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: mnemosyne-mcp
+  policy:
+    numerical:
+      order: asc
+  filterTags:
+    pattern: '^mcp-(?P<value>[0-9]+)-.*$'
+    extract: '$value'
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageUpdateAutomation
+metadata:
+  name: mnemosyne-mcp
+  namespace: flux-system
+spec:
+  interval: 1m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  git:
+    checkout:
+      ref:
+        branch: master
+    commit:
+      author:
+        email: fluxcdbot@tazlab.net
+        name: fluxcdbot
+      messageTemplate: 'chore: self-update mnemosyne-mcp image [skip ci]'
+    push:
+      branch: master
+  update:
+    path: ./apps/base/mnemosyne-mcp
+    strategy: Setters
