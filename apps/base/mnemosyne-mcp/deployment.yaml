@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: server
-          image: tazzo/mnemosyne-mcp:mcp-8-e053c442e3f1a26325fb36871f8ea8e319f9beab # {"$imagepolicy": "flux-system:mnemosyne-mcp"}
+          image: tazzo/mnemosyne-mcp:mcp-9-5916395b58c8b0eb1e1b91dc57340bc65d028df3 # {"$imagepolicy": "flux-system:mnemosyne-mcp"}
           env:
             - name: DB_HOST
               valueFrom:
