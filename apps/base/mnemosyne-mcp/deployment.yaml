@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: server
-          image: tazzo/mnemosyne-mcp:latest # {"$imagepolicy": "flux-system:mnemosyne-mcp"}
+          image: tazzo/mnemosyne-mcp:mcp-3-b6bdeccd1071bfef50baa03af82d4f48170a7373 # {"$imagepolicy": "flux-system:mnemosyne-mcp"}
           env:
             - name: DB_HOST
               value: "tazlab-db-rw.tazlab-db.svc.cluster.local"
