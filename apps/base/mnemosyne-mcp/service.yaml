@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mnemosyne-mcp
+  namespace: tazlab-db
+  annotations:
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Developer
+    gethomepage.dev/icon: gemini.png
+    gethomepage.dev/name: Mnemosyne MCP
+    metallb.universe.tf/allow-shared-ip: tazlab-internal-dashboard
+    metallb.universe.tf/ip-allocated-from-pool: default-pool
+    metallb.universe.tf/loadBalancerIPs: 192.168.1.240
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8004
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: mnemosyne-mcp
