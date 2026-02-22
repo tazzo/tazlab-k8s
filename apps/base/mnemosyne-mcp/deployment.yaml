@@ -16,8 +16,11 @@ spec:
       containers:
         - name: server
           image: tazzo/mnemosyne-mcp:mcp-13-61c6c8f5d17362d2275766068f1c21b8e3eea013 # {"$imagepolicy": "flux-system:mnemosyne-mcp"}
-          env:
-            - name: DB_HOST
+                  env:
+                  - name: MCP_TRANSPORT
+                    value: "sse"
+                  - name: DB_HOST
+          
               valueFrom:
                 secretKeyRef:
                   name: tazlab-db-pguser-mnemosyne
