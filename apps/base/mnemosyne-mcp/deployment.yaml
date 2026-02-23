@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: server
-          image: tazzo/mnemosyne-mcp:mcp-13-61c6c8f5d17362d2275766068f1c21b8e3eea013 # {"$imagepolicy": "flux-system:mnemosyne-mcp"}
+          image: tazzo/mnemosyne-mcp:mcp-15-730aba48021260cbf8448204d3d515a77d00961a # {"$imagepolicy": "flux-system:mnemosyne-mcp"}
                   env:
                   - name: MCP_TRANSPORT
                     value: "sse"
