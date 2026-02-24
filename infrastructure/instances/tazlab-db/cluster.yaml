@@ -42,6 +42,9 @@ spec:
             name: s3-backrest-creds
       repos:
       - name: repo1
+        schedules:
+          full: "0 1 * * 0"
+          differential: "0 1 * * 1-6"
         s3:
           bucket: "tazlab-storage"
           endpoint: "s3.amazonaws.com"
