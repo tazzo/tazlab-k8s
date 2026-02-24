@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: server
-          image: tazzo/mnemosyne-mcp:mcp-25-b0eee9a37659dea838c5db4c402ee8d9fae20bfd
+          image: tazzo/mnemosyne-mcp:mcp-26-9a9d66bf52d0dea783e8f27b59ba4421a5731146
           imagePullPolicy: Always
           env:
             - name: MCP_TRANSPORT
