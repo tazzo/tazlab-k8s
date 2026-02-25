@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pgadmin-sa
+  namespace: tazlab-db
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pgadmin-secret-reader
+  namespace: tazlab-db
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pgadmin-secret-reader-binding
+  namespace: tazlab-db
+subjects:
+  - kind: ServiceAccount
+    name: pgadmin-sa
+    namespace: tazlab-db
+roleRef:
+  kind: Role
+  name: pgadmin-secret-reader
+  apiGroup: rbac.authorization.k8s.io
