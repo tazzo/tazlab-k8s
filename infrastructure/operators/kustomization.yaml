@@ -1,9 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - cloudflare-ddns-namespace.yaml
-  - cert-manager
-  - postgres-operator
-  - traefik
-  - tazlab-db-namespace.yaml
-  - hugo-blog-namespace.yaml
+  - core-kustomization.yaml
+  - data-kustomization.yaml
+  - namespaces-kustomization.yaml
