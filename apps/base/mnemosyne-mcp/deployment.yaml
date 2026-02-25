@@ -13,6 +13,18 @@ spec:
       labels:
         app: mnemosyne-mcp
     spec:
+      serviceAccountName: mnemosyne-mcp-sa
+      initContainers:
+        - name: wait-for-db-secret
+          image: bitnami/kubectl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              until kubectl get secret tazlab-db-pguser-mnemosyne; do
+                echo "waiting for database user secret..."
+                sleep 5
+              done
       containers:
         - name: server
           image: tazzo/mnemosyne-mcp:mcp-29-ace89cfbfa8e79b523ff01c0dfe38ffcff336d18 # {"$imagepolicy": "flux-system:mnemosyne-mcp"}
