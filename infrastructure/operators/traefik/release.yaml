@@ -20,7 +20,7 @@ spec:
   values:
     deployment:
       kind: Deployment
-      replicas: 2
+      replicas: 1
     podSecurityContext:
       fsGroup: 65532
     additionalArguments:
