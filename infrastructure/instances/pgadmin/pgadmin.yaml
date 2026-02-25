@@ -26,6 +26,18 @@ spec:
       labels:
         app: pgadmin
     spec:
+      serviceAccountName: pgadmin-sa
+      initContainers:
+        - name: wait-for-db-secret
+          image: bitnami/kubectl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              until kubectl get secret tazlab-db-pguser-pgadmin; do
+                echo "waiting for database user secret..."
+                sleep 5
+              done
       containers:
         - name: pgadmin
           image: dpage/pgadmin4:9.12
