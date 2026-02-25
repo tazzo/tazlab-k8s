@@ -6,7 +6,6 @@ metadata:
 spec:
   dependsOn:
     - name: infrastructure-configs
-    - name: infrastructure-instances
   interval: 1h
   path: ./apps/cluster/mnemosyne-mcp
   prune: true
