@@ -6,7 +6,6 @@ metadata:
 spec:
   dependsOn:
     - name: infrastructure-operators-core
-    - name: infrastructure-operators-data
     - name: infrastructure-operators-namespaces
   interval: 1h
   path: ./infrastructure/cluster-bridge
