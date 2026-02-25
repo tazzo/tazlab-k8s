@@ -45,7 +45,7 @@ metadata:
     gethomepage.dev/group: "Developer"
     gethomepage.dev/icon: "hugo.png"
 spec:
-  ingressClassName: tazlab-ingress
+  ingressClassName: traefik
   tls:
     - hosts:
         - blog.tazlab.net
@@ -73,7 +73,7 @@ metadata:
     traefik.ingress.kubernetes.io/router.tls: "true"
     traefik.ingress.kubernetes.io/router.middlewares: hugo-blog-hugo-blog-redirect-to-blog@kubernetescrd
 spec:
-  ingressClassName: tazlab-ingress
+  ingressClassName: traefik
   tls:
     - hosts:
         - tazlab.net
