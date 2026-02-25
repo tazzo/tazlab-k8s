@@ -8,6 +8,11 @@ spec:
     - name: infrastructure-configs
   interval: 1h
   path: ./infrastructure/cluster-instances
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-vars
+        optional: false
   prune: true
   wait: true
   sourceRef:

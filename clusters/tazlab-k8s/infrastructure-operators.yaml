@@ -6,6 +6,11 @@ metadata:
 spec:
   interval: 1h
   path: ./infrastructure/cluster
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-vars
+        optional: false
   prune: true
   wait: true
   sourceRef:

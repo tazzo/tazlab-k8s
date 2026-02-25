@@ -8,6 +8,11 @@ spec:
     - name: infrastructure-operators
   interval: 1h
   path: ./infrastructure/cluster-bridge
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-vars
+        optional: false
   prune: true
   wait: true
   sourceRef:
