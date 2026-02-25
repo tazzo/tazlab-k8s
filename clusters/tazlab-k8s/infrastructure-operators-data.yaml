@@ -5,7 +5,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 1h
-  path: ./infrastructure/operators/data-kustomization.yaml
+  path: ./infrastructure/operators/data
   postBuild:
     substituteFrom:
       - kind: ConfigMap
