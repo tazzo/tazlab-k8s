@@ -45,11 +45,12 @@ data:
             "showThresholdLabels": false,
             "showThresholdMarkers": true
           },
-          "title": "CPU Usage (Total)",
+          "title": "CPU Usage (Total Cluster)",
           "type": "gauge",
           "targets": [
             {
-              "expr": "100 - (avg by (instance) (irate(node_cpu_seconds_total{mode='idle'}[5m])) * 100)",
+              "expr": "100 - (avg(irate(node_cpu_seconds_total{mode='idle'}[5m])) * 100)",
+              "legendFormat": "Cluster Average",
               "refId": "A"
             }
           ]
@@ -78,11 +79,12 @@ data:
             "showThresholdLabels": false,
             "showThresholdMarkers": true
           },
-          "title": "Memory Usage (Total)",
+          "title": "Memory Usage (Total Cluster)",
           "type": "gauge",
           "targets": [
             {
-              "expr": "100 * (1 - ((node_memory_MemFree_bytes + node_memory_Cached_bytes + node_memory_Buffers_bytes) / node_memory_MemTotal_bytes))",
+              "expr": "100 * avg(1 - ((node_memory_MemFree_bytes + node_memory_Cached_bytes + node_memory_Buffers_bytes) / node_memory_MemTotal_bytes))",
+              "legendFormat": "Cluster Average",
               "refId": "A"
             }
           ]
