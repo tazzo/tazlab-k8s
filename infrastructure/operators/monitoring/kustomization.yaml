@@ -5,3 +5,4 @@ resources:
   - metrics-server.yaml
   - prometheus-stack.yaml
   - secrets.yaml
+  - dashboards/cluster-health.yaml
