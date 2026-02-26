@@ -29,10 +29,10 @@ spec:
     kubeStateMetrics:
       enabled: true
     
-    # Prometheus Minimal
+    # Prometheus Configuration
     prometheus:
       prometheusSpec:
-        retention: 1d
+        retention: 15d
         storageSpec:
           volumeClaimTemplate:
             spec:
@@ -40,11 +40,25 @@ spec:
               accessModes: ["ReadWriteOnce"]
               resources:
                 requests:
-                  storage: 2Gi
+                  storage: 10Gi
     
-    # Grafana Minimal (SQLite for now)
+    # Grafana Configuration (Enterprise Postgres Backend)
     grafana:
       enabled: true
+      grafana.ini:
+        database:
+          type: postgres
+          host: tazlab-db-primary.tazlab-db.svc.cluster.local:5432
+          name: grafana
+          user: grafana
+          password: "${GF_DATABASE_PASSWORD}"
+      # Environment variables for secret injection
+      envValueFrom:
+        GF_DATABASE_PASSWORD:
+          secretKeyRef:
+            name: tazlab-db-pguser-grafana
+            key: password
+      
       persistence:
         enabled: false
       service:
@@ -52,5 +66,9 @@ spec:
         annotations:
           metallb.universe.tf/loadBalancerIPs: "192.168.1.240"
           metallb.universe.tf/allow-shared-ip: "tazlab-internal-dashboard"
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/name: "Grafana"
+          gethomepage.dev/group: "Management"
+          gethomepage.dev/icon: "grafana.png"
         port: 8005
         targetPort: 3000
