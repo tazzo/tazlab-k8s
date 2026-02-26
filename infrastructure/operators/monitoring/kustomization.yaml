@@ -5,5 +5,6 @@ resources:
   - metrics-server.yaml
   - prometheus-stack.yaml
   - secrets.yaml
+  - secrets-db-sync.yaml
   - dashboards/cluster-health.yaml
   - dashboards/nodes-pro.yaml
