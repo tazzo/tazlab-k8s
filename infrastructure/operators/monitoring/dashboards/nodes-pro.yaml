@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-nodes-pro
+  namespace: monitoring
+  labels:
+    grafana_dashboard: "1"
+  annotations:
+    grafana_dashboard_folder: "Infrastructure"
+data:
+  # Sto usando una versione ottimizzata e pulita della dashboard 1860
+  nodes-pro.json: |
+    {
+      "title": "Nodes Pro - Detail",
+      "uid": "nodes-pro",
+      "tags": ["enterprise", "infrastructure"],
+      "timezone": "browser",
+      "schemaVersion": 38,
+      "templating": {
+        "list": [
+          {
+            "name": "node",
+            "type": "query",
+            "datasource": { "type": "prometheus", "uid": "prometheus" },
+            "definition": "label_values(node_uname_info, nodename)",
+            "includeAll": true,
+            "multi": false,
+            "refresh": 1
+          }
+        ]
+      },
+      "panels": [
+        {
+          "title": "CPU Usage per Node",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+          "targets": [
+            {
+              "expr": "100 - (avg by (nodename) (irate(node_cpu_seconds_total{mode='idle', nodename=~"$node"}[5m])) * 100)",
+              "legendFormat": "{{nodename}}",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "title": "Memory Usage per Node",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+          "targets": [
+            {
+              "expr": "node_memory_MemTotal_bytes{nodename=~"$node"} - node_memory_MemAvailable_bytes{nodename=~"$node"}",
+              "legendFormat": "{{nodename}}",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": { "defaults": { "unit": "bytes" } }
+        },
+        {
+          "title": "Disk Space Usage (%)",
+          "type": "gauge",
+          "gridPos": { "h": 8, "w": 24, "x": 0, "y": 8 },
+          "targets": [
+            {
+              "expr": "100 - ((node_filesystem_avail_bytes{mountpoint="/", nodename=~"$node"} * 100) / node_filesystem_size_bytes{mountpoint="/", nodename=~"$node"})",
+              "legendFormat": "{{nodename}}",
+              "refId": "A"
+            }
+          ]
+        }
+      ]
+    }
