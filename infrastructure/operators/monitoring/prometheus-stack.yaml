@@ -42,19 +42,18 @@ spec:
     # Grafana Configuration
     grafana:
       enabled: true
+      grafana.ini:
+        database:
+          type: postgres
+          host: tazlab-db-primary.tazlab-db.svc.cluster.local:5432
+          name: grafana
+          user: grafana
+          password: "${GF_DATABASE_PASSWORD}"
       # Enterprise-grade persistence using PostgreSQL
-      env:
-        GF_DATABASE_TYPE: postgres
-        GF_DATABASE_HOST: tazlab-db-primary.tazlab-db.svc.cluster.local:5432
-        GF_DATABASE_NAME: grafana
       envValueFrom:
-        GF_DATABASE_USER:
-          secretKeyRef:
-            name: tazlab-db-pguser-tazlab-admin
-            key: user
         GF_DATABASE_PASSWORD:
           secretKeyRef:
-            name: tazlab-db-pguser-tazlab-admin
+            name: tazlab-db-pguser-grafana
             key: password
       
       # Sidecar for auto-loading dashboards from ConfigMaps
