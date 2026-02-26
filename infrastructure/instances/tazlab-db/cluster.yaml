@@ -59,6 +59,9 @@ spec:
     - name: mnemosyne
       databases:
         - mnemosyne
+    - name: grafana
+      databases:
+        - grafana
     - name: tazlab-admin
       databases:
         - tazlab
@@ -67,6 +70,7 @@ spec:
     dynamicConfiguration:
       postgresql:
         pg_hba:
+          - host grafana grafana 0.0.0.0/0 md5
           - host mnemosyne mnemosyne 0.0.0.0/0 md5
           - host mnemosyne all 0.0.0.0/0 md5
           - host tazlab-admin all 0.0.0.0/0 md5
