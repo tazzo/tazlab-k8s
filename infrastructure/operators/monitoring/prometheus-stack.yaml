@@ -7,11 +7,11 @@ spec:
   releaseName: kube-prometheus-stack
   interval: 1h
   install:
-    timeout: 10m
+    timeout: 15m
     remediation:
       retries: 3
   upgrade:
-    timeout: 10m
+    timeout: 15m
   chart:
     spec:
       chart: kube-prometheus-stack
@@ -21,13 +21,18 @@ spec:
         name: prometheus-community
         namespace: flux-system
   values:
-    # Disable components we don't want yet or that might conflict
+    # Minimal Setup to avoid timeouts
     alertmanager:
       enabled: false
+    nodeExporter:
+      enabled: true
+    kubeStateMetrics:
+      enabled: true
     
-    # Prometheus Configuration
+    # Prometheus Minimal
     prometheus:
       prometheusSpec:
+        retention: 1d
         storageSpec:
           volumeClaimTemplate:
             spec:
@@ -35,37 +40,17 @@ spec:
               accessModes: ["ReadWriteOnce"]
               resources:
                 requests:
-                  storage: 10Gi
-        retention: 15d
-        serviceMonitorSelectorNilUsesHelmValues: false
+                  storage: 2Gi
     
-    # Grafana Configuration
+    # Grafana Minimal (SQLite for now)
     grafana:
       enabled: true
-      # Temporary SQLite for debugging
-      grafana.ini:
-        database:
-          type: sqlite3
       persistence:
         enabled: false
-      
-      # Sidecar for auto-loading dashboards from ConfigMaps
-      sidecar:
-        dashboards:
-          enabled: true
-          label: grafana_dashboard
-          labelValue: "1"
-          searchNamespace: ALL
-      
-      # Service exposure on port 8004 (MetalLB IP sharing)
       service:
         type: LoadBalancer
         annotations:
           metallb.universe.tf/loadBalancerIPs: "192.168.1.240"
           metallb.universe.tf/allow-shared-ip: "tazlab-internal-dashboard"
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/name: "Grafana"
-          gethomepage.dev/group: "Management"
-          gethomepage.dev/icon: "grafana.png"
         port: 8004
         targetPort: 3000
