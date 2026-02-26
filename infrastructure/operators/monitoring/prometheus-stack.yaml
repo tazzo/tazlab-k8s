@@ -6,6 +6,12 @@ metadata:
 spec:
   releaseName: kube-prometheus-stack
   interval: 1h
+  install:
+    timeout: 10m
+    remediation:
+      retries: 3
+  upgrade:
+    timeout: 10m
   chart:
     spec:
       chart: kube-prometheus-stack
