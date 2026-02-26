@@ -59,9 +59,6 @@ spec:
     - name: mnemosyne
       databases:
         - mnemosyne
-    - name: grafana
-      databases:
-        - grafana
     - name: tazlab-admin
       databases:
         - tazlab
