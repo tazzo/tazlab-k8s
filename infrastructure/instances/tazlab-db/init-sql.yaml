@@ -47,3 +47,8 @@ data:
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );
     INSERT INTO rebirth_test (test_val) VALUES ('Data Immortality Test - ' || NOW());
+
+    -- Setup Grafana Persistence DB
+    \c grafana
+    GRANT ALL ON SCHEMA public TO grafana;
+    ALTER SCHEMA public OWNER TO grafana;
