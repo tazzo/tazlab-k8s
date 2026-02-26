@@ -51,7 +51,7 @@ spec:
           host: tazlab-db-primary.tazlab-db.svc.cluster.local:5432
           name: grafana
           user: grafana
-          password: "${GF_DATABASE_PASSWORD}"
+          # Password is injected via Environment Variable to avoid Helm validation errors
       # Environment variables for secret injection
       envValueFrom:
         GF_DATABASE_PASSWORD:
