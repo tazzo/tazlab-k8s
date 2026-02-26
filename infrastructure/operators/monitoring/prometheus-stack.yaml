@@ -51,8 +51,12 @@ spec:
           host: tazlab-db-primary.tazlab-db.svc.cluster.local:5432
           name: grafana
           user: grafana
-          # Password is injected via Environment Variable to avoid Helm validation errors
-      # Environment variables for secret injection
+      # Environment variables for absolute certainty
+      env:
+        GF_DATABASE_TYPE: postgres
+        GF_DATABASE_HOST: tazlab-db-primary.tazlab-db.svc.cluster.local:5432
+        GF_DATABASE_NAME: grafana
+        GF_DATABASE_USER: grafana
       envValueFrom:
         GF_DATABASE_PASSWORD:
           secretKeyRef:
