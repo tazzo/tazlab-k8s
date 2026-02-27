@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dex-sa
+  namespace: dex
+---
+# Role per leggere secrets nel namespace dex (init container)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: dex-secret-reader
+  namespace: dex
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: dex-secret-reader-binding
+  namespace: dex
+subjects:
+  - kind: ServiceAccount
+    name: dex-sa
+    namespace: dex
+roleRef:
+  kind: Role
+  name: dex-secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# ClusterRole per DEX kubernetes storage (gestisce propri CRD)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: dex-crd-manager
+rules:
+  - apiGroups: ["dex.coreos.com"]
+    resources:
+      - authcodes
+      - authrequests
+      - connectordata
+      - keys
+      - oauth2clients
+      - offlinesessionses
+      - passwords
+      - refreshtokens
+      - signingkeies
+    verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
+  - apiGroups: ["apiextensions.k8s.io"]
+    resources: ["customresourcedefinitions"]
+    verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: dex-crd-manager-binding
+subjects:
+  - kind: ServiceAccount
+    name: dex-sa
+    namespace: dex
+roleRef:
+  kind: ClusterRole
+  name: dex-crd-manager
+  apiGroup: rbac.authorization.k8s.io

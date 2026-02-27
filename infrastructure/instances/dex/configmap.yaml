@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dex-config
+  namespace: dex
+data:
+  config.yaml: |
+    issuer: https://dex.tazlab.net
+
+    storage:
+      type: kubernetes
+      config:
+        inCluster: true
+
+    web:
+      http: 0.0.0.0:5556
+      allowedOrigins:
+        - https://dex.tazlab.net
+
+    grpc:
+      addr: 0.0.0.0:5558
+
+    oauth2:
+      skipApprovalScreen: true
+
+    connectors:
+      - type: google
+        id: google
+        name: Google
+        config:
+          clientID: $GOOGLE_CLIENT_ID
+          clientSecret: $GOOGLE_CLIENT_SECRET
+          redirectURI: https://dex.tazlab.net/callback
+
+    staticClients:
+      - id: oauth2-proxy
+        secret: $OAUTH2_PROXY_CLIENT_SECRET
+        redirectURIs:
+          - https://auth.tazlab.net/oauth2/callback
+        name: oauth2-proxy
+
+    enablePasswordDB: false
+
+    logger:
+      level: info
+      format: json

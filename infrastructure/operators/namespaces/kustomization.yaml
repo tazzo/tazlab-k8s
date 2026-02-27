@@ -4,4 +4,6 @@ resources:
   - ../cloudflare-ddns-namespace.yaml
   - ../tazlab-db-namespace.yaml
   - ../hugo-blog-namespace.yaml
+  - ../dex-namespace.yaml
+  - ../auth-namespace.yaml
   - monitoring.yaml

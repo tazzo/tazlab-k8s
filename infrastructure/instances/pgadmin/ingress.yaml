@@ -1,0 +1,48 @@
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: wildcard-tls-external
+  namespace: tazlab-db
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: tazlab-secrets
+  target:
+    name: wildcard-tls
+    template:
+      type: kubernetes.io/tls
+  data:
+    - secretKey: tls.crt
+      remoteRef:
+        key: WILDCARD_CRT
+    - secretKey: tls.key
+      remoteRef:
+        key: WILDCARD_KEY
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pgadmin
+  namespace: tazlab-db
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.middlewares: auth-oauth2-proxy@kubernetescrd
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - pgadmin.tazlab.net
+      secretName: wildcard-tls
+  rules:
+    - host: pgadmin.tazlab.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: pgadmin
+                port:
+                  number: 8001

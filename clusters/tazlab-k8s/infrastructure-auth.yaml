@@ -1,0 +1,21 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: infrastructure-auth
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: infrastructure-instances
+  interval: 1h
+  path: ./infrastructure/auth
+  prune: true
+  wait: true
+  timeout: 5m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-vars
+        optional: false
