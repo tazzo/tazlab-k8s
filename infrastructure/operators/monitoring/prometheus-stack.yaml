@@ -70,6 +70,7 @@ spec:
         GF_DATABASE_HOST: tazlab-db-primary.tazlab-db.svc.cluster.local:5432
         GF_DATABASE_NAME: grafana
         GF_DATABASE_USER: grafana
+        GF_DATABASE_SSL_MODE: disable
       envValueFrom:
         GF_DATABASE_PASSWORD:
           secretKeyRef:
