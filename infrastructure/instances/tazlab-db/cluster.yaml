@@ -63,6 +63,9 @@ spec:
       databases:
         - tazlab
         - tazlab-test
+    - name: grafana
+      databases:
+        - grafana
   patroni:
     dynamicConfiguration:
       postgresql:

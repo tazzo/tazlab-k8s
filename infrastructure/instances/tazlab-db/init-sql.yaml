@@ -50,6 +50,5 @@ data:
 
     -- Setup Grafana Persistence DB
     \c grafana
-    CREATE USER grafana WITH PASSWORD '${GRAFANA_DB_PASSWORD}';
     GRANT ALL ON SCHEMA public TO grafana;
     ALTER SCHEMA public OWNER TO grafana;
