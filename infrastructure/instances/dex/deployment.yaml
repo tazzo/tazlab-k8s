@@ -55,13 +55,13 @@ spec:
               containerPort: 5558
           livenessProbe:
             httpGet:
-              path: /healthz/live
+              path: /healthz
               port: 5556
             initialDelaySeconds: 15
             periodSeconds: 10
           readinessProbe:
             httpGet:
-              path: /healthz/ready
+              path: /healthz
               port: 5556
             initialDelaySeconds: 5
             periodSeconds: 5
