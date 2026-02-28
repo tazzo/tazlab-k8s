@@ -34,7 +34,7 @@ data:
 
     staticClients:
       - id: oauth2-proxy
-        secret: $OAUTH2_PROXY_CLIENT_SECRET
+        secretEnv: OAUTH2_PROXY_CLIENT_SECRET
         redirectURIs:
           - https://auth.tazlab.net/oauth2/callback
         name: oauth2-proxy
