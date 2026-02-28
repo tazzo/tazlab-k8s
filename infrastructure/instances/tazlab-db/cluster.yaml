@@ -71,7 +71,12 @@ spec:
       postgresql:
         pg_hba:
           - host grafana grafana 0.0.0.0/0 md5
+          - host grafana grafana ::/0 md5
           - host mnemosyne mnemosyne 0.0.0.0/0 md5
+          - host mnemosyne mnemosyne ::/0 md5
           - host mnemosyne all 0.0.0.0/0 md5
+          - host mnemosyne all ::/0 md5
           - host tazlab-admin all 0.0.0.0/0 md5
+          - host tazlab-admin all ::/0 md5
           - host all all 10.0.0.0/8 md5
+          - host all all 10.244.0.0/16 md5
