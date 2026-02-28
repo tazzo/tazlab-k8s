@@ -55,9 +55,15 @@ spec:
           enabled: true
           header_name: X-Auth-Request-User
           header_property: username
+          header_email: X-Auth-Request-Email
           auto_sign_up: true
           sync_ttl: 0
           sync_ttl_api_key: 0
+          enable_login_token_rotation: false
+          skip_org_role_sync: true
+        security:
+          admin_user: ''
+          allow_login_without_configured_admin: true
       # Environment variables for absolute certainty
       env:
         GF_DATABASE_TYPE: postgres
