@@ -28,10 +28,16 @@ spec:
       containers:
         - name: dex
           image: ghcr.io/dexidp/dex:v2.41.1
-          args:
-            - dex
-            - serve
-            - /etc/dex/cfg/config.yaml
+          command:
+            - /bin/sh
+            - -c
+            - |
+              sed \
+                -e "s|\$GOOGLE_CLIENT_ID|${GOOGLE_CLIENT_ID}|g" \
+                -e "s|\$GOOGLE_CLIENT_SECRET|${GOOGLE_CLIENT_SECRET}|g" \
+                -e "s|\$OAUTH2_PROXY_CLIENT_SECRET|${OAUTH2_PROXY_CLIENT_SECRET}|g" \
+                /etc/dex/cfg/config.yaml > /tmp/dex-config.yaml
+              exec dex serve /tmp/dex-config.yaml
           env:
             - name: GOOGLE_CLIENT_ID
               valueFrom:
