@@ -25,6 +25,7 @@ spec:
             - --cookie-secure=true
             - --cookie-domain=.tazlab.net
             - --whitelist-domain=.tazlab.net
+            - --redirect-url=https://auth.tazlab.net/oauth2/callback
             - --upstream=static://200
             - --http-address=:4180
             - --skip-provider-button=true
