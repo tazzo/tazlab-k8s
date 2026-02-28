@@ -30,6 +30,7 @@ spec:
             - --http-address=:4180
             - --skip-provider-button=true
             - --set-xauthrequest=true
+            - --reverse-proxy=true
             - --authenticated-emails-file=/etc/oauth2-proxy/allowed-emails.txt
             - --silence-ping-logging=true
           env:
