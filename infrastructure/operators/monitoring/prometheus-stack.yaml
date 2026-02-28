@@ -57,6 +57,12 @@ spec:
           header_property: username
           auto_sign_up: true
           sync_ttl: 60
+        security:
+          admin_user: admin
+          disable_login_form: false
+        auth:
+          oauth_auto_login: false
+          disable_login_form: false
       # Environment variables for absolute certainty
       env:
         GF_DATABASE_TYPE: postgres
