@@ -51,6 +51,12 @@ spec:
           host: tazlab-db-primary.tazlab-db.svc.cluster.local:5432
           name: grafana
           user: grafana
+        auth.proxy:
+          enabled: true
+          header_name: X-Auth-Request-User
+          header_property: username
+          auto_sign_up: true
+          sync_ttl: 60
       # Environment variables for absolute certainty
       env:
         GF_DATABASE_TYPE: postgres
