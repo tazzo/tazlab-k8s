@@ -15,14 +15,14 @@ spec:
     spec:
       serviceAccountName: dex-sa
       initContainers:
-        - name: wait-for-dex-secrets
+        - name: wait-for-dex-config
           image: bitnami/kubectl:latest
           command:
             - /bin/sh
             - -c
             - |
-              until kubectl get secret dex-google-secrets -n dex; do
-                echo "waiting for dex-google-secrets..."
+              until kubectl get secret dex-rendered-config -n dex; do
+                echo "waiting for dex-rendered-config..."
                 sleep 5
               done
       containers:
@@ -33,16 +33,6 @@ spec:
             - serve
             - /etc/dex/cfg/config.yaml
           env:
-            - name: GOOGLE_CLIENT_ID
-              valueFrom:
-                secretKeyRef:
-                  name: dex-google-secrets
-                  key: GOOGLE_CLIENT_ID
-            - name: GOOGLE_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: dex-google-secrets
-                  key: GOOGLE_CLIENT_SECRET
             - name: OAUTH2_PROXY_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
@@ -77,8 +67,8 @@ spec:
               mountPath: /etc/dex/cfg
       volumes:
         - name: config
-          configMap:
-            name: dex-config
+          secret:
+            secretName: dex-rendered-config
             items:
               - key: config.yaml
                 path: config.yaml
