@@ -62,52 +62,28 @@ data:
             icon: hugo.png
             href: "https://blog.tazlab.net"
             description: "Blog personale"
-            widget:
-              type: kubernetes
-              selector: "app=hugo-blog"
-              namespace: "hugo-blog"
         - Homepage:
             icon: homepage.png
             href: "https://home.tazlab.net"
             description: "Questo pannello"
-            widget:
-              type: kubernetes
-              selector: "app=homepage"
-              namespace: "homepage"
     - Monitoring:
         - Grafana:
             icon: grafana.png
             href: "https://grafana.tazlab.net"
             description: "Metrics & Dashboards"
-            widget:
-              type: kubernetes
-              selector: "app.kubernetes.io/name=grafana"
-              namespace: "monitoring"
         - Traefik:
             icon: traefik.png
             href: "https://traefik.tazlab.net/dashboard/"
             description: "Ingress statistics"
-            widget:
-              type: kubernetes
-              selector: "app.kubernetes.io/name=traefik"
-              namespace: "traefik"
     - Management:
         - pgAdmin:
             icon: postgresql.png
             href: "https://pgadmin.tazlab.net"
             description: "Database management"
-            widget:
-              type: kubernetes
-              selector: "app=pgadmin"
-              namespace: "tazlab-db"
         - Longhorn:
             icon: longhorn.png
             href: "https://longhorn.tazlab.net"
             description: "Storage management"
-            widget:
-              type: kubernetes
-              selector: "app=longhorn-ui"
-              namespace: "longhorn-system"
     - Infrastructure:
         - Proxmox:
             icon: proxmox.png
@@ -118,7 +94,7 @@ data:
             description: "Main database"
             widget:
               type: kubernetes
-              selector: "postgres-operator.crunchydata.com/role=master"
+              labelSelector: "postgres-operator.crunchydata.com/role=master"
               namespace: "tazlab-db"
   bookmarks.yaml: ""
   custom.css: |
