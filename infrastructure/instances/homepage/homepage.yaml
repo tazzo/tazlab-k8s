@@ -89,14 +89,15 @@ data:
             icon: proxmox.png
             href: "https://192.168.1.200:8006/"
             description: "Virtualization management"
-        - PostgreSQL:
+        - tazlab-db-primary:
+            name: PostgreSQL
             icon: postgresql.png
             description: "Main database"
             href: "https://pgadmin.tazlab.net"
             widget:
               type: kubernetes
               namespace: "tazlab-db"
-              label: "tazlab-db"
+              show: true
   bookmarks.yaml: ""
   custom.css: |
     .greeting {
