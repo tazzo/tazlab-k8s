@@ -43,7 +43,7 @@ data:
   kubernetes.yaml: |
     mode: cluster
     ingress: false
-    services: false
+    services: true
     traefik: true
   docker.yaml: ""
   proxmox.yaml: ""
@@ -99,8 +99,6 @@ data:
               type: kubernetes
               namespace: "tazlab-db"
               selector: "app.kubernetes.io/name=tazlab-db"
-              selector:
-                app.kubernetes.io/name: tazlab-db
   bookmarks.yaml: ""
   custom.css: |
     .greeting {
