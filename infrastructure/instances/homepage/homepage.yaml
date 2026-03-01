@@ -95,8 +95,7 @@ data:
             widget:
               type: kubernetes
               namespace: "tazlab-db"
-              selector: "app.kubernetes.io/name=tazlab-db"
-              show: true
+              label: "tazlab-db"
   bookmarks.yaml: ""
   custom.css: |
     .greeting {
