@@ -43,7 +43,7 @@ data:
   kubernetes.yaml: |
     mode: cluster
     ingress: false
-    services: true
+    services: false
     traefik: true
   docker.yaml: ""
   proxmox.yaml: ""
@@ -89,14 +89,14 @@ data:
             icon: proxmox.png
             href: "https://192.168.1.200:8006/"
             description: "Virtualization management"
-        - tazlab-db:
-            name: PostgreSQL
+        - PostgreSQL:
             icon: postgresql.png
             description: "Main database"
             href: "https://pgadmin.tazlab.net"
             widget:
               type: kubernetes
               namespace: "tazlab-db"
+              selector: "app.kubernetes.io/name=tazlab-db"
   bookmarks.yaml: ""
   custom.css: |
     .greeting {
