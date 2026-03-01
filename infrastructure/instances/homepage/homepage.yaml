@@ -101,7 +101,7 @@ data:
             widget:
               type: kubernetes
               namespace: "tazlab-db"
-              pod-selector: "app.kubernetes.io/name=tazlab-db"
+              app: "tazlab-db"
   bookmarks.yaml: ""
   custom.css: |
     .greeting {
