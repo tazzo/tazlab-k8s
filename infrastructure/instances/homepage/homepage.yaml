@@ -60,21 +60,30 @@ data:
     - Developer:
         - Blog:
             icon: hugo.png
-            href: "http://192.168.1.240/"
+            href: "https://blog.tazlab.net"
             description: "Blog personale"
+        - Homepage:
+            icon: homepage.png
+            href: "https://home.tazlab.net"
+            description: "Questo pannello"
+    - Monitoring:
+        - Grafana:
+            icon: grafana.png
+            href: "https://grafana.tazlab.net"
+            description: "Metrics & Dashboards"
+        - Traefik:
+            icon: traefik.png
+            href: "https://traefik.tazlab.net/dashboard/"
+            description: "Ingress statistics"
     - Management:
         - pgAdmin:
             icon: postgresql.png
-            href: "http://192.168.1.240:8001/"
+            href: "https://pgadmin.tazlab.net"
             description: "Database management"
         - Longhorn:
             icon: longhorn.png
-            href: "http://192.168.1.240:8002/"
+            href: "https://longhorn.tazlab.net"
             description: "Storage management"
-        - Traefik:
-            icon: traefik.png
-            href: "http://192.168.1.240:8003/dashboard/"
-            description: "Ingress statistics"
     - Infrastructure:
         - Proxmox:
             icon: proxmox.png
