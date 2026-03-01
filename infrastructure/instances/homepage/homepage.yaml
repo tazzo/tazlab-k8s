@@ -46,7 +46,7 @@ data:
   kubernetes.yaml: |
     mode: cluster
     ingress: false
-    services: true
+    services: false
     traefik: true
   docker.yaml: ""
   proxmox.yaml: ""
@@ -96,12 +96,12 @@ data:
             icon: postgresql.png
             description: "Main database"
             href: "https://pgadmin.tazlab.net"
+            app: "tazlab-db"
             namespace: "tazlab-db"
-            pod-selector: "app.kubernetes.io/name=tazlab-db"
             widget:
               type: kubernetes
               namespace: "tazlab-db"
-              pod-selector: "app.kubernetes.io/name=tazlab-db"
+              selector: "app.kubernetes.io/name=tazlab-db"
   bookmarks.yaml: ""
   custom.css: |
     .greeting {
