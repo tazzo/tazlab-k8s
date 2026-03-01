@@ -42,8 +42,8 @@ metadata:
 data:
   kubernetes.yaml: |
     mode: cluster
-    ingress: true
-    services: true
+    ingress: false
+    services: false
     traefik: true
   docker.yaml: ""
   proxmox.yaml: ""
@@ -94,8 +94,8 @@ data:
             description: "Main database"
             widget:
               type: kubernetes
-              labelSelector: "postgres-operator.crunchydata.com/role=master"
               namespace: "tazlab-db"
+              selector: "postgres-operator.crunchydata.com/role=master"
   bookmarks.yaml: ""
   custom.css: |
     .greeting {
