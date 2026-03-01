@@ -15,7 +15,7 @@ metadata:
   name: homepage
 rules:
   - apiGroups: [""]
-    resources: ["services", "pods", "nodes"]
+    resources: ["services", "pods", "nodes", "namespaces"]
     verbs: ["get", "list", "watch"]
   - apiGroups: ["networking.k8s.io"]
     resources: ["ingresses"]
@@ -43,7 +43,7 @@ data:
   kubernetes.yaml: |
     mode: cluster
     ingress: false
-    services: false
+    services: true
     traefik: true
   docker.yaml: ""
   proxmox.yaml: ""
@@ -95,7 +95,7 @@ data:
             widget:
               type: kubernetes
               namespace: "tazlab-db"
-              labelSelector: "app.kubernetes.io/name=tazlab-db"
+              selector: "postgres-operator.crunchydata.com/role=master"
   bookmarks.yaml: ""
   custom.css: |
     .greeting {
