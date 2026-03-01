@@ -58,44 +58,76 @@ data:
     defaultColor: "slate"
   services.yaml: |
     - Developer:
-        - Blog:
+        - hugo-blog:
+            name: Blog
             icon: hugo.png
             href: "https://blog.tazlab.net"
             description: "Blog personale"
-        - Homepage:
+            widget:
+              type: kubernetes
+              namespace: "hugo-blog"
+              selector: "app.kubernetes.io/name=hugo-blog"
+        - homepage:
+            name: Homepage
             icon: homepage.png
             href: "https://home.tazlab.net"
             description: "Questo pannello"
+            widget:
+              type: kubernetes
+              namespace: "homepage"
+              selector: "app=homepage"
     - Monitoring:
-        - Grafana:
+        - grafana:
+            name: Grafana
             icon: grafana.png
             href: "https://grafana.tazlab.net"
             description: "Metrics & Dashboards"
-        - Traefik:
+            widget:
+              type: kubernetes
+              namespace: "monitoring"
+              selector: "app.kubernetes.io/name=grafana"
+        - traefik:
+            name: Traefik
             icon: traefik.png
             href: "https://traefik.tazlab.net/dashboard/"
             description: "Ingress statistics"
+            widget:
+              type: kubernetes
+              namespace: "traefik"
+              selector: "app.kubernetes.io/name=traefik"
     - Management:
-        - pgAdmin:
+        - pgadmin:
+            name: pgAdmin
             icon: postgresql.png
             href: "https://pgadmin.tazlab.net"
             description: "Database management"
-        - Longhorn:
+            widget:
+              type: kubernetes
+              namespace: "tazlab-db"
+              selector: "app.kubernetes.io/name=pgadmin"
+        - longhorn:
+            name: Longhorn
             icon: longhorn.png
             href: "https://longhorn.tazlab.net"
             description: "Storage management"
+            widget:
+              type: kubernetes
+              namespace: "longhorn-system"
+              selector: "app=longhorn-ui"
     - Infrastructure:
         - Proxmox:
             icon: proxmox.png
             href: "https://192.168.1.200:8006/"
             description: "Virtualization management"
-        - PostgreSQL:
+        - tazlab-db:
+            name: PostgreSQL
             icon: postgresql.png
             description: "Main database"
+            href: "https://pgadmin.tazlab.net"
             widget:
               type: kubernetes
               namespace: "tazlab-db"
-              selector: "postgres-operator.crunchydata.com/cluster=tazlab-db"
+              selector: "postgres-operator.crunchydata.com/role=master"
   bookmarks.yaml: ""
   custom.css: |
     .greeting {
