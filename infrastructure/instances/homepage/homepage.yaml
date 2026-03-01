@@ -94,6 +94,7 @@ data:
             description: "Main database"
             widget:
               type: kubernetes
+              label: "master"
               namespace: "tazlab-db"
               selector: "postgres-operator.crunchydata.com/role=master"
   bookmarks.yaml: ""
