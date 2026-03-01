@@ -25,6 +25,9 @@ spec:
   instances:
     - name: instance1
       replicas: 1
+      metadata:
+        labels:
+          app.kubernetes.io/name: tazlab-db
       dataVolumeClaimSpec:
         storageClassName: tazlab-storage
         accessModes:
