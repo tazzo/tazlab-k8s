@@ -55,11 +55,9 @@ spec:
             - name: PGADMIN_CONFIG_SERVER_MODE
               value: "True"
             - name: PGADMIN_CONFIG_REVERSE_PROXY_ADDRESSES
-              value: "*"
+              value: "['*']"
             - name: PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION
               value: "False"
-            - name: PGADMIN_CONFIG_CONSOLE_LOG_LEVEL
-              value: "10"
           ports:
             - containerPort: 80
               name: http
