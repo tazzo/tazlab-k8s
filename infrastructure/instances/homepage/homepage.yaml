@@ -42,8 +42,8 @@ metadata:
 data:
   kubernetes.yaml: |
     mode: cluster
-    ingress: true
-    services: true
+    ingress: false
+    services: false
     traefik: true
   docker.yaml: ""
   proxmox.yaml: ""
@@ -58,72 +58,40 @@ data:
     defaultColor: "slate"
   services.yaml: |
     - Developer:
-        - hugo-blog:
-            name: Blog
+        - Blog:
             icon: hugo.png
             href: "https://blog.tazlab.net"
             description: "Blog personale"
-            widget:
-              type: kubernetes
-              namespace: "hugo-blog"
-              selector: "app.kubernetes.io/name=hugo-blog"
-        - homepage:
-            name: Homepage
+        - Homepage:
             icon: homepage.png
             href: "https://home.tazlab.net"
             description: "Questo pannello"
-            widget:
-              type: kubernetes
-              namespace: "homepage"
-              selector: "app=homepage"
     - Monitoring:
-        - grafana:
-            name: Grafana
+        - Grafana:
             icon: grafana.png
             href: "https://grafana.tazlab.net"
             description: "Metrics & Dashboards"
-            widget:
-              type: kubernetes
-              namespace: "monitoring"
-              selector: "app.kubernetes.io/name=grafana"
-        - traefik:
-            name: Traefik
+        - Traefik:
             icon: traefik.png
             href: "https://traefik.tazlab.net/dashboard/"
             description: "Ingress statistics"
-            widget:
-              type: kubernetes
-              namespace: "traefik"
-              selector: "app.kubernetes.io/name=traefik"
     - Management:
-        - pgadmin:
-            name: pgAdmin
+        - pgAdmin:
             icon: postgresql.png
             href: "https://pgadmin.tazlab.net"
             description: "Database management"
-            widget:
-              type: kubernetes
-              namespace: "tazlab-db"
-              selector: "app.kubernetes.io/name=pgadmin"
-        - longhorn:
-            name: Longhorn
+        - Longhorn:
             icon: longhorn.png
             href: "https://longhorn.tazlab.net"
             description: "Storage management"
-            widget:
-              type: kubernetes
-              namespace: "longhorn-system"
-              selector: "app=longhorn-ui"
     - Infrastructure:
         - Proxmox:
             icon: proxmox.png
             href: "https://192.168.1.200:8006/"
             description: "Virtualization management"
-        - tazlab-db:
-            name: PostgreSQL
+        - PostgreSQL:
             icon: postgresql.png
             description: "Main database"
-            href: "https://pgadmin.tazlab.net"
             widget:
               type: kubernetes
               namespace: "tazlab-db"
