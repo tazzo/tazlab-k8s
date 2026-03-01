@@ -51,6 +51,7 @@ spec:
           host: tazlab-db-primary.tazlab-db.svc.cluster.local:5432
           name: grafana
           user: grafana
+          password: $__env{GF_DATABASE_PASSWORD}
           sslmode: disable
         auth.proxy:
           enabled: true
