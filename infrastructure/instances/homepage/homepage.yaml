@@ -95,7 +95,7 @@ data:
             widget:
               type: kubernetes
               namespace: "tazlab-db"
-              selector: "postgres-operator.crunchydata.com/role=master"
+              labelSelector: "app.kubernetes.io/name=tazlab-db"
   bookmarks.yaml: ""
   custom.css: |
     .greeting {
