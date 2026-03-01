@@ -58,8 +58,8 @@ spec:
           sslmode: disable
         auth.proxy:
           enabled: true
-          header_name: X-Auth-Request-User
-          header_property: username
+          header_name: X-Auth-Request-Email
+          header_property: email
           header_email: X-Auth-Request-Email
           auto_sign_up: true
           sync_ttl: 0
