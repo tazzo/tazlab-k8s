@@ -12,6 +12,7 @@ spec:
     metadata:
       labels:
         app: hugo-blog
+        app.kubernetes.io/name: hugo-blog
     spec:
       containers:
         - name: blog

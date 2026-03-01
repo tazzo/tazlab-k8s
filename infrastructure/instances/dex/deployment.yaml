@@ -12,6 +12,7 @@ spec:
     metadata:
       labels:
         app: dex
+        app.kubernetes.io/name: dex
     spec:
       serviceAccountName: dex-sa
       initContainers:
