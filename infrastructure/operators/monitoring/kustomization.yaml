@@ -1,9 +1,10 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - repository.yaml
+  - helmrepository.yaml
+  - helmrelease.yaml
+  - namespace.yaml
   - metrics-server.yaml
-  - prometheus-stack.yaml
   - secrets.yaml
   - flux-secret-sync.yaml
   - grafana-ingress.yaml

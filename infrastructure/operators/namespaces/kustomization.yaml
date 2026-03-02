@@ -1,9 +1,10 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-resources:
-  - ../cloudflare-ddns-namespace.yaml
-  - ../tazlab-db-namespace.yaml
-  - ../hugo-blog-namespace.yaml
-  - ../dex-namespace.yaml
-  - ../auth-namespace.yaml
-  - monitoring.yaml
+resources: []
+# NOTE: All namespaces sono stati spostati inline nelle cartelle operator (Opzione A.1)
+# - cloudflare-ddns → cloudflare-ddns/
+# - tazlab-db → tazlab-db/
+# - hugo-blog → hugo-blog/
+# - dex → dex/
+# - auth → auth/
+# - monitoring → monitoring/
