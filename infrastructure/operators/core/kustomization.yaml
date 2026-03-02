@@ -5,3 +5,8 @@ resources:
   - ../traefik
   - ../monitoring
   - ../postgres-operator
+  - ../dex
+  - ../auth
+  - ../cloudflare-ddns
+  - ../tazlab-db
+  - ../hugo-blog
