@@ -14,7 +14,6 @@ spec:
         name: cluster-vars
         optional: false
   prune: true
-  wait: true # Now safe because it's decoupled
   sourceRef:
     kind: GitRepository
     name: flux-system
