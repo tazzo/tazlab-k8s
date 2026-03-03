@@ -46,7 +46,7 @@ spec:
     grafana:
       enabled: true
       annotations:
-        secret.reloader.stakater.com/reload: "tazlab-db-pguser-grafana,grafana-password-source"
+        secret.reloader.stakater.com/reload: "tazlab-db-pguser-grafana"
       grafana.ini:
         server:
           domain: grafana.tazlab.net
