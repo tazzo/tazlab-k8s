@@ -76,14 +76,14 @@ spec:
           # Allow grafana user from anywhere before rejection rules
           # Use scram-sha-256 to match password hashing method in database
           # Support both SSL/TLS (hostssl) and plain connections (host)
-          - hostssl grafana grafana 0.0.0.0/0 scram-sha-256
-          - hostssl grafana grafana ::/0 scram-sha-256
-          - hostssl all grafana 0.0.0.0/0 scram-sha-256
-          - hostssl all grafana ::/0 scram-sha-256
-          - host grafana grafana 0.0.0.0/0 scram-sha-256
-          - host grafana grafana ::/0 scram-sha-256
-          - host all grafana 0.0.0.0/0 scram-sha-256
-          - host all grafana ::/0 scram-sha-256
+          - hostssl grafana grafana 0.0.0.0/0 md5
+          - hostssl grafana grafana ::/0 md5
+          - hostssl all grafana 0.0.0.0/0 md5
+          - hostssl all grafana ::/0 md5
+          - host grafana grafana 0.0.0.0/0 md5
+          - host grafana grafana ::/0 md5
+          - host all grafana 0.0.0.0/0 md5
+          - host all grafana ::/0 md5
           # Other users
           - host mnemosyne mnemosyne 0.0.0.0/0 md5
           - host mnemosyne mnemosyne ::/0 md5
