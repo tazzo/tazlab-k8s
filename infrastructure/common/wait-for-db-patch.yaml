@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: placeholder
+spec:
+  template:
+    spec:
+      initContainers:
+        - name: wait-for-db
+          image: alpine:3.19
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Starting Database Waiter..."
+              if [ -z "$DB_HOST" ]; then
+                echo "ERROR: DB_HOST variable not set. Exiting."
+                exit 1
+              fi
+              until nc -zv $DB_HOST ${DB_PORT:-5432}; do
+                echo "Waiting for database at $DB_HOST:${DB_PORT:-5432}..."
+                sleep 5
+              done
+              echo "Database is UP! Proceeding..."

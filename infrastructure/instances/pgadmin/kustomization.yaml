@@ -4,3 +4,9 @@ resources:
   - pgadmin.yaml
   - rbac.yaml
   - ingress.yaml
+
+patches:
+  - path: ../../common/wait-for-db-patch.yaml
+    target:
+      kind: Deployment
+      name: pgadmin

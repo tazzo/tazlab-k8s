@@ -48,16 +48,18 @@ spec:
       annotations:
         secret.reloader.stakater.com/reload: "tazlab-db-pguser-grafana"
       extraInitContainers:
-        - name: wait-for-db-secret
-          image: bitnami/kubectl:latest
+        - name: wait-for-db
+          image: alpine:3.19
           command:
             - /bin/sh
             - -c
             - |
-              until kubectl get secret tazlab-db-pguser-grafana; do
-                echo "waiting for database user secret..."
+              echo "Starting Database Waiter..."
+              until nc -zv tazlab-db-primary.tazlab-db.svc.cluster.local 5432; do
+                echo "Waiting for database at tazlab-db-primary:5432..."
                 sleep 5
               done
+              echo "Database is UP! Proceeding..."
       grafana.ini:
         server:
           domain: grafana.tazlab.net
