@@ -16,6 +16,8 @@ kind: Deployment
 metadata:
   name: pgadmin
   namespace: tazlab-db
+  annotations:
+    secret.reloader.stakater.com/reload: "tazlab-db-pguser-pgadmin"
 spec:
   replicas: 1
   selector:
