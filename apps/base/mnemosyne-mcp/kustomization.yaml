@@ -6,3 +6,9 @@ resources:
   - external-secret.yaml
   - service.yaml
   - rbac.yaml
+
+patches:
+  - path: ../../../infrastructure/common/wait-for-db-patch.yaml
+    target:
+      kind: Deployment
+      name: mnemosyne-mcp

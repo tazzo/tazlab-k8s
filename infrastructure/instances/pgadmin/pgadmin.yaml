@@ -30,17 +30,6 @@ spec:
         app.kubernetes.io/name: pgadmin
     spec:
       serviceAccountName: pgadmin-sa
-      initContainers:
-        - name: wait-for-db-secret
-          image: bitnami/kubectl:latest
-          command:
-            - /bin/sh
-            - -c
-            - |
-              until kubectl get secret tazlab-db-pguser-pgadmin; do
-                echo "waiting for database user secret..."
-                sleep 5
-              done
       containers:
         - name: pgadmin
           image: dpage/pgadmin4:9.12
@@ -48,6 +37,11 @@ spec:
             runAsUser: 0
             runAsGroup: 0
           env:
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: tazlab-db-pguser-pgadmin
+                  key: host
             - name: PGADMIN_DEFAULT_EMAIL
               value: "admin@pgadmin.tazlab.net"
             - name: PGADMIN_DEFAULT_PASSWORD
