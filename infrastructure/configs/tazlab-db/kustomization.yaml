@@ -3,3 +3,4 @@ kind: Kustomization
 
 resources:
   - s3-external-secret.yaml
+  - push-secrets.yaml
