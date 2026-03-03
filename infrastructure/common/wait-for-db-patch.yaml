@@ -8,6 +8,11 @@ spec:
       initContainers:
         - name: wait-for-db
           image: alpine:3.19
+          env:
+            - name: DB_HOST
+              value: "tazlab-db-primary.tazlab-db.svc.cluster.local"
+            - name: DB_PORT
+              value: "5432"
           command:
             - /bin/sh
             - -c
