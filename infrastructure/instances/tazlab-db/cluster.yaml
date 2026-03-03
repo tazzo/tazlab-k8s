@@ -69,10 +69,6 @@ spec:
     - name: grafana
       databases:
         - grafana
-      password:
-        secretKeyRef:
-          name: grafana-password-source
-          key: password
   patroni:
     dynamicConfiguration:
       postgresql:
