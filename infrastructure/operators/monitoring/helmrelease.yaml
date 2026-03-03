@@ -47,6 +47,17 @@ spec:
       enabled: true
       annotations:
         secret.reloader.stakater.com/reload: "tazlab-db-pguser-grafana"
+      extraInitContainers:
+        - name: wait-for-db-secret
+          image: bitnami/kubectl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              until kubectl get secret tazlab-db-pguser-grafana; do
+                echo "waiting for database user secret..."
+                sleep 5
+              done
       grafana.ini:
         server:
           domain: grafana.tazlab.net
