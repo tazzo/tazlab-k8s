@@ -3,6 +3,8 @@ kind: HelmRelease
 metadata:
   name: kube-prometheus-stack
   namespace: monitoring
+  annotations:
+    secret.reloader.stakater.com/reload: "tazlab-db-pguser-grafana"
 spec:
   releaseName: kube-prometheus-stack
   interval: 1h
