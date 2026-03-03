@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - ../cert-manager
   - ../traefik
+  - ../reloader
   - ../monitoring
   - ../postgres-operator
   - ../dex
