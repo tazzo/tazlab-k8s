@@ -34,7 +34,7 @@ spec:
         - ReadWriteOnce
         resources:
           requests:
-            storage: 2Gi
+            storage: 4Gi
   backups:
     pgbackrest:
       global:
