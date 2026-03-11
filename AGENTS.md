@@ -1,160 +1,178 @@
-# AGENTS.md - Tazlab Kubernetes Repository Guide
+# AGENTS.md — tazlab-k8s
 
-This document provides context, guidelines, and commands for AI agents operating within the `tazlab-k8s` repository. 
-This is an **Infrastructure as Code (IaC)** repository for a bare-metal Kubernetes cluster managed via Talos Linux on Proxmox.
+GitOps repository for the TazLab cluster managed by Flux CD.
+Bare-metal Kubernetes on Talos Linux / Proxmox.
 
-## 1. Environment & Architecture
+Talos machine configs and cluster lifecycle scripts live in
+`../ephemeral-castle/clusters/tazlab-k8s/proxmox/`.
 
-- **Cluster Name**: `talos-proxmox-cluster`
-- **OS**: Talos Linux (immutable, API-managed OS).
-- **Orchestration**: Kubernetes.
-- **Core Components**:
-  - **Networking**: MetalLB (L2 LoadBalancer), Traefik (Ingress), Kube-VIP.
-  - **Storage**: Longhorn (Distributed Block Storage).
-  - **Secrets**: SOPS (Mozilla) with AGE encryption, Infisical.
-  - **Dev Environment**: DevContainer/DevPod (Debian-based) with `tazpod` vault.
+## Cluster
 
-## 2. Build, Lint, and Test Commands
+- **Name**: `talos-proxmox-cluster` — 1 Control Plane + 2 Workers on Proxmox
+- **OS**: Talos Linux (immutable, API-managed)
+- **GitOps**: Flux CD v2
+- **KUBECONFIG**: `../ephemeral-castle/clusters/tazlab-k8s/proxmox/configs/kubeconfig`
 
-In this IaC context, "build" equates to configuration validation and "test" equates to dry-runs or schema checks.
+## Repository Structure
 
-### Prerequisite Checks
-Before running any commands, ensure the required tools are present:
-```bash
-# Check tool availability
-command -v kubectl >/dev/null && echo "kubectl present"
-command -v talosctl >/dev/null && echo "talosctl present"
-command -v helm >/dev/null && echo "helm present"
-command -v yamllint >/dev/null && echo "yamllint present"
+```
+clusters/tazlab-k8s/         Flux Kustomization entrypoints — one file per layer
+  infrastructure-operators-namespaces.yaml
+  infrastructure-operators-core.yaml
+  infrastructure-operators-data.yaml
+  infrastructure-configs.yaml
+  infrastructure-instances.yaml
+  infrastructure-auth.yaml
+  infrastructure-bridge.yaml
+  infrastructure-monitoring.yaml
+  apps-static.yaml           hugo-blog (static, image-automated)
+  apps-data.yaml             mnemosyne-mcp (stateful, DB-backed)
+  flux-system/               Flux bootstrap manifests
+
+flux-system/                 Flux source-of-truth sync config
+
+infrastructure/
+  operators/                 HelmReleases + namespaces (controllers/operators)
+    traefik/                 Ingress controller
+    cert-manager/            TLS certificate management (Cloudflare DNS01)
+    postgres-operator/       Crunchy PGO v5
+    reloader/                Stakater Reloader (auto-restart on Secret/ConfigMap change)
+    monitoring/              kube-prometheus-stack (Grafana + Prometheus + dashboards)
+    dex/                     OIDC provider
+    cloudflare-ddns/         Dynamic DNS
+    hugo-blog/               namespace only
+    tazlab-db/               namespace only
+    auth/                    namespace only
+
+  configs/                   ExternalSecrets + static config for operators
+    cert-manager/            Cloudflare API secret + ClusterIssuer
+    dex/                     Dex config secret
+    tazlab-db/               S3 backup secret, Grafana password
+    wildcard-tls/            Wildcard TLS cert (*.tazlab.net)
+    storage/
+    github-external-secret.yaml
+
+  instances/                 Deployed instances of operators
+    traefik/                 Traefik Service + Ingress
+    tazlab-db/               PostgresCluster CR (Crunchy PGO)
+    dex/                     Dex Deployment + Ingress + ConfigMap
+    longhorn/                Longhorn Service + Ingress
+    cloudflare-ddns/         DDNS Deployment
+    pgadmin/                 PGAdmin Deployment + Ingress
+    homepage/                Homepage dashboard + Ingress
+
+  auth/                      OAuth2 Proxy (Deployment + Ingress + Middleware)
+  bridge/                    Shared: IngressClass, ClusterIssuer
+  automation/                Flux ImageUpdateAutomation + ImagePolicy
+    hugo-blog/
+    mnemosyne-mcp/
+  common/                    Shared patches (e.g. wait-for-db init container)
+
+apps/
+  base/                      Base manifests (cluster-agnostic)
+    hugo-blog/               Deployment, Certificate, Middlewares
+    mnemosyne-mcp/           Deployment, Service, ExternalSecret, RBAC
+  cluster/                   Cluster-specific Kustomize overlays
+    hugo-blog/
+    mnemosyne-mcp/
+
+tests/
+  verify_manifest_purity.sh  Checks no plaintext secrets in manifests
 ```
 
-### Validation (Linting & Formatting)
-Run these commands to ensure code quality before proposing changes.
+## Flux Load Order
 
-**YAML Validation (General)**
+Flux applies layers in dependency order (defined via `dependsOn` in `clusters/tazlab-k8s/`):
+
+```
+namespaces → core operators → data operators → configs → instances
+          → auth → bridge → monitoring → apps
+```
+
+Never apply instances before their operator is ready.
+
+## Stack Components
+
+| Component | Type | Namespace |
+|---|---|---|
+| Traefik | Ingress controller | `traefik` |
+| cert-manager | TLS (Cloudflare DNS01) | `cert-manager` |
+| Crunchy PGO v5 | Postgres operator | `tazlab-db` |
+| Stakater Reloader | Secret/CM watcher | `reloader` |
+| kube-prometheus-stack | Monitoring | `monitoring` |
+| Dex | OIDC provider | `dex` |
+| OAuth2 Proxy | Auth gateway | `auth` |
+| Cloudflare DDNS | Dynamic DNS | `cloudflare-ddns` |
+| Longhorn | Block storage | `longhorn-system` |
+| ESO | Infisical → K8s Secrets | `external-secrets` |
+| hugo-blog | Static site | `hugo-blog` |
+| mnemosyne-mcp | MCP server | `tazlab-db` |
+| Homepage | Dashboard | `homepage` |
+| PGAdmin | Postgres UI | `pgadmin` |
+
+## Secrets Management
+
+- **Source of truth**: Infisical EU
+- **Bridge**: External Secrets Operator syncs Infisical → Kubernetes Secrets
+- **In this repo**: only `ExternalSecret` CRDs — no plaintext secrets, no SOPS, no AGE keys
+- Wildcard TLS cert `*.tazlab.net` is managed via cert-manager + Cloudflare DNS01
+
+## Apps Pattern
+
+`apps/base/<app>/` contains cluster-agnostic manifests.
+`apps/cluster/<app>/kustomization.yaml` overlays cluster-specific patches.
+Flux Image Automation in `infrastructure/automation/<app>/` handles tag updates.
+
+## Validation Commands
+
 ```bash
-# Lint all YAML files in a directory (recursive)
+# Lint YAML
 yamllint .
+yamllint apps/base/hugo-blog/hugo-blog.yaml
 
-# Lint a specific file
-yamllint apps/hugo-blog/hugo-blog.yaml
-```
-
-**Helm Chart Validation**
-```bash
-# Lint a Helm chart located in ./charts/my-chart
+# Helm dry-run
 helm lint ./charts/my-chart
+helm template my-release ./charts/my-chart -f values.yaml --debug
 
-# Verify Helm values against the chart
-helm template my-release ./charts/my-chart -f ./charts/my-chart/values.yaml --debug
+# Kubernetes dry-run (requires active cluster)
+kubectl apply -f apps/base/mnemosyne-mcp/ --dry-run=server
+kubectl diff -f apps/base/mnemosyne-mcp/
+
+# Check for plaintext secrets
+./tests/verify_manifest_purity.sh
 ```
 
-**Talos Configuration Validation**
+## Flux Workflow
+
 ```bash
-# Validate Talos machine config or patches
-talosctl validate --config talos/patches/global-patch.yaml --mode cloud
+# Force reconcile
+flux reconcile source git flux-system
+flux reconcile kustomization infrastructure-operators-core
+flux reconcile kustomization apps-static
+
+# Status
+flux get all -A
+flux get kustomizations -A
+
+# Suspend / resume
+flux suspend kustomization <name>
+flux resume kustomization <name>
+
+# Image automation status
+flux get images all -A
 ```
 
-**Bash Script Analysis**
-```bash
-# Static analysis for shell scripts
-shellcheck scripts/tazpod
-```
+## Code Style
 
-### "Running a Single Test"
-There is no unit test suite. To test a specific resource (e.g., a new Deployment manifest):
+- **Indentation**: 2 spaces, no tabs
+- **Naming**: `kebab-case` for files and Kubernetes resource names
+- **Images**: always specific tags, never `latest`
+- **Resources**: define `requests` and `limits` for all containers
+- **Namespace**: always specify `namespace` in manifests or via `kustomization.yaml`
 
-1.  **Syntax Check**:
-    ```bash
-    yamllint apps/new-app/deployment.yaml
-    ```
+## Agent Rules
 
-2.  **Kubernetes Dry-Run** (Simulates server-side validation):
-    *Note: Requires active cluster connection via `~/.kube/config`.*
-    ```bash
-    kubectl apply -f apps/new-app/deployment.yaml --dry-run=server
-    ```
-
-3.  **Diff Preview** (If modifying existing resources):
-    ```bash
-    kubectl diff -f apps/new-app/deployment.yaml
-    ```
-
-## 3. Code Style & Development Guidelines
-
-### File Organization
-Follow the established directory structure (see `GEMINI.md`):
-- **`talos/`**: Machine configs, patches, and OS-level settings.
-- **`bootstrap/`**: Core infrastructure manifests (CNI, CSI, Ingress).
-- **`apps/`**: Application workloads (e.g., Hugo, Utilities).
-- **`secrets/`**: Encrypted secrets. **NEVER** edit these manually without `sops`.
-- **`scripts/`**: Automation tools.
-
-### YAML & Kubernetes Manifests
-- **Indentation**: Strictly 2 spaces.
-- **Naming Conventions**:
-  - Files: `kebab-case.yaml` (e.g., `cloudflare-ddns.yaml`).
-  - Resources: `kebab-case` (lowercase alphanumeric + hyphens).
-- **Comments**:
-  - Use comments to explain *magic numbers* (ports, memory limits).
-  - Comment out optional fields instead of deleting them if they might be useful later.
-- **Best Practices**:
-  - Always specify `namespace` in manifests or use a `kustomization.yaml`.
-  - Use specific image tags (e.g., `image: nginx:1.21.6`), avoid `latest`.
-  - Define `resources` (requests/limits) for all containers.
-
-### Bash Scripting (`scripts/`)
-- **Header**: Start with `#!/bin/bash`.
-- **Safety**: Enable strict mode immediately:
-  ```bash
-  set -euo pipefail
-  ```
-- **Modularity**: Define logic in functions (e.g., `deploy_app() { ... }`).
-- **Paths**: Use dynamic root resolution. Do not rely on relative paths from assumed PWD.
-  ```bash
-  PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-  ```
-- **Output**: Use emojis for status updates (✅, ⚠️, ❌) to match the existing style (see `scripts/tazpod`).
-
-### Secrets Management (CRITICAL)
-- **Zero Trust**: Assume the repo is public.
-- **Encryption**: Use SOPS with AGE.
-- **Workflow**:
-  - **View**: `sops -d secrets/my-secret.yaml`
-  - **Edit**: `sops secrets/my-secret.yaml`
-  - **Creation**: Use `sops` to encrypt new files before committing.
-- **Vault**: Refer to `scripts/tazpod` for how secrets are mounted in the dev environment.
-
-### Git & Commit Messages
-- **Format**: `type(scope): description`
-  - Types: `feat`, `fix`, `chore`, `refactor`, `docs`, `ci`.
-  - Example: `feat(talos): add longhorn disk patch`
-  - Example: `fix(apps): update hugo image tag`
-
-## 4. Operational Workflows
-
-### Refactoring & IaC Transition
-Per `GEMINI.md`, the repository is transitioning towards Terraform.
-- **Goal**: Move static YAMLs in `apps/` and `bootstrap/` to Terraform resources/modules eventually.
-- **Current State**: Manual `kubectl apply` or Helm installs.
-- **Agent Task**: When asked to "refactor", check if the resource can be templated or improved for Terraform adoption.
-
-### Deployment Checklist
-When adding a new application:
-1. Create a folder in `apps/<app-name>`.
-2. Define the `Deployment`/`StatefulSet`, `Service`, and `Ingress/HTTPRoute`.
-3. If persistent storage is needed, use the `longhorn` StorageClass.
-4. Validate with `yamllint`.
-5. Add the app to the documentation or status report if necessary.
-
-## 5. Agent-Specific Rules (Cursor/Copilot)
-
-- **Read First**: Always read `GEMINI.md` to understand the current "Sprints" and "Technical Debt".
-- **No Hallucinations**: Do not invent new cluster capabilities (e.g., don't assume a GPU is present unless verified).
-- **Idempotency**: Ensure any script or command you generate can be run multiple times without side effects.
-- **Security**: If you see a hardcoded password, STOP and flag it. Suggest moving it to `secrets/` or Infisical.
-- **Context**: You are "Gemini" or "Antigravity" (an engineer pairing with the user). Maintain a professional, helpful, and concise engineering persona.
-
----
-*Reference: .cursor/rules (None), .github/copilot-instructions.md (None)*
-*Last Updated: Jan 24 2026*
+- Infer load order from `dependsOn` in `clusters/tazlab-k8s/*.yaml` before touching infra
+- Secrets → ExternalSecret only, never inline values
+- Before adding an app: check if its namespace has a corresponding operator namespace entry
+- Run `./tests/verify_manifest_purity.sh` after any change to manifests

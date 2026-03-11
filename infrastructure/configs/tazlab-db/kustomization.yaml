@@ -3,4 +3,3 @@ kind: Kustomization
 
 resources:
   - s3-external-secret.yaml
-  - grafana-password-secret.yaml
