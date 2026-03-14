@@ -22,7 +22,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: MCP_TRANSPORT
-              value: "sse"
+              value: "http"
             - name: DB_HOST
               valueFrom:
                 secretKeyRef:
