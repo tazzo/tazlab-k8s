@@ -4,8 +4,6 @@ resources:
   - ../cert-manager
   - ../traefik
   - ../reloader
-  - ../monitoring
-  - ../postgres-operator
   - ../dex
   - ../auth
   - ../cloudflare-ddns
