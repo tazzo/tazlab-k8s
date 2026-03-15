@@ -12,7 +12,6 @@ spec:
         name: cluster-vars
         optional: false
   prune: true
-  wait: true
   retryInterval: 2m
   sourceRef:
     kind: GitRepository
