@@ -6,6 +6,7 @@ metadata:
 spec:
   dependsOn:
     - name: infrastructure-operators-namespaces
+  retryInterval: 2m
   interval: 1h
   path: ./infrastructure/operators/monitoring
   postBuild:

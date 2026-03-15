@@ -5,5 +5,4 @@ resources:
   - ./wildcard-tls
   - ./tazlab-db
   - ./dex
-  - ./storage
   - github-external-secret.yaml
