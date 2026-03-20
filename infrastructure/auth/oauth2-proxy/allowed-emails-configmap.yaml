@@ -6,3 +6,4 @@ metadata:
 data:
   allowed-emails.txt: |
     ${ADMIN_EMAIL}
+    roberto.tazzoli@gmail.com
