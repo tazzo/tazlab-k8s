@@ -39,11 +39,6 @@ spec:
                 secretKeyRef:
                   name: dex-google-secrets
                   key: OAUTH2_PROXY_CLIENT_SECRET
-            - name: GOOGLE_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: dex-google-secrets
-                  key: GOOGLE_CLIENT_SECRET
           ports:
             - name: http
               containerPort: 5556
