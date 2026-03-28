@@ -18,7 +18,7 @@ spec:
       serviceAccountName: mnemosyne-mcp-sa
       containers:
         - name: server
-          image: tazzo/mnemosyne-mcp:mcp-32-abef5adeeb7f66b90987b63bd116714645faccba # {"$imagepolicy": "flux-system:mnemosyne-mcp"}
+          image: tazzo/mnemosyne-mcp:mcp-33-317977614654a04ea36be0870946ab72e2fc3791 # {"$imagepolicy": "flux-system:mnemosyne-mcp"}
           imagePullPolicy: Always
           env:
             - name: MCP_TRANSPORT
