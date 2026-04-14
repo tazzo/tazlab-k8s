@@ -53,11 +53,6 @@ spec:
                 secretKeyRef:
                   name: openclaw-secrets
                   key: ELEVENLABS_API_KEY
-            - name: GEMINI_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: openclaw-secrets
-                  key: GEMINI_API_KEY
           volumeMounts:
             - name: config
               mountPath: /home/node/.openclaw
