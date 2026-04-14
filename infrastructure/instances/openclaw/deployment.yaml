@@ -40,7 +40,7 @@ spec:
             - name: OPENCLAW_GATEWAY_PORT
               value: "18789"
             - name: OPENCLAW_GATEWAY_BIND
-              value: "0.0.0.0"
+              value: "lan"
             - name: OPENCLAW_GATEWAY_TOKEN
               valueFrom:
                 secretKeyRef:
