@@ -47,6 +47,8 @@ spec:
                 secretKeyRef:
                   name: openclaw-secrets
                   key: OPENCLAW_GATEWAY_TOKEN
+            - name: OPENCLAW_GATEWAY_CONTROLUI_DANGEROUSLYALLOWHOSTHEADERORIGINFALLBACK
+              value: "true"
             - name: TELEGRAM_BOT_TOKEN
               valueFrom:
                 secretKeyRef:
