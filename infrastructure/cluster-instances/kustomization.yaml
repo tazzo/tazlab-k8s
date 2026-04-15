@@ -4,3 +4,4 @@ resources:
   - ../instances
   - ../automation/hugo-blog
   - ../automation/mnemosyne-mcp
+  - ../automation/openclaw

@@ -27,7 +27,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: openclaw
-          image: ghcr.io/openclaw/openclaw:latest
+          image: tazzo/openclaw-custom:latest # {"$imagepolicy": "flux-system:openclaw"}
           command: ["node", "dist/index.js", "gateway", "--bind", "lan", "--port", "18789", "--allow-unconfigured"]
           securityContext:
             allowPrivilegeEscalation: false
