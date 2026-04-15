@@ -1,0 +1,48 @@
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageRepository
+metadata:
+  name: openclaw
+  namespace: flux-system
+spec:
+  image: tazzo/openclaw-custom
+  interval: 1m
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImagePolicy
+metadata:
+  name: openclaw
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: openclaw
+  policy:
+    numerical:
+      order: asc
+  filterTags:
+    pattern: '^openclaw-(?P<value>[0-9]+)-.*$'
+    extract: '$value'
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageUpdateAutomation
+metadata:
+  name: openclaw
+  namespace: flux-system
+spec:
+  interval: 1m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  git:
+    checkout:
+      ref:
+        branch: master
+    commit:
+      author:
+        email: fluxcdbot@tazlab.net
+        name: fluxcdbot
+      messageTemplate: 'chore: self-update openclaw custom image [skip ci]'
+    push:
+      branch: master
+  update:
+    path: ./infrastructure/instances/openclaw
+    strategy: Setters
