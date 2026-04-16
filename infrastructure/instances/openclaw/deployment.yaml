@@ -27,7 +27,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: openclaw
-          image: tazzo/openclaw-custom:latest # {"$imagepolicy": "flux-system:openclaw"}
+          image: tazzo/openclaw-custom:openclaw-4-0c9df4baadf4f5853281e68f7752cca534b66c96 # {"$imagepolicy": "flux-system:openclaw"}
           command: ["node", "dist/index.js", "gateway", "--bind", "lan", "--port", "18789", "--allow-unconfigured"]
           securityContext:
             allowPrivilegeEscalation: false
