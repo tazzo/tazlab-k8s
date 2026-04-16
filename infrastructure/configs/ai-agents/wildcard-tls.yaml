@@ -16,9 +16,7 @@ spec:
   data:
     - secretKey: tls.crt
       remoteRef:
-        key: .
-        property: WILDCARD_CRT
+        key: WILDCARD_CRT
     - secretKey: tls.key
       remoteRef:
-        key: .
-        property: WILDCARD_KEY
+        key: WILDCARD_KEY
