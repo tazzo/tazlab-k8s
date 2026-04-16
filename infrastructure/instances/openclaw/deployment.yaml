@@ -67,6 +67,9 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /home/node/.openclaw
+            - name: config
+              subPath: .gemini
+              mountPath: /home/node/.gemini
             - name: workspace
               mountPath: /home/node/workspace
           resources:
