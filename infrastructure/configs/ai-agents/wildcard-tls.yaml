@@ -13,7 +13,12 @@ spec:
     template:
       type: kubernetes.io/tls
       engineVersion: v2
-  dataFrom:
-  - find:
-      name:
-        regexp: WILDCARD_.*
+  data:
+    - secretKey: tls.crt
+      remoteRef:
+        key: .
+        property: WILDCARD_CRT
+    - secretKey: tls.key
+      remoteRef:
+        key: .
+        property: WILDCARD_KEY
