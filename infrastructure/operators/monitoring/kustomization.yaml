@@ -5,7 +5,6 @@ resources:
   - helmrelease.yaml
   - namespace.yaml
   - metrics-server.yaml
-  - secrets.yaml
   - flux-secret-sync.yaml
   - grafana-ingress.yaml
   - dashboards/cluster-health.yaml
