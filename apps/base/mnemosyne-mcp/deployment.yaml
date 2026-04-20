@@ -16,19 +16,6 @@ spec:
         app: mnemosyne-mcp
     spec:
       serviceAccountName: mnemosyne-mcp-sa
-      initContainers:
-        - name: wait-for-db
-          image: alpine:3.19
-          command:
-            - /bin/sh
-            - -c
-            - |
-              echo "Starting Database Waiter..."
-              until nc -zv tazlab-db-primary.tazlab-db.svc.cluster.local 5432; do
-                echo "Waiting for database at tazlab-db-primary:5432..."
-                sleep 5
-              done
-              echo "Database is UP! Proceeding..."
       containers:
         - name: server
           image: tazzo/mnemosyne-mcp:mcp-42-7ba6c96d3827d2b4eb5841eebf86aa62e4b8605d # {"$imagepolicy": "flux-system:mnemosyne-mcp"}
