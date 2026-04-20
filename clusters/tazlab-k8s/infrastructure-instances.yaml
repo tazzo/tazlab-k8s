@@ -19,12 +19,7 @@ spec:
         name: grafana-bootstrap-secret
         optional: false
   prune: true
-  wait: true
-  healthChecks:
-    - apiVersion: postgres-operator.crunchydata.com/v1beta1
-      kind: PostgresCluster
-      name: tazlab-db
-      namespace: tazlab-db
+  wait: false
   sourceRef:
     kind: GitRepository
     name: flux-system
