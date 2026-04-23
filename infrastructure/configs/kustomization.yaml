@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - ./cert-manager
   - ./wildcard-tls
+  - ./hugo-wiki
   - ./tazlab-db
   - ./dex
   - ./ai-agents

@@ -1,0 +1,48 @@
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageRepository
+metadata:
+  name: hugo-wiki
+  namespace: flux-system
+spec:
+  image: tazzo/tazlab-wiki
+  interval: 1m
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImagePolicy
+metadata:
+  name: hugo-wiki
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: hugo-wiki
+  policy:
+    numerical:
+      order: asc
+  filterTags:
+    pattern: '^wiki-(?P<value>[0-9]+)-.*$'
+    extract: '$value'
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageUpdateAutomation
+metadata:
+  name: hugo-wiki
+  namespace: flux-system
+spec:
+  interval: 1m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  git:
+    checkout:
+      ref:
+        branch: master
+    commit:
+      author:
+        email: fluxcdbot@tazlab.net
+        name: fluxcdbot
+      messageTemplate: 'chore: self-update hugo-wiki image [skip ci]'
+    push:
+      branch: master
+  update:
+    path: ./apps/base/hugo-wiki
+    strategy: Setters
