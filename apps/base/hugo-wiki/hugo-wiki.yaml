@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hugo-wiki
+  namespace: hugo-wiki
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hugo-wiki
+  template:
+    metadata:
+      labels:
+        app: hugo-wiki
+        app.kubernetes.io/name: hugo-wiki
+    spec:
+      containers:
+        - name: wiki
+          image: tazzo/tazlab-wiki:wiki-2-a2d807775cc7578fd27155601e1ac5b38443ead8 # {"$imagepolicy": "flux-system:hugo-wiki"}
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hugo-wiki
+  namespace: hugo-wiki
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: hugo-wiki
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hugo-wiki-ingress
+  namespace: hugo-wiki
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/name: "Wiki"
+    gethomepage.dev/group: "Developer"
+    gethomepage.dev/icon: "book-open.svg"
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - wiki.tazlab.net
+      secretName: wildcard-tls
+  rules:
+    - host: wiki.tazlab.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: hugo-wiki
+                port:
+                  number: 80

@@ -1,0 +1,22 @@
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: wildcard-tls-v2
+  namespace: hugo-wiki
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: tazlab-secrets
+  target:
+    name: wildcard-tls
+    template:
+      type: kubernetes.io/tls
+      engineVersion: v2
+  data:
+    - secretKey: tls.crt
+      remoteRef:
+        key: WILDCARD_CRT
+    - secretKey: tls.key
+      remoteRef:
+        key: WILDCARD_KEY
