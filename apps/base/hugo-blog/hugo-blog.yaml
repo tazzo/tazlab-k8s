@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: blog
-          image: tazzo/tazlab-blog:blog-49-392d128a9a37b90adaec6b273ff2f28301513a52 # {"$imagepolicy": "flux-system:hugo-blog"}
+          image: tazzo/tazlab-blog:blog-50-3871f8aefa1beb8107d1766a65c6ef244fa9e6cc # {"$imagepolicy": "flux-system:hugo-blog"}
           ports:
             - containerPort: 80
 ---
