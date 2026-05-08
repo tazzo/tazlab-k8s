@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: tailscale-dns-relay
+  namespace: tailscale
+spec:
+  selector:
+    matchLabels:
+      app: tailscale-dns-relay
+  template:
+    metadata:
+      labels:
+        app: tailscale-dns-relay
+    spec:
+      hostNetwork: true
+      dnsPolicy: None
+      dnsConfig:
+        nameservers:
+          - 100.100.100.100
+      tolerations:
+        - operator: Exists
+      containers:
+        - name: coredns
+          image: coredns/coredns:latest
+          args: ["-conf", "/etc/coredns/Corefile"]
+          volumeMounts:
+            - name: corefile
+              mountPath: /etc/coredns
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
+      volumes:
+        - name: corefile
+          configMap:
+            name: tailscale-dns-relay
