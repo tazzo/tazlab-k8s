@@ -6,5 +6,5 @@ metadata:
 data:
   tailscale-magicdns.server: |
     magellanic-gondola.ts.net:53 {
-        forward . 10.96.0.100
+        forward . 10.96.0.101
     }

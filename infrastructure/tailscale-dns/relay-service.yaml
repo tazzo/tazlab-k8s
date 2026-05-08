@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: tailscale-dns-static
+  name: tailscale-dns-relay
   namespace: tailscale
 spec:
-  clusterIP: 10.96.0.100
+  clusterIP: 10.96.0.101
   selector:
-    app: tailscale-dns
+    app: tailscale-dns-relay
   ports:
     - protocol: UDP
       port: 53
