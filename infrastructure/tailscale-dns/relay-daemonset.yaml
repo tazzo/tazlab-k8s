@@ -26,12 +26,6 @@ spec:
           volumeMounts:
             - name: corefile
               mountPath: /etc/coredns
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
-            seccompProfile:
-              type: RuntimeDefault
       volumes:
         - name: corefile
           configMap:
