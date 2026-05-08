@@ -6,7 +6,9 @@ metadata:
 data:
   Corefile: |
     .:5353 {
-        forward . 100.100.100.100
-        errors
-        log
+        hosts {
+            100.82.13.87 lushycorp-vault.magellanic-gondola.ts.net
+            fallthrough
+        }
+        forward . 1.1.1.1 8.8.8.8
     }
