@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - dnsconfig.yaml
   - externalname.yaml
+  - nameserver-static.yaml
