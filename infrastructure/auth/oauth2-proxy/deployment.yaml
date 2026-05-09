@@ -13,6 +13,21 @@ spec:
       labels:
         app: oauth2-proxy
     spec:
+      initContainers:
+        - name: wait-for-dex
+          image: curlimages/curl:8.7.1
+          args:
+            - -s
+            - -o
+            - /dev/null
+            - -w
+            - "%{http_code}"
+            - --retry
+            - "30"
+            - --retry-delay
+            - "5"
+            - --retry-all-errors
+            - https://dex.tazlab.net/.well-known/openid-configuration
       containers:
         - name: oauth2-proxy
           image: quay.io/oauth2-proxy/oauth2-proxy:v7.8.1

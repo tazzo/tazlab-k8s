@@ -25,3 +25,7 @@ spec:
       name: tailscale-operator-oauth
       valuesKey: clientSecret
       targetPath: oauth.clientSecret
+  values:
+    operator:
+      proxy:
+        tags: ["tag:k8s-operator"]
