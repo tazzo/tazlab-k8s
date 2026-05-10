@@ -26,6 +26,5 @@ spec:
       valuesKey: clientSecret
       targetPath: oauth.clientSecret
   values:
-    operator:
-      proxy:
-        tags: ["tag:k8s-operator"]
+    proxyConfig:
+      defaultTags: "tag:k8s-operator"
