@@ -3,5 +3,5 @@ kind: Kustomization
 
 resources:
   - cluster.yaml
-  - service.yaml
   - init-sql.yaml
+  - tailnet-service.yaml

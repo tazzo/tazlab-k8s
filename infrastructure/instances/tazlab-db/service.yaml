@@ -1,16 +1,19 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: tazlab-db-external
-  namespace: tazlab-db
-  annotations:
-    metallb.universe.tf/loadBalancerIPs: 192.168.1.241
-spec:
-  type: LoadBalancer
-  ports:
-    - port: 5432
-      targetPort: 5432
-      name: postgres
-  selector:
-    postgres-operator.crunchydata.com/cluster: tazlab-db
-    postgres-operator.crunchydata.com/role: master
+# COMMENTED OUT 2026-05-23 — replaced by tailnet-service.yaml (Tailscale LB)
+# k8s_operator_oauth client_id: kWfrYhtPEB21CNTRL
+# keep for rollback; uncomment and push to restore MetalLB path
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: tazlab-db-external
+#  namespace: tazlab-db
+#  annotations:
+#    metallb.universe.tf/loadBalancerIPs: 192.168.1.241
+#spec:
+#  type: LoadBalancer
+#  ports:
+#    - port: 5432
+#      targetPort: 5432
+#      name: postgres
+#  selector:
+#    postgres-operator.crunchydata.com/cluster: tazlab-db
+#    postgres-operator.crunchydata.com/role: master
