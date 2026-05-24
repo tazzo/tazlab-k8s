@@ -3,15 +3,8 @@ kind: Service
 metadata:
   name: longhorn
   namespace: longhorn-system
-  annotations:
-    metallb.universe.tf/loadBalancerIPs: 192.168.1.240
-    metallb.universe.tf/allow-shared-ip: "tazlab-internal-dashboard"
-    gethomepage.dev/enabled: "true"
-    gethomepage.dev/name: "Longhorn"
-    gethomepage.dev/group: "Management"
-    gethomepage.dev/icon: "longhorn.png"
-spec:
-  type: LoadBalancer
+  spec:
+  type: ClusterIP
   selector:
     app: longhorn-ui
   ports:
