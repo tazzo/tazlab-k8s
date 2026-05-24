@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - homepage.yaml
   - ingress.yaml
+  - tailnet-ingress.yaml
