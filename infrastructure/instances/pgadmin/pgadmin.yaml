@@ -84,7 +84,7 @@ kind: Service
 metadata:
   name: pgadmin
   namespace: tazlab-db
-  spec:
+spec:
   type: ClusterIP
   selector:
     app: pgadmin
