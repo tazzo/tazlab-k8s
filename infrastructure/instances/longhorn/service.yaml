@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: longhorn
   namespace: longhorn-system
-  spec:
+spec:
   type: ClusterIP
   selector:
     app: longhorn-ui
