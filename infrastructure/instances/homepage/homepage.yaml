@@ -67,7 +67,7 @@ data:
             description: "Blog personale"
         - Homepage:
             icon: homepage.png
-            href: "https://home.tazlab.net"
+            href: "https://home.magellanic-gondola.ts.net"
             description: "Questo pannello"
     - Monitoring:
         - Grafana:
@@ -146,7 +146,7 @@ spec:
           image: ghcr.io/gethomepage/homepage:latest
           env:
             - name: HOMEPAGE_ALLOWED_HOSTS
-              value: "192.168.1.240:8000,home.tazlab.net"
+              value: "home.magellanic-gondola.ts.net,home.tazlab.net"
           ports:
             - containerPort: 3000
               name: http
@@ -187,14 +187,12 @@ metadata:
   name: homepage
   namespace: homepage
   annotations:
-    metallb.universe.tf/loadBalancerIPs: 192.168.1.240
-    metallb.universe.tf/allow-shared-ip: "tazlab-internal-dashboard"
     gethomepage.dev/enabled: "true"
     gethomepage.dev/name: "Homepage"
     gethomepage.dev/group: "Developer"
     gethomepage.dev/icon: "homepage.png"
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - port: 8000
       targetPort: 3000
