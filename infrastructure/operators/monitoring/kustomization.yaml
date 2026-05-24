@@ -6,6 +6,6 @@ resources:
   - namespace.yaml
   - metrics-server.yaml
   - flux-secret-sync.yaml
-  - grafana-ingress.yaml
+  - tailnet-ingress.yaml
   - dashboards/cluster-health.yaml
   - dashboards/nodes-pro.yaml
