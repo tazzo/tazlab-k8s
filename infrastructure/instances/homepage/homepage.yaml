@@ -72,20 +72,20 @@ data:
     - Monitoring:
         - Grafana:
             icon: grafana.png
-            href: "https://grafana.tazlab.net"
+            href: "https://grafana.magellanic-gondola.ts.net"
             description: "Metrics & Dashboards"
         - Traefik:
             icon: traefik.png
-            href: "https://traefik.tazlab.net/dashboard/"
+            href: "https://traefik.magellanic-gondola.ts.net/dashboard/"
             description: "Ingress statistics"
     - Management:
         - pgAdmin:
             icon: postgresql.png
-            href: "https://pgadmin.tazlab.net"
+            href: "https://pgadmin.magellanic-gondola.ts.net"
             description: "Database management"
         - Longhorn:
             icon: longhorn.png
-            href: "https://longhorn.tazlab.net"
+            href: "https://longhorn.magellanic-gondola.ts.net"
             description: "Storage management"
     - Infrastructure:
         - Proxmox:
@@ -95,7 +95,7 @@ data:
         - PostgreSQL:
             icon: postgresql.png
             description: "Main database"
-            href: "https://pgadmin.tazlab.net"
+            href: "https://pgadmin.magellanic-gondola.ts.net"
             namespace: "tazlab-db"
             app: "tazlab-db"
             widget:
