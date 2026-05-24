@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: traefik-dashboard
   namespace: traefik
-  spec:
+spec:
   type: ClusterIP
   selector:
     app.kubernetes.io/name: traefik
