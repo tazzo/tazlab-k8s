@@ -8,3 +8,14 @@ metadata:
 spec:
   type: ExternalName
   externalName: lushycorp-vault.magellanic-gondola.ts.net
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lushycorp-k8s
+  namespace: tailscale
+  annotations:
+    tailscale.com/tailnet-fqdn: lushycorp-k8s.magellanic-gondola.ts.net
+spec:
+  type: ExternalName
+  externalName: lushycorp-k8s.magellanic-gondola.ts.net
