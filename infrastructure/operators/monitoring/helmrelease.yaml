@@ -48,14 +48,19 @@ spec:
       serviceAccount:
         create: false
         name: grafana-sa
+      containerSecurityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
       podAnnotations:
         vault.hashicorp.com/agent-inject: "true"
-        vault.hashicorp.com/agent-pre-populate-only: "true"
         vault.hashicorp.com/role: "grafana-consumer"
         vault.hashicorp.com/auth-type: "jwt"
         vault.hashicorp.com/auth-path: "auth/jwt"
         vault.hashicorp.com/auth-config-path: "/var/run/secrets/kubernetes.io/serviceaccount/token"
         vault.hashicorp.com/auth-config-remove-jwt-after-reading: "false"
+        vault.hashicorp.com/agent-run-as-user: "1000"
+        vault.hashicorp.com/agent-run-as-group: "1000"
+        vault.hashicorp.com/agent-share-process-namespace: "true"
         vault.hashicorp.com/ca-cert: "/vault/tls/ca.crt"
         vault.hashicorp.com/tls-secret: "vault-ca-cert"
         vault.hashicorp.com/agent-inject-secret-db-creds-username: "database/creds/grafana"
