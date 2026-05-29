@@ -67,7 +67,6 @@ spec:
         vault.hashicorp.com/agent-inject-template-db-creds-username: '{{- with secret "database/creds/grafana" -}}{{ .Data.username }}{{- end }}'
         vault.hashicorp.com/agent-inject-secret-db-creds-password: "database/creds/grafana"
         vault.hashicorp.com/agent-inject-template-db-creds-password: '{{- with secret "database/creds/grafana" -}}{{ .Data.password }}{{- end }}'
-        vault.hashicorp.com/agent-inject-command-db-creds-username: "kill -TERM 1"
       grafana.ini:
         server:
           domain: grafana.tazlab.net
