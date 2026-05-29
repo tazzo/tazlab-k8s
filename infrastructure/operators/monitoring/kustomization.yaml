@@ -4,7 +4,6 @@ resources:
   - helmrepository.yaml
   - helmrelease.yaml
   - namespace.yaml
-  - secrets.yaml
   - metrics-server.yaml
   - flux-secret-sync.yaml
   - tailnet-ingress.yaml
