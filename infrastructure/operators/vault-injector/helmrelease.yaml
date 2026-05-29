@@ -35,6 +35,9 @@ spec:
       authPath: "auth/jwt"
       revokeOnShutdown: true
 
+      agentImage:
+        tag: "1.19.5"
+
       agentDefaults:
         cpuLimit: "500m"
         cpuRequest: "250m"
