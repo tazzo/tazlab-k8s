@@ -69,7 +69,6 @@ spec:
           {{ "{{" }}- end {{ "}}" }}
         vault.hashicorp.com/agent-inject-command-db-creds-username: "kill -TERM 1"
         vault.hashicorp.com/agent-share-process-namespace: "true"
-        vault.hashicorp.com/agent-run-as-same-user: "true"
       extraInitContainers:
         - name: wait-for-db
           image: alpine:3.19
