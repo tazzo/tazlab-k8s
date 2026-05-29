@@ -58,15 +58,9 @@ spec:
         vault.hashicorp.com/ca-cert: "/vault/tls/ca.crt"
         vault.hashicorp.com/tls-secret: "vault-ca-cert"
         vault.hashicorp.com/agent-inject-secret-db-creds-username: "database/creds/grafana"
-        vault.hashicorp.com/agent-inject-template-db-creds-username: |
-          {{ "{{" }}- with secret "database/creds/grafana" -{{ "}}" }}
-          {{ "{{" }} .Data.username {{ "}}" }}
-          {{ "{{" }}- end {{ "}}" }}
+        vault.hashicorp.com/agent-inject-template-db-creds-username: '{{- with secret "database/creds/grafana" -}}{{ .Data.username }}{{- end }}'
         vault.hashicorp.com/agent-inject-secret-db-creds-password: "database/creds/grafana"
-        vault.hashicorp.com/agent-inject-template-db-creds-password: |
-          {{ "{{" }}- with secret "database/creds/grafana" -{{ "}}" }}
-          {{ "{{" }} .Data.password {{ "}}" }}
-          {{ "{{" }}- end {{ "}}" }}
+        vault.hashicorp.com/agent-inject-template-db-creds-password: '{{- with secret "database/creds/grafana" -}}{{ .Data.password }}{{- end }}'
         vault.hashicorp.com/agent-inject-command-db-creds-username: "kill -TERM 1"
         vault.hashicorp.com/agent-share-process-namespace: "true"
       extraInitContainers:
