@@ -15,9 +15,6 @@ spec:
       - kind: ConfigMap
         name: cluster-vars
         optional: false
-      - kind: Secret
-        name: grafana-bootstrap-secret
-        optional: false
   prune: true
   wait: false
   sourceRef:
