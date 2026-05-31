@@ -21,15 +21,12 @@ spec:
         name: prometheus-community
         namespace: flux-system
   values:
-    # Minimal Setup to avoid timeouts
     alertmanager:
       enabled: false
     nodeExporter:
       enabled: true
     kubeStateMetrics:
       enabled: true
-    
-    # Prometheus Configuration
     prometheus:
       prometheusSpec:
         retention: 15d
@@ -41,8 +38,6 @@ spec:
               resources:
                 requests:
                   storage: 10Gi
-    
-    # Grafana Configuration (PostgreSQL Backend via VSO VaultDynamicSecret)
     grafana:
       enabled: true
       serviceAccount:
@@ -57,7 +52,13 @@ spec:
           domain: grafana.tazlab.net
           root_url: https://grafana.tazlab.net/
           serve_from_sub_path: false
-
+        database:
+          type: postgres
+          host: tazlab-db-primary.tazlab-db.svc.cluster.local:5432
+          name: grafana
+          user: ""
+          password: ""
+          sslmode: disable
         auth.proxy:
           enabled: true
           header_name: X-Auth-Request-Email
@@ -72,7 +73,7 @@ spec:
         security:
           admin_user: ''
           allow_login_without_configured_admin: true
-      env:
+      envValueFrom:
         GF_DATABASE_USER:
           secretKeyRef:
             name: grafana-dynamic-creds
@@ -81,6 +82,11 @@ spec:
           secretKeyRef:
             name: grafana-dynamic-creds
             key: password
+      env:
+        GF_DATABASE_TYPE: postgres
+        GF_DATABASE_HOST: tazlab-db-primary.tazlab-db.svc.cluster.local:5432
+        GF_DATABASE_NAME: grafana
+        GF_DATABASE_SSL_MODE: disable
       persistence:
         enabled: false
       service:
