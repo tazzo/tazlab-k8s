@@ -78,15 +78,17 @@ spec:
           admin_user: ''
           allow_login_without_configured_admin: true
       env: {}
-      envValueFrom:
-        GF_DATABASE_USER:
-          secretKeyRef:
-            name: grafana-dynamic-creds
-            key: username
-        GF_DATABASE_PASSWORD:
-          secretKeyRef:
-            name: grafana-dynamic-creds
-            key: password
+      extraEnv:
+        - name: GF_DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              name: grafana-dynamic-creds
+              key: username
+        - name: GF_DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: grafana-dynamic-creds
+              key: password
       persistence:
         enabled: false
       service:
