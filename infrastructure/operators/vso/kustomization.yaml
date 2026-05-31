@@ -7,3 +7,5 @@ resources:
   - vaultconnection.yaml
   - vaultauth.yaml
   - helmrelease.yaml
+  - sa-vso-auth-sa-tazlab-db.yaml
+  - vaultstaticsecret-mnemosyne.yaml
