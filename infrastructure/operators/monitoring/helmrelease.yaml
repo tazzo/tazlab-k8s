@@ -42,7 +42,7 @@ spec:
                 requests:
                   storage: 10Gi
     
-    # Grafana Configuration (PostgreSQL Backend via Vault Agent Injector)
+    # Grafana Configuration (PostgreSQL Backend via VSO VaultDynamicSecret)
     grafana:
       enabled: true
       serviceAccount:
@@ -51,22 +51,7 @@ spec:
       containerSecurityContext:
         runAsUser: 1000
         runAsGroup: 1000
-      podAnnotations:
-        vault.hashicorp.com/agent-inject: "true"
-        vault.hashicorp.com/role: "grafana-consumer"
-        vault.hashicorp.com/auth-type: "jwt"
-        vault.hashicorp.com/auth-path: "auth/jwt"
-        vault.hashicorp.com/auth-config-path: "/var/run/secrets/kubernetes.io/serviceaccount/token"
-        vault.hashicorp.com/auth-config-remove-jwt-after-reading: "false"
-        vault.hashicorp.com/agent-run-as-user: "1000"
-        vault.hashicorp.com/agent-run-as-group: "1000"
-        vault.hashicorp.com/agent-share-process-namespace: "true"
-        vault.hashicorp.com/ca-cert: "/vault/tls/ca.crt"
-        vault.hashicorp.com/tls-secret: "vault-ca-cert"
-        vault.hashicorp.com/agent-inject-secret-db-creds-username: "database/creds/grafana"
-        vault.hashicorp.com/agent-inject-template-db-creds-username: '{{- with secret "database/creds/grafana" -}}{{ .Data.username }}{{- end }}'
-        vault.hashicorp.com/agent-inject-secret-db-creds-password: "database/creds/grafana"
-        vault.hashicorp.com/agent-inject-template-db-creds-password: '{{- with secret "database/creds/grafana" -}}{{ .Data.password }}{{- end }}'
+      podAnnotations: {}
       grafana.ini:
         server:
           domain: grafana.tazlab.net
@@ -92,10 +77,16 @@ spec:
         security:
           admin_user: ''
           allow_login_without_configured_admin: true
-      env:
-        GF_DATABASE_USER__FILE: /vault/secrets/db-creds-username
-        GF_DATABASE_PASSWORD__FILE: /vault/secrets/db-creds-password
-      
+      env: {}
+      envValueFrom:
+        GF_DATABASE_USER:
+          secretKeyRef:
+            name: grafana-dynamic-creds
+            key: username
+        GF_DATABASE_PASSWORD:
+          secretKeyRef:
+            name: grafana-dynamic-creds
+            key: password
       persistence:
         enabled: false
       service:
