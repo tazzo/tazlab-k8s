@@ -47,6 +47,12 @@ spec:
         runAsUser: 1000
         runAsGroup: 1000
       podAnnotations: {}
+      extraSecretMounts:
+        - name: grafana-db-creds-mount
+          secretName: grafana-dynamic-creds
+          mountPath: /etc/secrets/grafana-dynamic-creds
+          defaultMode: 0440
+          readOnly: true
       grafana.ini:
         server:
           domain: grafana.tazlab.net
@@ -56,9 +62,7 @@ spec:
           type: postgres
           host: tazlab-db-primary.tazlab-db.svc.cluster.local:5432
           name: grafana
-          user: ""
-          password: ""
-          sslmode: disable
+          ssl_mode: disable
         auth.proxy:
           enabled: true
           header_name: X-Auth-Request-Email
@@ -73,20 +77,9 @@ spec:
         security:
           admin_user: ''
           allow_login_without_configured_admin: true
-      envValueFrom:
-        GF_DATABASE_USER:
-          secretKeyRef:
-            name: grafana-dynamic-creds
-            key: username
-        GF_DATABASE_PASSWORD:
-          secretKeyRef:
-            name: grafana-dynamic-creds
-            key: password
       env:
-        GF_DATABASE_TYPE: postgres
-        GF_DATABASE_HOST: tazlab-db-primary.tazlab-db.svc.cluster.local:5432
-        GF_DATABASE_NAME: grafana
-        GF_DATABASE_SSL_MODE: disable
+        GF_DATABASE_USER__FILE: "/etc/secrets/grafana-dynamic-creds/username"
+        GF_DATABASE_PASSWORD__FILE: "/etc/secrets/grafana-dynamic-creds/password"
       persistence:
         enabled: false
       service:
