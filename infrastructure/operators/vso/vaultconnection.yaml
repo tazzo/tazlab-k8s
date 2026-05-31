@@ -1,0 +1,9 @@
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultConnection
+metadata:
+  name: hetzner-vault-connection
+  namespace: vso-system
+spec:
+  address: "https://lushycorp-vault.magellanic-gondola.ts.net:8200"
+  skipTLSVerify: false
+  caCertSecretRef: vault-ca-cert
