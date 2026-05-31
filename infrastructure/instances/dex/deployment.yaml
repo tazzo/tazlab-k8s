@@ -23,14 +23,14 @@ spec:
             - serve
             - /etc/dex/cfg/config.yaml
           env:
-          envFrom:
-            - secretRef:
-                name: dex-google-oauth
             - name: OAUTH2_PROXY_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
                   name: dex-google-secrets
                   key: OAUTH2_PROXY_CLIENT_SECRET
+          envFrom:
+            - secretRef:
+                name: dex-google-oauth
           ports:
             - name: http
               containerPort: 5556
