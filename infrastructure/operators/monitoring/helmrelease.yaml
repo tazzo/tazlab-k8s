@@ -58,11 +58,6 @@ spec:
           domain: grafana.tazlab.net
           root_url: https://grafana.tazlab.net/
           serve_from_sub_path: false
-        database:
-          type: postgres
-          host: tazlab-db-primary.tazlab-db.svc.cluster.local:5432
-          name: grafana
-          ssl_mode: disable
         auth.proxy:
           enabled: true
           header_name: X-Auth-Request-Email
