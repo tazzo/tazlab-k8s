@@ -57,12 +57,7 @@ spec:
           domain: grafana.tazlab.net
           root_url: https://grafana.tazlab.net/
           serve_from_sub_path: false
-        database:
-          type: postgres
-          host: tazlab-db-primary.tazlab-db.svc.cluster.local:5432
-          name: grafana
-          user: ''
-          sslmode: disable
+
         auth.proxy:
           enabled: true
           header_name: X-Auth-Request-Email
@@ -77,18 +72,15 @@ spec:
         security:
           admin_user: ''
           allow_login_without_configured_admin: true
-      env: {}
-      extraEnv:
-        - name: GF_DATABASE_USER
-          valueFrom:
-            secretKeyRef:
-              name: grafana-dynamic-creds
-              key: username
-        - name: GF_DATABASE_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: grafana-dynamic-creds
-              key: password
+      env:
+        GF_DATABASE_USER:
+          secretKeyRef:
+            name: grafana-dynamic-creds
+            key: username
+        GF_DATABASE_PASSWORD:
+          secretKeyRef:
+            name: grafana-dynamic-creds
+            key: password
       persistence:
         enabled: false
       service:
