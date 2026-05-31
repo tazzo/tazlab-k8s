@@ -1,0 +1,25 @@
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  name: vso-jwt-auth
+  namespace: vso-system
+spec:
+  vaultConnectionRef: hetzner-vault-connection
+  allowedNamespaces:
+    - monitoring
+    - auth
+    - dex
+    - flux-system
+    - cert-manager
+    - longhorn-system
+    - tazlab-db
+    - cloudflare-ddns
+    - ai-agents
+  method: jwt
+  mount: jwt
+  jwt:
+    role: vso-role-jwt
+    serviceAccount: vso-auth-sa
+    audiences:
+      - https://kubernetes.default.svc.cluster.local
+    tokenExpirationSeconds: 600
