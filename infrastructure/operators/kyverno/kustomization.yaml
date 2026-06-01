@@ -4,4 +4,5 @@ resources:
   - helmrepository.yaml
   - helmrelease.yaml
   - namespace.yaml
+  - rbac-tls-consolidate.yaml
   - clusterpolicy-tls-consolidate.yaml
