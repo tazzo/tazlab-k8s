@@ -8,4 +8,3 @@ resources:
   - ./dex
   - ./ai-agents
   - ./vault
-  - github-external-secret.yaml
