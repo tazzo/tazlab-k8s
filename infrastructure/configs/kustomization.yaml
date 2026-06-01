@@ -6,3 +6,4 @@ resources:
   - ./dex
   - ./ai-agents
   - ./vault
+  - ./wildcard-tls
