@@ -3,9 +3,16 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - sa-vso-auth-sa.yaml
-  - vault-ca-cert.yaml
   - vaultconnection.yaml
   - vaultauth.yaml
   - helmrelease.yaml
   - sa-vso-auth-sa-tazlab-db.yaml
   - vaultstaticsecret-mnemosyne.yaml
+secretGenerator:
+  - name: vault-ca-cert
+    namespace: vso-system
+    files:
+      - ca.crt
+    type: Opaque
+generatorOptions:
+  disableNameSuffixHash: true
