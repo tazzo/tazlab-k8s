@@ -14,9 +14,6 @@ spec:
     - longhorn-system
     - tazlab-db
     - cloudflare-ddns
-    - ai-agents
-    - hugo-blog
-    - hugo-wiki
   method: jwt
   mount: jwt
   jwt:

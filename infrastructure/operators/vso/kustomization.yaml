@@ -13,6 +13,7 @@ resources:
   - vaultstaticsecret-cert-manager.yaml
   - sa-vso-auth-sa-cross-ns.yaml
   - vaultstaticsecret-wildcard-tls.yaml
+  - vaultauth-local.yaml
 secretGenerator:
   - name: vault-ca-cert
     namespace: vso-system
