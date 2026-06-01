@@ -3,7 +3,7 @@ kind: Kustomization
 
 resources:
   - deployment.yaml
-  - external-secret.yaml
+
   - service.yaml
   - rbac.yaml
 
