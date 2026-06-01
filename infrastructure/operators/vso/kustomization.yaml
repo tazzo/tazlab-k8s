@@ -8,6 +8,9 @@ resources:
   - helmrelease.yaml
   - sa-vso-auth-sa-tazlab-db.yaml
   - vaultstaticsecret-mnemosyne.yaml
+  - vaultstaticsecret-oauth2-proxy.yaml
+  - vaultstaticsecret-cloudflare-ddns.yaml
+  - vaultstaticsecret-cert-manager.yaml
 secretGenerator:
   - name: vault-ca-cert
     namespace: vso-system

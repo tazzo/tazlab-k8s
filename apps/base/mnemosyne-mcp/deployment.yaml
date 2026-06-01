@@ -45,6 +45,7 @@ spec:
             - name: GEMINI_API_KEY
               valueFrom:
                 secretKeyRef:
+                  name: mnemosyne-mcp-secrets
                   key: value
           resources:
             limits:
