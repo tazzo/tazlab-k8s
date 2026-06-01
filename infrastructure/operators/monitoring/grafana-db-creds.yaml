@@ -1,0 +1,18 @@
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultDynamicSecret
+metadata:
+  name: grafana-db-creds
+  namespace: monitoring
+spec:
+  destination:
+    create: true
+    name: grafana-dynamic-creds
+    overwrite: true
+    labels:
+      reconcile.fluxcd.io/watch: "Enabled"
+    transformation: {}
+  mount: database
+  path: creds/grafana
+  renewalPercent: 67
+  revoke: true
+  vaultAuthRef: vso-system/vso-jwt-auth
