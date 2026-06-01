@@ -7,10 +7,23 @@ resources:
   - vaultauth.yaml
   - helmrelease.yaml
   - sa-vso-auth-sa-tazlab-db.yaml
+  - sa-vso-auth-sa-auth.yaml
+  - sa-vso-auth-sa-cert-manager.yaml
+  - sa-vso-auth-sa-cloudflare-ddns.yaml
+  - sa-vso-auth-sa-dex.yaml
+  - sa-vso-auth-sa-flux-system.yaml
+  - sa-vso-auth-sa-longhorn-system.yaml
+  - sa-vso-auth-sa-monitoring.yaml
   - vaultstaticsecret-mnemosyne.yaml
   - vaultstaticsecret-oauth2-proxy.yaml
   - vaultstaticsecret-cloudflare-ddns.yaml
   - vaultstaticsecret-cert-manager.yaml
+  - vaultstaticsecret-github-api-token.yaml
+  - vaultstaticsecret-aws-backup-secret.yaml
+  - vaultstaticsecret-s3-backrest-creds.yaml
+  - vaultstaticsecret-dex-config-rendered.yaml
+  - vaultstaticsecret-dex-google-oauth-sync.yaml
+  - vaultstaticsecret-oauth2-proxy-dex-secret.yaml
 secretGenerator:
   - name: vault-ca-cert
     namespace: vso-system
