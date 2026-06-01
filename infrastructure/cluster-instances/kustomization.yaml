@@ -5,4 +5,3 @@ resources:
   - ../automation/hugo-blog
   - ../automation/hugo-wiki
   - ../automation/mnemosyne-mcp
-  - ../automation/openclaw

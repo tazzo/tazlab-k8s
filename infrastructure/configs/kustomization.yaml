@@ -4,6 +4,5 @@ resources:
   - ./cert-manager
   - ./tazlab-db
   - ./dex
-  - ./ai-agents
   - ./vault
   - ./wildcard-tls
