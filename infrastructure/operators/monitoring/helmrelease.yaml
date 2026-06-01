@@ -46,14 +46,13 @@ spec:
       containerSecurityContext:
         runAsUser: 1000
         runAsGroup: 1000
-      podAnnotations: {}
-      extraSecretMounts:
-        - name: grafana-db-creds-mount
-          secretName: grafana-dynamic-creds
-          mountPath: /etc/secrets/grafana-dynamic-creds
-          defaultMode: 0440
-          readOnly: true
+
+      # SQLite Template Bypass: type=sqlite3 impedisce al chart di generare
+      # GF_DATABASE_USER / GF_DATABASE_PASSWORD vuote (che confliggono con __FILE)
+      database:
+        type: sqlite3
       grafana.ini:
+        database: null
         server:
           domain: grafana.tazlab.net
           root_url: https://grafana.tazlab.net/
@@ -72,9 +71,27 @@ spec:
         security:
           admin_user: ''
           allow_login_without_configured_admin: true
+
+      # Runtime env vars sovrascrivono sqlite3 con PostgreSQL
       env:
+        GF_DATABASE_TYPE: "postgres"
+        GF_DATABASE_HOST: "tazlab-db-primary.tazlab-db.svc.cluster.local:5432"
+        GF_DATABASE_NAME: "grafana"
         GF_DATABASE_USER__FILE: "/etc/secrets/grafana-dynamic-creds/username"
         GF_DATABASE_PASSWORD__FILE: "/etc/secrets/grafana-dynamic-creds/password"
+
+      # Volume projection per il secret VSO
+      extraSecretMounts:
+        - name: grafana-dynamic-creds-mount
+          secretName: grafana-dynamic-creds
+          mountPath: /etc/secrets/grafana-dynamic-creds
+          readOnly: true
+          defaultMode: 0440
+
+      # Rollout trigger per forzare nuovo ReplicaSet
+      podAnnotations:
+        rollout-trigger: "2026-06-01-v2"
+
       persistence:
         enabled: false
       service:
