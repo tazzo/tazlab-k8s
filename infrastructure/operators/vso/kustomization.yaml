@@ -11,9 +11,8 @@ resources:
   - vaultstaticsecret-oauth2-proxy.yaml
   - vaultstaticsecret-cloudflare-ddns.yaml
   - vaultstaticsecret-cert-manager.yaml
-  - sa-vso-auth-sa-cross-ns.yaml
   - vaultstaticsecret-wildcard-tls.yaml
-  - vaultauth-local.yaml
+  - vaultauth-wildcard-tls.yaml
 secretGenerator:
   - name: vault-ca-cert
     namespace: vso-system

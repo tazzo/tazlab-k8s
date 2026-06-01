@@ -1,0 +1,31 @@
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  name: vault-auth-crt
+  namespace: vso-system
+spec:
+  vaultConnectionRef: hetzner-vault-connection
+  method: jwt
+  mount: jwt
+  jwt:
+    role: vso-role-jwt
+    serviceAccount: vso-auth-sa
+    audiences:
+      - https://kubernetes.default.svc.cluster.local
+    tokenExpirationSeconds: 600
+---
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  name: vault-auth-key
+  namespace: vso-system
+spec:
+  vaultConnectionRef: hetzner-vault-connection
+  method: jwt
+  mount: jwt
+  jwt:
+    role: vso-role-jwt
+    serviceAccount: vso-auth-sa
+    audiences:
+      - https://kubernetes.default.svc.cluster.local
+    tokenExpirationSeconds: 600
