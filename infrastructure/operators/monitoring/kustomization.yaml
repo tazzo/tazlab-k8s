@@ -9,3 +9,4 @@ resources:
   - dashboards/cluster-health.yaml
   - dashboards/nodes-pro.yaml
   - grafana-db-creds.yaml
+  - grafana-sa.yaml
