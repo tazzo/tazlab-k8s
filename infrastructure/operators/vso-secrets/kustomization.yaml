@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../vso/vaultconnection.yaml
+  - ../vso/vaultauth.yaml
+  - ../vso/vaultstaticsecret-mnemosyne.yaml
+  - ../vso/vaultstaticsecret-oauth2-proxy.yaml
+  - ../vso/vaultstaticsecret-cloudflare-ddns.yaml
+  - ../vso/vaultstaticsecret-cert-manager.yaml
+  - ../vso/vaultstaticsecret-github-api-token.yaml
+  - ../vso/vaultstaticsecret-aws-backup-secret.yaml
+  - ../vso/vaultstaticsecret-s3-backrest-creds.yaml
+  - ../vso/vaultstaticsecret-dex-config-rendered.yaml
+  - ../vso/vaultstaticsecret-dex-google-oauth-sync.yaml
+  - ../vso/vaultstaticsecret-oauth2-proxy-dex-secret.yaml
