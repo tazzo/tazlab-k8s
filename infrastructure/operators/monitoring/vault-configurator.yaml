@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vault-configurator
+  namespace: default
+  labels:
+    app.kubernetes.io/name: vault-configurator
+    app.kubernetes.io/component: vault-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: vault-configurator
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: vault-configurator
+        app.kubernetes.io/component: vault-proxy
+    spec:
+      containers:
+        - name: vault
+          image: hashicorp/vault:1.15.2
+          command: ["sleep", "36000"]
