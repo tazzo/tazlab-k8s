@@ -3,8 +3,9 @@ kind: Deployment
 metadata:
   name: oauth2-proxy
   namespace: auth
+  annotations:
+    reloader.stakater.com/auto: "true"
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: oauth2-proxy
@@ -17,6 +18,7 @@ spec:
         - name: wait-for-dex
           image: curlimages/curl:8.7.1
           args:
+            - -k
             - -s
             - -o
             - /dev/null

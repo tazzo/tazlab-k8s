@@ -6,6 +6,7 @@ metadata:
 spec:
   dependsOn:
     - name: infrastructure-instances
+    - name: infrastructure-operators-eso
   interval: 1h
   path: ./infrastructure/auth
   prune: true

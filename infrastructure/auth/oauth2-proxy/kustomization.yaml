@@ -6,3 +6,5 @@ resources:
   - service.yaml
   - ingress.yaml
   - middleware.yaml
+  - externalsecret-oauth2-proxy-secrets.yaml
+  - externalsecret-oauth2-proxy-dex-secret.yaml

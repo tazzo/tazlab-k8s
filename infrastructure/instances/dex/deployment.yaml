@@ -3,8 +3,9 @@ kind: Deployment
 metadata:
   name: dex
   namespace: dex
+  annotations:
+    reloader.stakater.com/auto: "true"
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: dex
