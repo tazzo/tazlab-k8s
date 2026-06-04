@@ -4,7 +4,6 @@ resources:
   - ../vso/vaultconnection.yaml
   - ../vso/vaultauth.yaml
   - ../vso/vaultstaticsecret-mnemosyne.yaml
-  - ../vso/vaultstaticsecret-oauth2-proxy.yaml
   - ../vso/vaultstaticsecret-cloudflare-ddns.yaml
   - ../vso/vaultstaticsecret-cert-manager.yaml
   - ../vso/vaultstaticsecret-github-api-token.yaml
