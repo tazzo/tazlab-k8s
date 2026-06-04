@@ -10,6 +10,3 @@ resources:
   - ../vso/vaultstaticsecret-github-api-token.yaml
   - ../vso/vaultstaticsecret-aws-backup-secret.yaml
   - ../vso/vaultstaticsecret-s3-backrest-creds.yaml
-  - ../vso/vaultstaticsecret-dex-config-rendered.yaml
-  - ../vso/vaultstaticsecret-dex-google-oauth-sync.yaml
-  - ../vso/vaultstaticsecret-oauth2-proxy-dex-secret.yaml
