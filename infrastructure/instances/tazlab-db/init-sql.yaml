@@ -5,6 +5,9 @@ metadata:
   namespace: tazlab-db
 data:
   init.sql: |
+    -- Bootstrap: ensure tazlab-admin can create roles and manage grafana membership
+    ALTER ROLE "tazlab-admin" CREATEROLE;
+    GRANT grafana TO "tazlab-admin" WITH ADMIN OPTION;
     -- Setup Mnemosyne Memory DB
     \c mnemosyne
     GRANT ALL ON SCHEMA public TO mnemosyne;
