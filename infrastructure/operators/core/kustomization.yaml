@@ -5,6 +5,5 @@ resources:
   - ../traefik
   - ../auth
   - ../cloudflare-ddns
-  - ../tazlab-db
   - ../hugo-blog
   - ../hugo-wiki
