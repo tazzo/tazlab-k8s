@@ -70,10 +70,9 @@ spec:
       databases:
         - grafana
   customTLSSecret:
-    name: tazlab-db-server-tls
-  customReplicationTLSSecret:
-    name: tazlab-db-server-tls
-  patroni:
+  proxy:
+    pgBouncer:
+      replicas: 0
     dynamicConfiguration:
       postgresql:
         pg_hba:
