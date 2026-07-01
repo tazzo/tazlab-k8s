@@ -50,8 +50,7 @@ spec:
   tls:
     - hosts:
         - blog.tazlab.net
-      secretName: wildcard-tls
-  rules:
+      secretName: blog-tazlab.net-tls
     - host: blog.tazlab.net
       http:
         paths:
@@ -80,7 +79,7 @@ spec:
         - tazlab.net
         - www.tazlab.net
         - lab.tazlab.net
-      secretName: wildcard-tls
+      secretName: blog-tazlab.net-tls
   rules:
     - host: lab.tazlab.net
       http:

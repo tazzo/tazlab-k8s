@@ -49,7 +49,7 @@ spec:
   tls:
     - hosts:
         - wiki.tazlab.net
-      secretName: wildcard-tls
+      secretName: wiki-tazlab.net-tls
   rules:
     - host: wiki.tazlab.net
       http:

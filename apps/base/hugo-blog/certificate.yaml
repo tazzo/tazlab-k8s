@@ -6,12 +6,14 @@ metadata:
 spec:
   secretName: blog-tazlab.net-tls
   issuerRef:
-    name: tazlab-issuer
+    name: letsencrypt-issuer
     kind: ClusterIssuer
   commonName: tazlab.net
   dnsNames:
+    - blog.tazlab.net
     - tazlab.net
-    - "*.tazlab.net"
+    - www.tazlab.net
+    - lab.tazlab.net
   privateKey:
     rotationPolicy: Always
     algorithm: RSA

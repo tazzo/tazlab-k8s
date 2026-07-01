@@ -3,3 +3,4 @@ kind: Kustomization
 
 resources:
   - hugo-wiki.yaml
+  - certificate.yaml
