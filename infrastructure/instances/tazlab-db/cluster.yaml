@@ -69,6 +69,10 @@ spec:
     - name: grafana
       databases:
         - grafana
+  customTLSSecret:
+    name: tazlab-db-server-tls
+  customReplicationTLSSecret:
+    name: tazlab-db-server-tls
   patroni:
     dynamicConfiguration:
       postgresql:

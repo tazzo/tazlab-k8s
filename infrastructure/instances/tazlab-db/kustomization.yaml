@@ -4,4 +4,7 @@ kind: Kustomization
 resources:
   - cluster.yaml
   - init-sql.yaml
-  - tailnet-service.yaml
+  - tailnet-service.yaml  - vaultpkisecret-server-tls.yaml
+  - vaultpkisecret-client-mnemosyne.yaml
+  - vaultpkisecret-client-pgadmin.yaml
+  - vaultpkisecret-client-tazlab-admin.yaml
