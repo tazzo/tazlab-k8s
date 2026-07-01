@@ -77,6 +77,10 @@ spec:
     dynamicConfiguration:
       postgresql:
         pg_hba:
+          # mTLS cert auth for grafana
+          - hostssl grafana grafana 0.0.0.0/0 cert
+          - hostssl grafana grafana ::/0 cert
+          # MD5 fallback
           - hostssl grafana grafana 0.0.0.0/0 md5
           - hostssl grafana grafana ::/0 md5
           - hostssl all grafana 0.0.0.0/0 md5
