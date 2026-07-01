@@ -78,12 +78,12 @@ spec:
         security:
           admin_user: ''
           allow_login_without_configured_admin: true
-        database:
-          type: postgres
-          host: tazlab-db-primary.tazlab-db.svc:5432
-          name: grafana
-          user: grafana
-          ssl_mode: require
+      env:
+        GF_DATABASE_TYPE: "postgres"
+        GF_DATABASE_HOST: "tazlab-db-primary.tazlab-db.svc:5432"
+        GF_DATABASE_NAME: "grafana"
+        GF_DATABASE_USER: "grafana"
+        GF_DATABASE_SSL_MODE: "require"
       command:
         - "/bin/sh"
         - "-c"
