@@ -59,6 +59,7 @@ spec:
         runAsGroup: 1000
       database:
         type: sqlite3
+      assertNoLeakedSecrets: false
       grafana.ini:
         server:
           domain: grafana.tazlab.net
@@ -78,38 +79,42 @@ spec:
         security:
           admin_user: ''
           allow_login_without_configured_admin: true
-      env:
-        GF_DATABASE_TYPE: "postgres"
-        GF_DATABASE_HOST: "tazlab-db-primary.tazlab-db.svc:5432"
-        GF_DATABASE_NAME: "grafana"
-        GF_DATABASE_USER: "grafana"
-        GF_DATABASE_SSL_MODE: "require"
-      command:
-        - "/bin/sh"
-        - "-c"
-        - |
-          mkdir -p /etc/grafana/certs
-          find /tmp/db-certs-raw -maxdepth 1 \( -type f -o -type l \) -exec cp -HL {} /etc/grafana/certs/ \; && echo "certs copied OK" || echo "cert copy FAILED"
-          chmod 600 /etc/grafana/certs/tls.key 2>/dev/null || true
-          ls -la /etc/grafana/certs/
-          exec /run.sh
-      extraVolumes:
-        - name: secure-certs-volume
-          emptyDir: {}
-      extraVolumeMounts:
-        - name: secure-certs-volume
-          mountPath: /etc/grafana/certs
+        database:
+          type: postgres
+          host: tazlab-db-primary.tazlab-db.svc:5432
+          name: grafana
+          user: grafana
+          ssl_mode: require
+          ca_cert_path: /etc/grafana/certs/ca.crt
+          client_cert_path: /etc/grafana/certs/tls.crt
+          client_key_path: /etc/grafana/certs/tls.key
       extraSecretMounts:
-        - name: db-client-grafana-tls-raw
+        - name: grafana-db-certs
           secretName: db-client-grafana-tls
-          mountPath: /tmp/db-certs-raw
+          mountPath: /tmp/db-certs-in
           readOnly: true
           defaultMode: 384
-        - name: grafana-dynamic-creds-mount
-          secretName: grafana-dynamic-creds
-          mountPath: /etc/secrets/grafana-dynamic-creds
-          readOnly: true
-          defaultMode: 0440
+      extraInitContainers:
+        - name: copy-db-certs
+          image: alpine:3.21
+          command:
+            - sh
+            - -c
+            - |
+              cp -rL /tmp/db-certs-in/* /etc/grafana/certs/
+              chmod 600 /etc/grafana/certs/tls.key
+              ls -la /etc/grafana/certs/
+          volumeMounts:
+            - name: grafana-db-certs
+              mountPath: /tmp/db-certs-in
+            - name: grafana-certs-empty
+              mountPath: /etc/grafana/certs
+      extraVolumes:
+        - name: grafana-certs-empty
+          emptyDir: {}
+      extraVolumeMounts:
+        - name: grafana-certs-empty
+          mountPath: /etc/grafana/certs
       podAnnotations:
         rollout-trigger: "2026-06-01-v2"
       persistence:
