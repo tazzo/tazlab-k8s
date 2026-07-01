@@ -83,7 +83,7 @@ spec:
         GF_DATABASE_HOST: "tazlab-db-primary.tazlab-db.svc:5432"
         GF_DATABASE_NAME: "grafana"
         GF_DATABASE_USER: "grafana"
-        GF_DATABASE_SSL_MODE: "verify-full"
+        GF_DATABASE_SSL_MODE: "require"
         GF_DATABASE_CA_CERT_PATH: "/etc/grafana/certs/ca.crt"
         GF_DATABASE_CLIENT_CERT_PATH: "/etc/grafana/certs/tls.crt"
         GF_DATABASE_CLIENT_KEY_PATH: "/etc/grafana/certs/tls.key"
