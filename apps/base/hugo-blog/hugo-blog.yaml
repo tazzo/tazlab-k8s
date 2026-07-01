@@ -51,6 +51,7 @@ spec:
     - hosts:
         - blog.tazlab.net
       secretName: blog-tazlab.net-tls
+  rules:
     - host: blog.tazlab.net
       http:
         paths:
