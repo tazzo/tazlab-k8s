@@ -9,4 +9,5 @@ resources:
   - dashboards/cluster-health.yaml
   - dashboards/nodes-pro.yaml
   - grafana-db-creds.yaml
-  - grafana-sa.yaml  - vaultpkisecret-client-grafana.yaml
+  - grafana-sa.yaml
+  - vaultpkisecret-client-grafana.yaml
