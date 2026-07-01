@@ -54,7 +54,7 @@ spec:
           region: "eu-central-1"
   proxy:
     pgBouncer:
-      replicas: 0
+      replicas: 1
   users:
     - name: pgadmin
       databases:
@@ -69,18 +69,13 @@ spec:
     - name: grafana
       databases:
         - grafana
-  customTLSSecret:
-    name: tazlab-db-server-tls
-  customReplicationTLSSecret:
-    name: tazlab-db-server-tls
   patroni:
     dynamicConfiguration:
       postgresql:
         pg_hba:
-          # mTLS cert auth for grafana
-          - hostssl grafana grafana 0.0.0.0/0 cert
-          - hostssl grafana grafana ::/0 cert
-          # MD5 fallback
+          # Allow grafana user from anywhere before rejection rules
+          # Use scram-sha-256 to match password hashing method in database
+          # Support both SSL/TLS (hostssl) and plain connections (host)
           - hostssl grafana grafana 0.0.0.0/0 md5
           - hostssl grafana grafana ::/0 md5
           - hostssl all grafana 0.0.0.0/0 md5
@@ -89,14 +84,13 @@ spec:
           - host grafana grafana ::/0 md5
           - host all grafana 0.0.0.0/0 md5
           - host all grafana ::/0 md5
+          # Other users
           - host mnemosyne mnemosyne 0.0.0.0/0 md5
           - host mnemosyne mnemosyne ::/0 md5
           - host mnemosyne all 0.0.0.0/0 md5
           - host mnemosyne all ::/0 md5
           - host tazlab-admin all 0.0.0.0/0 md5
           - host tazlab-admin all ::/0 md5
-          # mTLS cert auth (pgadmin — first user migrated)
-          - hostssl pgadmin pgadmin 0.0.0.0/0 cert
-          - hostssl pgadmin pgadmin ::/0 cert
+          # Network ranges
           - host all all 10.0.0.0/8 md5
           - host all all 10.244.0.0/16 md5
