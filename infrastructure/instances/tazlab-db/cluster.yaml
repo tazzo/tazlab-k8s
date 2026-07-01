@@ -54,7 +54,7 @@ spec:
           region: "eu-central-1"
   proxy:
     pgBouncer:
-      replicas: 1
+      replicas: 0
   users:
     - name: pgadmin
       databases:
@@ -91,5 +91,8 @@ spec:
           - host mnemosyne all ::/0 md5
           - host tazlab-admin all 0.0.0.0/0 md5
           - host tazlab-admin all ::/0 md5
+          # mTLS cert auth (pgadmin — first user migrated)
+          - hostssl pgadmin pgadmin 0.0.0.0/0 cert
+          - hostssl pgadmin pgadmin ::/0 cert
           - host all all 10.0.0.0/8 md5
           - host all all 10.244.0.0/16 md5
