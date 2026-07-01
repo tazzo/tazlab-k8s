@@ -77,16 +77,6 @@ spec:
     dynamicConfiguration:
       postgresql:
         pg_hba:
-          # mTLS cert auth (tried first — Vault PKI client certificates)
-          - hostssl grafana grafana 0.0.0.0/0 cert
-          - hostssl grafana grafana ::/0 cert
-          - hostssl mnemosyne mnemosyne 0.0.0.0/0 cert
-          - hostssl mnemosyne mnemosyne ::/0 cert
-          - hostssl pgadmin pgadmin 0.0.0.0/0 cert
-          - hostssl pgadmin pgadmin ::/0 cert
-          - hostssl tazlab-admin tazlab-admin 0.0.0.0/0 cert
-          - hostssl tazlab-admin tazlab-admin ::/0 cert
-          # Password fallback (kept for transition)
           - hostssl grafana grafana 0.0.0.0/0 md5
           - hostssl grafana grafana ::/0 md5
           - hostssl all grafana 0.0.0.0/0 md5
