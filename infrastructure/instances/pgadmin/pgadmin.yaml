@@ -56,7 +56,7 @@ spec:
             - name: PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION
               value: "False"
             - name: PGSSLMODE
-              value: "require"
+              value: "verify-full"
             - name: PGSSLCERT
               value: "/etc/pgadmin/certs/tls.crt"
             - name: PGSSLKEY
