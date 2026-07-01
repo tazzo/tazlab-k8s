@@ -50,7 +50,7 @@ spec:
             - --reverse-proxy=true
             - --authenticated-emails-file=/etc/oauth2-proxy/allowed-emails.txt
             - --silence-ping-logging=true
-            - --provider-ca-file=/etc/oauth2-proxy/ca.crt
+            - --provider-ca-file=/etc/oauth2-proxy/pki/ca.crt
           env:
             - name: OAUTH2_PROXY_CLIENT_SECRET
               valueFrom:
@@ -88,8 +88,7 @@ spec:
             - name: allowed-emails
               mountPath: /etc/oauth2-proxy
             - name: pki-ca
-              mountPath: /etc/oauth2-proxy/ca.crt
-              subPath: ca_chain
+              mountPath: /etc/oauth2-proxy/pki
               readOnly: true
       volumes:
         - name: allowed-emails
@@ -99,3 +98,6 @@ spec:
           secret:
             secretName: vault-pki-tls
             optional: true
+            items:
+            - key: ca_chain
+              path: ca.crt
