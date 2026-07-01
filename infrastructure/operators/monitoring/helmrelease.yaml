@@ -55,8 +55,8 @@ spec:
         create: false
         name: grafana-sa
       containerSecurityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
+        runAsUser: 472
+        runAsGroup: 472
       database:
         type: sqlite3
       assertNoLeakedSecrets: false
