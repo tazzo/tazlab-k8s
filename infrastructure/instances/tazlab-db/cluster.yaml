@@ -69,28 +69,43 @@ spec:
     - name: grafana
       databases:
         - grafana
+  customTLSSecret:
+    name: tazlab-db-server-tls
+    items:
+      - key: ca.crt
+        path: ca.crt
+      - key: tls.crt
+        path: tls.crt
+      - key: tls.key
+        path: tls.key
+  customReplicationTLSSecret:
+    name: tazlab-db-server-tls
+    items:
+      - key: ca.crt
+        path: ca.crt
+      - key: tls.crt
+        path: tls.crt
+      - key: tls.key
+        path: tls.key
   patroni:
     dynamicConfiguration:
       postgresql:
         pg_hba:
-          # Allow grafana user from anywhere before rejection rules
-          # Use scram-sha-256 to match password hashing method in database
           - hostssl grafana grafana 0.0.0.0/0 cert
           - hostssl grafana grafana ::/0 cert
           - hostssl grafana grafana 0.0.0.0/0 md5
+          - hostssl grafana grafana ::/0 md5
           - hostssl all grafana 0.0.0.0/0 md5
           - hostssl all grafana ::/0 md5
           - host grafana grafana 0.0.0.0/0 md5
           - host grafana grafana ::/0 md5
           - host all grafana 0.0.0.0/0 md5
           - host all grafana ::/0 md5
-          # Other users
           - host mnemosyne mnemosyne 0.0.0.0/0 md5
           - host mnemosyne mnemosyne ::/0 md5
           - host mnemosyne all 0.0.0.0/0 md5
           - host mnemosyne all ::/0 md5
           - host tazlab-admin all 0.0.0.0/0 md5
           - host tazlab-admin all ::/0 md5
-          # Network ranges
           - host all all 10.0.0.0/8 md5
           - host all all 10.244.0.0/16 md5
