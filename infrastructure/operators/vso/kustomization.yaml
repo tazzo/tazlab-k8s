@@ -21,3 +21,4 @@ resources:
   - vaultauth-pki-replication.yaml
   - vaultauth-pki-local-mtls.yaml
   - vaultauth-pki-database-server.yaml
+  - vaultpkisecret-pki-tls.yaml

@@ -11,7 +11,7 @@ spec:
   tls:
     - hosts:
         - dex.tazlab.net
-      secretName: wildcard-tls
+      secretName: vault-pki-tls
   rules:
     - host: dex.tazlab.net
       http:

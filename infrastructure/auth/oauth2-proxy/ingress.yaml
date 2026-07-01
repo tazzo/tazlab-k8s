@@ -11,7 +11,7 @@ spec:
   tls:
     - hosts:
         - auth.tazlab.net
-      secretName: wildcard-tls
+      secretName: vault-pki-tls
   rules:
     - host: auth.tazlab.net
       http:
