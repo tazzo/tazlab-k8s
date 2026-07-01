@@ -87,10 +87,24 @@ spec:
           ca_cert_path: /etc/grafana/certs/ca.crt
           client_cert_path: /etc/grafana/certs/tls.crt
           client_key_path: /etc/grafana/certs/tls.key
-      extraSecretMounts:
-        - name: grafana-mtls-certs
-          secretName: db-client-grafana-tls
+      command:
+        - "/bin/sh"
+        - "-c"
+        - |
+          mkdir -p /etc/grafana/certs
+          cp -H /tmp/db-certs-raw/* /etc/grafana/certs/
+          chmod 600 /etc/grafana/certs/tls.key
+          exec /run.sh
+      extraVolumes:
+        - name: secure-certs-volume
+          emptyDir: {}
+      extraVolumeMounts:
+        - name: secure-certs-volume
           mountPath: /etc/grafana/certs
+      extraSecretMounts:
+        - name: db-client-grafana-tls-raw
+          secretName: db-client-grafana-tls
+          mountPath: /tmp/db-certs-raw
           readOnly: true
           defaultMode: 384
         - name: grafana-dynamic-creds-mount
