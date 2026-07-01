@@ -89,7 +89,7 @@ spec:
               mountPath: /etc/oauth2-proxy
             - name: pki-ca
               mountPath: /etc/oauth2-proxy/ca.crt
-              subPath: ca.crt
+              subPath: ca_chain
               readOnly: true
       volumes:
         - name: allowed-emails
