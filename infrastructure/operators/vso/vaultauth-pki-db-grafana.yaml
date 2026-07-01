@@ -1,0 +1,17 @@
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  name: vso-pki-db-grafana
+  namespace: vso-system
+spec:
+  allowedNamespaces:
+  - monitoring
+  jwt:
+    audiences:
+    - https://kubernetes.default.svc.cluster.local
+    role: vso-role-db-grafana
+    serviceAccount: grafana-sa
+    tokenExpirationSeconds: 600
+  method: jwt
+  mount: jwt
+  vaultConnectionRef: hetzner-vault-connection

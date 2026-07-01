@@ -13,3 +13,11 @@ resources:
   - sa-vso-auth-sa-flux-system.yaml
   - sa-vso-auth-sa-longhorn-system.yaml
   - sa-vso-auth-sa-monitoring.yaml
+  - vaultauth-pki-ingress.yaml
+  - vaultauth-pki-db-mnemosyne.yaml
+  - vaultauth-pki-db-grafana.yaml
+  - vaultauth-pki-db-pgadmin.yaml
+  - vaultauth-pki-db-tazlab-admin.yaml
+  - vaultauth-pki-replication.yaml
+  - vaultauth-pki-local-mtls.yaml
+  - vaultauth-pki-database-server.yaml

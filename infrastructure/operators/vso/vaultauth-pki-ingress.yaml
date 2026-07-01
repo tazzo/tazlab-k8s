@@ -1,0 +1,17 @@
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  name: vso-pki-ingress
+  namespace: vso-system
+spec:
+  allowedNamespaces:
+  - vso-system
+  jwt:
+    audiences:
+    - https://kubernetes.default.svc.cluster.local
+    role: vso-role-ingress
+    serviceAccount: vso-auth-sa
+    tokenExpirationSeconds: 600
+  method: jwt
+  mount: jwt
+  vaultConnectionRef: hetzner-vault-connection
