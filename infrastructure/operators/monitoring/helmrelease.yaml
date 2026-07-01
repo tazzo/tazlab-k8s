@@ -78,13 +78,21 @@ spec:
         security:
           admin_user: ''
           allow_login_without_configured_admin: true
-      env:
-        GF_DATABASE_TYPE: "postgres"
-        GF_DATABASE_HOST: "tazlab-db-primary.tazlab-db.svc.cluster.local:5432"
-        GF_DATABASE_NAME: "grafana"
-        GF_DATABASE_USER__FILE: "/etc/secrets/grafana-dynamic-creds/username"
-        GF_DATABASE_PASSWORD__FILE: "/etc/secrets/grafana-dynamic-creds/password"
+        database:
+          type: postgres
+          host: tazlab-db-primary.tazlab-db.svc:5432
+          name: grafana
+          user: grafana
+          ssl_mode: require
+          ca_cert_path: /etc/grafana/certs/ca.crt
+          client_cert_path: /etc/grafana/certs/tls.crt
+          client_key_path: /etc/grafana/certs/tls.key
       extraSecretMounts:
+        - name: grafana-mtls-certs
+          secretName: db-client-grafana-tls
+          mountPath: /etc/grafana/certs
+          readOnly: true
+          defaultMode: 384
         - name: grafana-dynamic-creds-mount
           secretName: grafana-dynamic-creds
           mountPath: /etc/secrets/grafana-dynamic-creds

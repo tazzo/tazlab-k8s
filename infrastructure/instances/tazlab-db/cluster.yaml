@@ -75,9 +75,9 @@ spec:
         pg_hba:
           # Allow grafana user from anywhere before rejection rules
           # Use scram-sha-256 to match password hashing method in database
-          # Support both SSL/TLS (hostssl) and plain connections (host)
+          - hostssl grafana grafana 0.0.0.0/0 cert
+          - hostssl grafana grafana ::/0 cert
           - hostssl grafana grafana 0.0.0.0/0 md5
-          - hostssl grafana grafana ::/0 md5
           - hostssl all grafana 0.0.0.0/0 md5
           - hostssl all grafana ::/0 md5
           - host grafana grafana 0.0.0.0/0 md5
