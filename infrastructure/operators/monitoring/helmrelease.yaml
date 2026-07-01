@@ -89,7 +89,7 @@ spec:
         - "-c"
         - |
           mkdir -p /etc/grafana/certs
-          find /tmp/db-certs-raw -maxdepth 1 -type f -exec cp -H {} /etc/grafana/certs/ \; && echo "certs copied OK" || echo "cert copy FAILED"
+          find /tmp/db-certs-raw -maxdepth 1 \( -type f -o -type l \) -exec cp -HL {} /etc/grafana/certs/ \; && echo "certs copied OK" || echo "cert copy FAILED"
           chmod 600 /etc/grafana/certs/tls.key 2>/dev/null || true
           ls -la /etc/grafana/certs/
           exec /run.sh
