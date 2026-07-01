@@ -77,9 +77,16 @@ spec:
     dynamicConfiguration:
       postgresql:
         pg_hba:
-          # Allow grafana user from anywhere before rejection rules
-          # Use scram-sha-256 to match password hashing method in database
-          # Support both SSL/TLS (hostssl) and plain connections (host)
+          # mTLS cert auth (tried first — Vault PKI client certificates)
+          - hostssl grafana grafana 0.0.0.0/0 cert
+          - hostssl grafana grafana ::/0 cert
+          - hostssl mnemosyne mnemosyne 0.0.0.0/0 cert
+          - hostssl mnemosyne mnemosyne ::/0 cert
+          - hostssl pgadmin pgadmin 0.0.0.0/0 cert
+          - hostssl pgadmin pgadmin ::/0 cert
+          - hostssl tazlab-admin tazlab-admin 0.0.0.0/0 cert
+          - hostssl tazlab-admin tazlab-admin ::/0 cert
+          # Password fallback (kept for transition)
           - hostssl grafana grafana 0.0.0.0/0 md5
           - hostssl grafana grafana ::/0 md5
           - hostssl all grafana 0.0.0.0/0 md5
@@ -88,13 +95,11 @@ spec:
           - host grafana grafana ::/0 md5
           - host all grafana 0.0.0.0/0 md5
           - host all grafana ::/0 md5
-          # Other users
           - host mnemosyne mnemosyne 0.0.0.0/0 md5
           - host mnemosyne mnemosyne ::/0 md5
           - host mnemosyne all 0.0.0.0/0 md5
           - host mnemosyne all ::/0 md5
           - host tazlab-admin all 0.0.0.0/0 md5
           - host tazlab-admin all ::/0 md5
-          # Network ranges
           - host all all 10.0.0.0/8 md5
           - host all all 10.244.0.0/16 md5
