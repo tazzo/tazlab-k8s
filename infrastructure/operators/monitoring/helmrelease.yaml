@@ -4,48 +4,32 @@ metadata:
   name: kube-prometheus-stack
   namespace: monitoring
 spec:
+  chartRef:
+    kind: HelmChart
+    name: prometheus-community
+    namespace: flux-system
   releaseName: kube-prometheus-stack
-  interval: 1h
+  timeout: 15m
   install:
-    timeout: 15m
     remediation:
       retries: 3
   upgrade:
-    timeout: 15m
-  chart:
-    spec:
-      chart: kube-prometheus-stack
-      version: "61.3.1"
-      sourceRef:
-        kind: HelmRepository
-        name: prometheus-community
-        namespace: flux-system
+    remediation:
+      retries: 3
   valuesFrom:
     - kind: Secret
       name: grafana-dynamic-creds
-      valuesKey: username
       targetPath: grafana.podAnnotations.vault-dynamic-username
+      valuesKey: username
   values:
-
-    alertmanager:
-      enabled: false
-    nodeExporter:
-      enabled: true
-    kubeStateMetrics:
-      enabled: true
-    prometheus:
-      prometheusSpec:
-        retention: 15d
-        storageSpec:
-          volumeClaimTemplate:
-            spec:
-              storageClassName: tazlab-storage
-              accessModes: ["ReadWriteOnce"]
-              resources:
-                requests:
-                  storage: 10Gi
     grafana:
-      enabled: true
+      adminPassword: change-me
+      forceDeployDashboards: true
+      sidecar:
+        dashboards:
+          searchNamespace: ALL
+        datasources:
+          defaultDatasourceEnabled: false
       strategy:
         type: RollingUpdate
         rollingUpdate:
@@ -72,29 +56,47 @@ spec:
           enabled: true
           header_name: X-Auth-Request-Email
           header_property: email
-          header_email: X-Auth-Request-Email
           auto_sign_up: true
-          sync_ttl: 0
-          sync_ttl_api_key: 0
-          enable_login_token_rotation: false
-          skip_org_role_sync: true
-          disable_login_form: true
-        security:
-          admin_user: ''
-          allow_login_without_configured_admin: true
+          enable_login_token: false
+          header_email: X-Auth-Request-Email
+          sign_up_url: https://dex.tazlab.net/signup
+          whitelist: ""
+        auth.basic:
+          enabled: false
+        auth.generic_oauth:
+          enabled: true
+          name: Dex
+          icon: sign-in
+          client_id: grafana
+          scopes: openid profile email groups
+          auth_url: https://dex.tazlab.net/auth
+          token_url: https://dex.tazlab.net/token
+          api_url: https://dex.tazlab.net/userinfo
+          allowed_domains: ""
+          allow_sign_up: true
+          role_attribute_path: contains(groups[*], 'tazlab-admin') && 'Admin' || 'Viewer'
+        auth.anonymous:
+          enabled: false
+        auth.google:
+          enabled: false
+        auth.grafana_com:
+          enabled: false
+        auth.saml:
+          enabled: false
+        disable_login_form: true
         database:
           type: postgres
           host: tazlab-db-primary.tazlab-db.svc:5432
           name: grafana
           user: grafana
-          ssl_mode: require
+          ssl_mode: disable
           ca_cert_path: /etc/grafana/certs/ca.crt
           client_cert_path: /etc/grafana/certs/tls.crt
           client_key_path: /etc/grafana/certs/tls.key
       extraSecretMounts:
         - name: grafana-db-certs
-          secretName: db-client-grafana-tls
           mountPath: /tmp/db-certs-in
+          secretName: db-client-grafana-tls
           readOnly: true
           defaultMode: 384
       extraInitContainers:
@@ -103,33 +105,15 @@ spec:
           command:
             - sh
             - -c
-            - |
-              cp -rL /tmp/db-certs-in/* /etc/grafana/certs/
+            - cp -rL /tmp/db-certs-in/* /etc/grafana/certs/
               chmod 600 /etc/grafana/certs/tls.key
               ls -la /etc/grafana/certs/
           volumeMounts:
             - name: grafana-db-certs
+              readOnly: true
               mountPath: /tmp/db-certs-in
             - name: grafana-certs-empty
               mountPath: /etc/grafana/certs
-      extraVolumes:
-        - name: grafana-certs-empty
-          emptyDir: {}
-      extraVolumeMounts:
+      extraEmptyDirMounts:
         - name: grafana-certs-empty
           mountPath: /etc/grafana/certs
-      podAnnotations:
-        rollout-trigger: "2026-06-01-v2"
-      persistence:
-        enabled: false
-      service:
-        type: LoadBalancer
-        annotations:
-          metallb.universe.tf/loadBalancerIPs: "192.168.1.240"
-          metallb.universe.tf/allow-shared-ip: "tazlab-internal-dashboard"
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/name: "Grafana"
-          gethomepage.dev/group: "Management"
-          gethomepage.dev/icon: "grafana.png"
-        port: 8005
-        targetPort: 3000
