@@ -3,7 +3,6 @@ kind: Kustomization
 resources:
   - helmrepository.yaml
   - helmrelease.yaml
-  - namespace.yaml
   - metrics-server.yaml
   - tailnet-ingress.yaml
   - dashboards/cluster-health.yaml
