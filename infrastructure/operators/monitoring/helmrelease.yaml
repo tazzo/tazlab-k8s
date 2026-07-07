@@ -50,6 +50,11 @@ spec:
       env:
         - name: GODEBUG
           value: tlskyber=0
+        - name: GF_DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: tazlab-db-pguser-grafana
+              key: password
       database:
         type: sqlite3
       assertNoLeakedSecrets: false
