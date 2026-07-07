@@ -111,9 +111,7 @@ spec:
           command:
             - sh
             - -c
-            - cp -rL /tmp/db-certs-in/* /etc/grafana/certs/
-              chmod 600 /etc/grafana/certs/tls.key
-              ls -la /etc/grafana/certs/
+            - cp -rL /tmp/db-certs-in/* /etc/grafana/certs/ && chmod 600 /etc/grafana/certs/tls.key && ls -la /etc/grafana/certs/
           volumeMounts:
             - name: grafana-db-certs
               readOnly: true
