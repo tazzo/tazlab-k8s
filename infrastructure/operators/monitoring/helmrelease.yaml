@@ -47,14 +47,6 @@ spec:
       containerSecurityContext:
         runAsUser: 472
         runAsGroup: 472
-      env:
-        - name: GODEBUG
-          value: tlskyber=0
-        - name: GF_DATABASE_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: tazlab-db-pguser-grafana
-              key: password
       database:
         type: sqlite3
       assertNoLeakedSecrets: false
@@ -100,6 +92,7 @@ spec:
           host: tazlab-db-primary.tazlab-db.svc:5432
           name: grafana
           user: grafana
+          password: [REDACTED_GRAFANA_PG_PASSWORD]
           ssl_mode: disable
           ca_cert_path: /etc/grafana/certs/ca.crt
           client_cert_path: /etc/grafana/certs/tls.crt
