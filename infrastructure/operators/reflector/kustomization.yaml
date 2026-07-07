@@ -4,4 +4,3 @@ resources:
   - ocirepository.yaml
   - helmrelease.yaml
   - namespace.yaml
-  - reflector-vault-pki-tls.yaml
