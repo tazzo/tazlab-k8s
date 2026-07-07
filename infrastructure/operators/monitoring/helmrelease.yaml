@@ -47,8 +47,9 @@ spec:
       containerSecurityContext:
         runAsUser: 472
         runAsGroup: 472
-      env:
-        GODEBUG: tlskyber=0
+      extraEnvVars:
+        - name: GODEBUG
+          value: tlskyber=0
       database:
         type: sqlite3
       assertNoLeakedSecrets: false
