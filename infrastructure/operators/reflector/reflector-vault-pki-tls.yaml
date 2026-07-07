@@ -1,0 +1,12 @@
+apiVersion: reflector.flanksource.com/v1
+kind: Reflector
+metadata:
+  name: vault-pki-tls
+  namespace: vso-system
+spec:
+  source:
+    kind: Secret
+    name: vault-pki-tls
+  targets:
+    - namespace: auth
+    - namespace: dex
