@@ -48,8 +48,7 @@ spec:
         runAsUser: 472
         runAsGroup: 472
       env:
-        - name: GODEBUG
-          value: tlskyber=0
+        GODEBUG: tlskyber=0
       database:
         type: sqlite3
       assertNoLeakedSecrets: false
