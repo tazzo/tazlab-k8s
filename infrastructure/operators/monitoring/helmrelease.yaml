@@ -92,8 +92,7 @@ spec:
           host: tazlab-db-primary.tazlab-db.svc:5432
           name: grafana
           user: grafana
-          password: [REDACTED_GRAFANA_PG_PASSWORD]
-          ssl_mode: disable
+          ssl_mode: require
           ca_cert_path: /etc/grafana/certs/ca.crt
           client_cert_path: /etc/grafana/certs/tls.crt
           client_key_path: /etc/grafana/certs/tls.key
