@@ -36,11 +36,6 @@ spec:
                 secretKeyRef:
                   name: tazlab-db-pguser-mnemosyne
                   key: user
-            - name: DB_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: tazlab-db-pguser-mnemosyne
-                  key: password
             - name: GEMINI_API_KEY
               valueFrom:
                 secretKeyRef:
