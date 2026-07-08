@@ -47,6 +47,14 @@ spec:
                 secretKeyRef:
                   name: mnemosyne-mcp-secrets
                   key: value
+            - name: DB_SSLMODE
+              value: "verify-full"
+            - name: DB_SSLCERT
+              value: "/etc/secrets/tls/tls.crt"
+            - name: DB_SSLKEY
+              value: "/etc/secrets/tls/tls.key"
+            - name: DB_SSLROOTCERT
+              value: "/etc/secrets/tls/ca.crt"
           resources:
             limits:
               cpu: 200m
@@ -54,3 +62,13 @@ spec:
             requests:
               cpu: 50m
               memory: 128Mi
+
+          volumeMounts:
+            - name: tls-certs
+              mountPath: /etc/secrets/tls
+              readOnly: true
+      volumes:
+        - name: tls-certs
+          secret:
+            secretName: db-client-mnemosyne-tls
+            defaultMode: 384
