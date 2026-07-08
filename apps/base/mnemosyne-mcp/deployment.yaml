@@ -3,7 +3,6 @@ kind: Deployment
 metadata:
   name: mnemosyne-mcp
   namespace: tazlab-db
-  annotations:
 spec:
   replicas: 1
   selector:
@@ -17,7 +16,7 @@ spec:
       serviceAccountName: mnemosyne-mcp-sa
       containers:
         - name: server
-          image: tazzo/mnemosyne-mcp:mcp-43-f8a28f062b2dce8e8a82f33d4447c4547d0fca0b # {"$imagepolicy": "flux-system:mnemosyne-mcp"}
+          image: tazzo/mnemosyne-mcp:mcp-44-3bf472756fd8336c3fae6eb5e683e1685b82f864 # {"$imagepolicy": "flux-system:mnemosyne-mcp"}
           imagePullPolicy: Always
           env:
             - name: MCP_TRANSPORT
@@ -62,7 +61,6 @@ spec:
             requests:
               cpu: 50m
               memory: 128Mi
-
           volumeMounts:
             - name: tls-certs
               mountPath: /etc/secrets/tls
