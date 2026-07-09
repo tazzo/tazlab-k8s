@@ -48,7 +48,11 @@ spec:
         runAsUser: 472
         runAsGroup: 472
       database:
-        type: sqlite3
+        type: postgres
+        host: tazlab-db-primary.tazlab-db.svc:5432
+        name: grafana
+        user: grafana
+        ssl_mode: require
       assertNoLeakedSecrets: false
       env:
         GODEBUG: "tlskyber=0"
@@ -90,11 +94,6 @@ spec:
           enabled: false
         disable_login_form: true
         database:
-          type: postgres
-          host: tazlab-db-primary.tazlab-db.svc:5432
-          name: grafana
-          user: grafana
-          ssl_mode: require
           ca_cert_path: /etc/grafana/certs/ca.crt
           client_cert_path: /etc/grafana/certs/tls.crt
           client_key_path: /etc/grafana/certs/tls.key
