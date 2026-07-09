@@ -62,7 +62,7 @@ spec:
             - name: PGSSLKEY
               value: "/etc/pgadmin/certs/tls.key"
             - name: PGSSLROOTCERT
-              value: "/etc/pgadmin/certs/ca_chain"
+              value: "/etc/pgadmin/certs/ca.crt"
           ports:
             - containerPort: 80
               name: http
@@ -85,6 +85,10 @@ spec:
             - name: client-cert
               mountPath: /etc/pgadmin/certs
               readOnly: true
+            - name: pgadmin-config
+              mountPath: /pgadmin4/servers.json
+              subPath: servers.json
+              readOnly: true
       volumes:
         - name: pgadmin-storage
           persistentVolumeClaim:
@@ -92,6 +96,10 @@ spec:
         - name: client-cert
           secret:
             secretName: db-client-pgadmin-tls
+            defaultMode: 384
+        - name: pgadmin-config
+          configMap:
+            name: pgadmin-servers
 ---
 apiVersion: v1
 kind: Service

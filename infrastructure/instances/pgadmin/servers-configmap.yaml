@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pgadmin-servers
+  namespace: tazlab-db
+data:
+  servers.json: |
+    {
+      "Servers": {
+        "1": {
+          "Name": "TazLab Database",
+          "Group": "TazLab",
+          "Host": "tazlab-db-primary.tazlab-db.svc",
+          "Port": 5432,
+          "Username": "pgadmin",
+          "SSLMode": "verify-full",
+          "SSLCert": "/etc/pgadmin/certs/tls.crt",
+          "SSLKey": "/etc/pgadmin/certs/tls.key",
+          "SSLRootCert": "/etc/pgadmin/certs/ca.crt",
+          "MaintenanceDB": "postgres"
+        }
+      }
+    }
