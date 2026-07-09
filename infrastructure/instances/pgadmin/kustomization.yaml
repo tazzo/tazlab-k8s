@@ -4,6 +4,7 @@ resources:
   - pgadmin.yaml
   - rbac.yaml
   - tailnet-ingress.yaml
+  - servers-configmap.yaml
 
 patches:
   - path: ../../common/wait-for-db-patch.yaml
