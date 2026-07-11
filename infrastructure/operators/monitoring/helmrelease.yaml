@@ -22,11 +22,6 @@ spec:
   upgrade:
     remediation:
       retries: 3
-  valuesFrom:
-    - kind: Secret
-      name: grafana-dynamic-creds
-      targetPath: grafana.podAnnotations.vault-dynamic-username
-      valuesKey: username
   values:
     grafana:
       adminPassword: change-me
