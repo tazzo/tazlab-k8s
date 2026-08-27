@@ -18,7 +18,6 @@ resources:
   - ../vso/vaultauth-pki-db-pgadmin.yaml
   - ../vso/vaultauth-pki-db-tazlab-admin.yaml
   - ../vso/vaultauth-pki-replication.yaml
-  - ../vso/vaultstaticsecret-alertmanager-discord.yaml
   - ../vso/vaultauth-pki-local-mtls.yaml
   - ../vso/vaultauth-pki-database-server.yaml
   - ../vso/vaultpkisecret-pki-tls.yaml
