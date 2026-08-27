@@ -143,7 +143,7 @@ spec:
       serviceAccountName: homepage
       containers:
         - name: homepage
-          image: ghcr.io/gethomepage/homepage:latest
+          image: ghcr.io/gethomepage/homepage:v2.1.2 # {"$imagepolicy": "flux-system:homepage"}
           env:
             - name: HOMEPAGE_ALLOWED_HOSTS
               value: "home.magellanic-gondola.ts.net,home.tazlab.net"
@@ -166,12 +166,18 @@ spec:
             httpGet:
               path: /
               port: 3000
+              httpHeaders:
+                - name: Host
+                  value: home.magellanic-gondola.ts.net
             initialDelaySeconds: 30
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /
               port: 3000
+              httpHeaders:
+                - name: Host
+                  value: home.magellanic-gondola.ts.net
             initialDelaySeconds: 5
             periodSeconds: 5
       volumes:
