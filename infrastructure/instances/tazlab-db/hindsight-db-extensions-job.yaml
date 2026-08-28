@@ -1,0 +1,48 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hindsight-db-extensions
+  namespace: tazlab-db
+  labels:
+    app: hindsight-db-extensions
+    app.kubernetes.io/name: hindsight-db-extensions
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      labels:
+        app: hindsight-db-extensions
+        app.kubernetes.io/name: hindsight-db-extensions
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: psql
+          # Digest pinned (s4). postgres:16-alpine @ 2026-08-28
+          image: postgres@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685
+          env:
+            - name: PGHOST
+              value: tazlab-db-primary.tazlab-db.svc
+            - name: PGPORT
+              value: "5432"
+            - name: PGDATABASE
+              value: hindsight
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: tazlab-db-pguser-postgres
+                  key: user
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: tazlab-db-pguser-postgres
+                  key: password
+          command: ["sh", "-c", "-e"]
+          args:
+            - |
+              # pgvector in the Crunchy image is NOT trusted (no `trusted = true` in
+              # vector.control) → CREATE EXTENSION requires superuser. This Job is the
+              # Flux-managed equivalent of databaseInitSQL for the live cluster path.
+              # Idempotent: safe on every fresh bootstrap (PGO restores run init-sql,
+              # this Job re-verifies).
+              psql -v ON_ERROR_STOP=1 -c "CREATE EXTENSION IF NOT EXISTS vector;"
+              psql -v ON_ERROR_STOP=1 -t -c "SELECT extname || ' v' || extversion FROM pg_extension WHERE extname = 'vector';"

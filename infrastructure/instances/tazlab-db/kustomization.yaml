@@ -9,3 +9,4 @@ resources:
   - vaultpkisecret-client-mnemosyne.yaml
   - vaultpkisecret-client-pgadmin.yaml
   - vaultpkisecret-client-tazlab-admin.yaml
+  - hindsight-db-extensions-job.yaml
