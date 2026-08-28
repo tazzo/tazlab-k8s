@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hindsight-worker-metrics
+  namespace: hindsight
+  labels:
+    app: hindsight-worker
+spec:
+  clusterIP: None
+  selector:
+    app: hindsight-worker
+  ports:
+    - name: metrics
+      port: 8889
+      targetPort: 8889

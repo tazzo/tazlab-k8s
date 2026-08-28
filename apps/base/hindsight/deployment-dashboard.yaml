@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hindsight-dashboard
+  namespace: hindsight
+  labels:
+    app: hindsight-dashboard
+    app.kubernetes.io/name: hindsight-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hindsight-dashboard
+  template:
+    metadata:
+      labels:
+        app: hindsight-dashboard
+        app.kubernetes.io/name: hindsight-dashboard
+    spec:
+      serviceAccountName: hindsight-sa
+      enableServiceLinks: false
+      containers:
+        - name: hindsight-dashboard
+          image: ghcr.io/vectorize-io/hindsight-control-plane:0.9.2@sha256:d9bf57083f7cb0a53ee5011bdfde6aae2490dbf5c360d2d1bff10473b45eb112
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+              name: http
+          env:
+            - name: PORT
+              value: "3000"
+            - name: HINDSIGHT_CP_DATAPLANE_API_URL
+              value: http://hindsight-api.hindsight.svc.cluster.local:8888
+            - name: HINDSIGHT_CP_DATAPLANE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: hindsight-cp-key
+                  key: value
+            - name: HINDSIGHT_CP_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: hindsight-cp-key
+                  key: value
+          livenessProbe:
+            tcpSocket:
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi

@@ -1,0 +1,140 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hindsight-worker
+  namespace: hindsight
+  labels:
+    app: hindsight-worker
+    app.kubernetes.io/name: hindsight-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hindsight-worker
+  template:
+    metadata:
+      labels:
+        app: hindsight-worker
+        app.kubernetes.io/name: hindsight-worker
+    spec:
+      serviceAccountName: hindsight-sa
+      enableServiceLinks: false
+      initContainers:
+        - name: ensure-db
+          image: postgres@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685
+          command: ["sh", "-c", "-e"]
+          env:
+            - name: PGHOST
+              value: tazlab-db-primary.tazlab-db.svc
+            - name: PGPORT
+              value: "5432"
+            - name: PGDATABASE
+              value: hindsight
+            - name: PGUSER
+              value: hindsight
+            - name: PGSSLCERT
+              value: /etc/certs/tls.crt
+            - name: PGSSLKEY
+              value: /etc/certs/tls.key
+            - name: PGSSLROOTCERT
+              value: /etc/certs/ca.crt
+            - name: PGSSLMODE
+              value: verify-full
+          volumeMounts:
+            - name: tls-certs
+              mountPath: /etc/certs
+              readOnly: true
+          args:
+            - |
+              until psql -t -c "SELECT 1" >/dev/null 2>&1; do
+                echo "waiting for hindsight database..."
+                sleep 5
+              done
+              if ! psql -t -c "SELECT 1 FROM pg_extension WHERE extname = 'vector'" | grep -q 1; then
+                echo "FATAL: vector extension missing in db hindsight"
+                exit 1
+              fi
+              echo "DB ready: mTLS ok, vector extension present"
+      containers:
+        - name: hindsight-worker
+          image: ghcr.io/vectorize-io/hindsight-api:0.9.2-slim@sha256:7635a15739361dbdf221ba796ad25a813f876144fe113022eea8e26cb6ee75e7
+          imagePullPolicy: IfNotPresent
+          command: ["hindsight-worker"]
+          ports:
+            - containerPort: 8889
+              name: metrics
+          env:
+            - name: HINDSIGHT_API_PORT
+              value: "8889"
+            - name: HINDSIGHT_API_WORKER_HTTP_PORT
+              value: "8889"
+            - name: HINDSIGHT_API_WORKER_ID
+              value: hindsight-worker-1
+            - name: HINDSIGHT_API_DATABASE_URL
+              value: "postgresql://hindsight@tazlab-db-primary.tazlab-db.svc:5432/hindsight?sslmode=verify-full&sslcert=/etc/certs/tls.crt&sslkey=/etc/certs/tls.key&sslrootcert=/etc/certs/ca.crt"
+            - name: HINDSIGHT_API_DATABASE_SCHEMA
+              value: hindsight
+            - name: HINDSIGHT_API_LLM_PROVIDER
+              value: gemini
+            - name: HINDSIGHT_API_LLM_MODEL
+              value: gemini-2.5-flash
+            - name: HINDSIGHT_API_LLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: hindsight-llm-key
+                  key: value
+            - name: HINDSIGHT_API_LLM_STRICT_SCHEMA
+              value: "true"
+            - name: HINDSIGHT_API_LLM_REASONING_EFFORT
+              value: none
+            - name: HINDSIGHT_API_EMBEDDINGS_PROVIDER
+              value: google
+            - name: HINDSIGHT_API_EMBEDDINGS_GEMINI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: hindsight-llm-key
+                  key: value
+            - name: HINDSIGHT_API_EMBEDDINGS_GEMINI_MODEL
+              value: gemini-embedding-001
+            - name: HINDSIGHT_API_EMBEDDINGS_GEMINI_OUTPUT_DIMENSIONALITY
+              value: "768"
+            - name: HINDSIGHT_API_RERANKER_PROVIDER
+              value: rrf
+            - name: HINDSIGHT_API_METRICS_BACKLOG_ENABLED
+              value: "true"
+            - name: HINDSIGHT_API_FILE_STORAGE_TYPE
+              value: native
+            - name: HINDSIGHT_API_FILE_DELETE_AFTER_RETAIN
+              value: "true"
+          volumeMounts:
+            - name: tls-certs
+              mountPath: /etc/certs
+              readOnly: true
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: 8889
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8889
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
+      volumes:
+        - name: tls-certs
+          secret:
+            secretName: db-client-hindsight-tls
+            defaultMode: 384

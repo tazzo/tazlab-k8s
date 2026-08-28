@@ -1,0 +1,74 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: hindsight-default-deny-ingress
+  namespace: hindsight
+spec:
+  podSelector: {}
+  policyTypes: ["Ingress"]
+---
+# API + MCP (:8888): LAN agents, in-cluster consumers (OpenClaw, dashboard),
+# Prometheus scraping (monitoring ns)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: hindsight-allow-api
+  namespace: hindsight
+spec:
+  podSelector:
+    matchLabels:
+      app: hindsight-api
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - ipBlock:
+            cidr: 192.168.1.0/24
+        - podSelector: {}
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ai-agents
+      ports:
+        - protocol: TCP
+          port: 8888
+---
+# Dashboard (:3000): LAN + tailnet operator access
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: hindsight-allow-dashboard
+  namespace: hindsight
+spec:
+  podSelector:
+    matchLabels:
+      app: hindsight-dashboard
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - ipBlock:
+            cidr: 192.168.1.0/24
+      ports:
+        - protocol: TCP
+          port: 3000
+---
+# Worker metrics (:8889): Prometheus scraping only
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: hindsight-allow-worker-metrics
+  namespace: hindsight
+spec:
+  podSelector:
+    matchLabels:
+      app: hindsight-worker
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring
+      ports:
+        - protocol: TCP
+          port: 8889

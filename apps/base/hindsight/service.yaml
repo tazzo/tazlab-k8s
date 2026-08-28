@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hindsight
+  namespace: hindsight
+  labels:
+    app: hindsight-api
+    app.kubernetes.io/name: hindsight-api
+  annotations:
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Developer
+    gethomepage.dev/icon: hindsight.png
+    gethomepage.dev/name: Hindsight
+    gethomepage.dev/description: Multi-agent shared memory platform
+    metallb.universe.tf/allow-shared-ip: tazlab-internal-dashboard
+    metallb.universe.tf/ip-allocated-from-pool: default-pool
+    metallb.universe.tf/loadBalancerIPs: 192.168.1.240
+spec:
+  type: LoadBalancer
+  selector:
+    app: hindsight-api
+  ports:
+    - name: api-mcp
+      port: 8006
+      targetPort: 8888
+    - name: dashboard
+      port: 8007
+      targetPort: 3000
