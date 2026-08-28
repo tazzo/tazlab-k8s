@@ -19,6 +19,8 @@ spec:
     spec:
       serviceAccountName: hindsight-sa
       enableServiceLinks: false
+      securityContext:
+        fsGroup: 1000
       initContainers:
         - name: ensure-db
           image: postgres@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685
@@ -137,4 +139,4 @@ spec:
         - name: tls-certs
           secret:
             secretName: db-client-hindsight-tls
-            defaultMode: 384
+            defaultMode: 416
