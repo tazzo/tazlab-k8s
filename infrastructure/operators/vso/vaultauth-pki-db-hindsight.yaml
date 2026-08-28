@@ -1,0 +1,17 @@
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  name: vso-pki-db-hindsight
+  namespace: vso-system
+spec:
+  allowedNamespaces:
+  - hindsight
+  jwt:
+    audiences:
+    - https://kubernetes.default.svc.cluster.local
+    role: vso-role-db-hindsight
+    serviceAccount: vso-auth-sa
+    tokenExpirationSeconds: 600
+  method: jwt
+  mount: jwt
+  vaultConnectionRef: hetzner-vault-connection

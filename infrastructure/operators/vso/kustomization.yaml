@@ -13,5 +13,6 @@ resources:
   - sa-vso-auth-sa-flux-system.yaml
   - sa-vso-auth-sa-longhorn-system.yaml
   - sa-vso-auth-sa-monitoring.yaml
+  - sa-vso-auth-sa-hindsight.yaml
 
   # PKI VaultAuth and VaultPKISecret moved to vso-secrets/kustomization.yaml

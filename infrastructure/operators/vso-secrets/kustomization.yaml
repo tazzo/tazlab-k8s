@@ -4,6 +4,9 @@ resources:
   - ../vso/vaultconnection.yaml
   - ../vso/vaultauth.yaml
   - ../vso/vaultstaticsecret-mnemosyne.yaml
+  - ../vso/vaultstaticsecret-hindsight-llm-key.yaml
+  - ../vso/vaultstaticsecret-hindsight-mcp-token.yaml
+  - ../vso/vaultstaticsecret-hindsight-cp-key.yaml
   - ../vso/vaultstaticsecret-cloudflare-ddns.yaml
   - ../vso/vaultstaticsecret-cert-manager.yaml
   - ../vso/vaultstaticsecret-github-api-token.yaml
@@ -14,6 +17,7 @@ resources:
   - ../vso/vaultstaticsecret-oauth2-proxy-dex-secret-sync.yaml
   - ../vso/vaultauth-pki-ingress.yaml
   - ../vso/vaultauth-pki-db-mnemosyne.yaml
+  - ../vso/vaultauth-pki-db-hindsight.yaml
   - ../vso/vaultauth-pki-db-grafana.yaml
   - ../vso/vaultauth-pki-db-pgadmin.yaml
   - ../vso/vaultauth-pki-db-tazlab-admin.yaml
@@ -21,3 +25,4 @@ resources:
   - ../vso/vaultauth-pki-local-mtls.yaml
   - ../vso/vaultauth-pki-database-server.yaml
   - ../vso/vaultpkisecret-pki-tls.yaml
+  - ../vso/vaultpkisecret-client-hindsight.yaml
