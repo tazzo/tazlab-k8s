@@ -7,7 +7,7 @@ metadata:
     app: hindsight-db-extensions
     app.kubernetes.io/name: hindsight-db-extensions
 spec:
-  backoffLimit: 3
+  backoffLimit: 6
   template:
     metadata:
       labels:
@@ -42,7 +42,14 @@ spec:
               # pgvector in the Crunchy image is NOT trusted (no `trusted = true` in
               # vector.control) → CREATE EXTENSION requires superuser. This Job is the
               # Flux-managed equivalent of databaseInitSQL for the live cluster path.
-              # Idempotent: safe on every fresh bootstrap (PGO restores run init-sql,
-              # this Job re-verifies).
+              # ONE-SHOT SAFE: at bootstrap PGO boots in parallel — wait up to 10 min
+              # for the DB, then run the idempotent SQL (no-op if init-sql ran already).
+              i=0
+              until psql -t -c "SELECT 1" >/dev/null 2>&1; do
+                i=$((i+1))
+                [ "$i" -gt 120 ] && echo "FATAL: database not reachable in 10m" && exit 1
+                echo "waiting for database ($i)..."
+                sleep 5
+              done
               psql -v ON_ERROR_STOP=1 -c "CREATE EXTENSION IF NOT EXISTS vector;"
               psql -v ON_ERROR_STOP=1 -t -c "SELECT extname || ' v' || extversion FROM pg_extension WHERE extname = 'vector';"
