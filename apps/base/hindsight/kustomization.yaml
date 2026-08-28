@@ -5,7 +5,8 @@ resources:
   - deployment-api.yaml
   - deployment-worker.yaml
   - deployment-dashboard.yaml
-  - service.yaml
+  - service-api.yaml
+  - service-dashboard.yaml
   - service-worker-metrics.yaml
   - networkpolicy.yaml
   - servicemonitor.yaml
