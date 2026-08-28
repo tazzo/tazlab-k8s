@@ -55,3 +55,9 @@ data:
     \c grafana
     GRANT ALL ON SCHEMA public TO grafana;
     ALTER SCHEMA public OWNER TO grafana;
+
+    -- Setup Hindsight Memory DB (Alembic-managed schema, extension for pgvector)
+    \c hindsight
+    GRANT ALL ON SCHEMA public TO hindsight;
+    ALTER SCHEMA public OWNER TO hindsight;
+    CREATE EXTENSION IF NOT EXISTS vector;

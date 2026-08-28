@@ -69,6 +69,9 @@ spec:
     - name: grafana
       databases:
         - grafana
+    - name: hindsight
+      databases:
+        - hindsight
   customTLSSecret:
     name: tazlab-db-server-tls
     items:
@@ -103,6 +106,8 @@ spec:
           - host all grafana ::/0 md5
           - hostssl mnemosyne mnemosyne 0.0.0.0/0 cert
           - hostssl mnemosyne mnemosyne ::/0 cert
+          - hostssl hindsight hindsight 0.0.0.0/0 cert
+          - hostssl hindsight hindsight ::/0 cert
           - host tazlab-admin all 0.0.0.0/0 md5
           - host tazlab-admin all ::/0 md5
           - hostssl postgres pgadmin 0.0.0.0/0 cert
