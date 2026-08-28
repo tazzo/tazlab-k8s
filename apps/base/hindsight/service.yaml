@@ -25,4 +25,4 @@ spec:
       targetPort: 8888
     - name: dashboard
       port: 8007
-      targetPort: 3000
+      targetPort: 9999
