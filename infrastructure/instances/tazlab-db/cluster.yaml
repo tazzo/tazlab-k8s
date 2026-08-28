@@ -72,6 +72,9 @@ spec:
     - name: hindsight
       databases:
         - hindsight
+    - name: postgres
+      databases:
+        - postgres
   customTLSSecret:
     name: tazlab-db-server-tls
     items:
