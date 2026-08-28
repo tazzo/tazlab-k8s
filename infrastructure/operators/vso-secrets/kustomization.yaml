@@ -4,9 +4,10 @@ resources:
   - ../vso/vaultconnection.yaml
   - ../vso/vaultauth.yaml
   - ../vso/vaultstaticsecret-mnemosyne.yaml
-  - ../vso/vaultstaticsecret-hindsight-llm-key.yaml
+  - ../vso/vaultstaticsecret-hindsight-gemini-key.yaml
   - ../vso/vaultstaticsecret-hindsight-mcp-token.yaml
   - ../vso/vaultstaticsecret-hindsight-cp-key.yaml
+  - ../vso/vaultstaticsecret-hindsight-opencode-key.yaml
   - ../vso/vaultstaticsecret-cloudflare-ddns.yaml
   - ../vso/vaultstaticsecret-cert-manager.yaml
   - ../vso/vaultstaticsecret-github-api-token.yaml
