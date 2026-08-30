@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: wiki
-          image: tazzo/tazlab-wiki:wiki-81-52d782f865125132568ad34ba910b967727fd512 # {"$imagepolicy": "flux-system:hugo-wiki"}
+          image: tazzo/tazlab-wiki:wiki-82-a21b7e2536b5089bfdbb5966d619f353f1069f80 # {"$imagepolicy": "flux-system:hugo-wiki"}
           ports:
             - containerPort: 80
 ---
