@@ -143,7 +143,7 @@ spec:
       serviceAccountName: homepage
       containers:
         - name: homepage
-          image: ghcr.io/gethomepage/homepage:v2.1.2 # {"$imagepolicy": "flux-system:homepage"}
+          image: ghcr.io/gethomepage/homepage:v2.2.0 # {"$imagepolicy": "flux-system:homepage"}
           env:
             - name: HOMEPAGE_ALLOWED_HOSTS
               value: "home.magellanic-gondola.ts.net,home.tazlab.net"
