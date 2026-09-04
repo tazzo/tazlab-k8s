@@ -22,6 +22,31 @@ spec:
       securityContext:
         fsGroup: 1000
       initContainers:
+        - name: quota-gate
+          image: alpine:3.20@sha256:c64c687cbea9300178b30c95835354e34c4e4febc4badfe27102879de0483b5e
+          command: ["sh", "-c", "-e"]
+          env:
+            - name: GEMINI_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: hindsight-gemini-key
+                  key: value
+          args:
+            - |
+              echo "[quota-gate] waiting for embedding quota window..."
+              sleep 10
+              for i in $(seq 1 30); do
+                RESP=$(wget -qO- --timeout=15 --post-data='{"model":"models/gemini-embedding-001","content":{"parts":[{"text":"gate"}]}}' \
+                  "https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=${GEMINI_KEY}" 2>/dev/null || true)
+                if echo "$RESP" | grep -q '"embedding"'; then
+                  echo "[quota-gate] quota OK (try $i)"
+                  exit 0
+                fi
+                echo "[quota-gate] not yet (try $i) — backing off"
+                sleep 20
+              done
+              echo "[quota-gate] quota never opened in window — failing"
+              exit 1
         - name: ensure-db
           image: postgres@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685
           command: ["sh", "-c", "-e"]
