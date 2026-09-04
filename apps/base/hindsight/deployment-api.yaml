@@ -36,13 +36,11 @@ spec:
               echo "[quota-gate] waiting for embedding quota window..."
               sleep 10
               for i in $(seq 1 40); do
-                KEY="$(cat /etc/gemini-key/value)"
-                RESP=$(curl -s --max-time 15 -X POST -H "Content-Type: application/json" --data '{"model":"models/gemini-embedding-001","content":{"parts":[{"text":"gate"}]}}' "https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=${KEY}" 2>/dev/null || true)
-                if echo "${RESP}" | grep -q '"embedding"'; then
-                  echo "[quota-gate] quota OK (try ${i})"
+                if curl -s --max-time 15 -X POST -H "Content-Type: application/json" --data '{"model":"models/gemini-embedding-001","content":{"parts":[{"text":"gate"}]}}' "https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=$(cat /etc/gemini-key/value)" 2>/dev/null | grep -q '"embedding"'; then
+                  echo "[quota-gate] quota OK"
                   exit 0
                 fi
-                echo "[quota-gate] not yet (try ${i}) — backing off"
+                echo "[quota-gate] not yet — backing off"
                 sleep 20
               done
               echo "[quota-gate] quota never opened in window — failing"
