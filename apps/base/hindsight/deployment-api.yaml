@@ -27,26 +27,22 @@ spec:
         - name: quota-gate
           image: curlimages/curl:latest@sha256:43366cd60f226c7655181a0f7e85c468a41d182fdd2dc2c1c3b872a2b9d05d7a
           command: ["sh", "-c", "-e"]
-          env:
-            - name: GEMINI_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: hindsight-gemini-key
-                  key: value
+          volumeMounts:
+            - name: gemini-key
+              mountPath: /etc/gemini-key
+              readOnly: true
           args:
             - |
               echo "[quota-gate] waiting for embedding quota window..."
               sleep 10
               for i in $(seq 1 40); do
-                RESP=$(curl -s --max-time 15 -X POST \
-                  -H "Content-Type: application/json" \
-                  --data '{"model":"models/gemini-embedding-001","content":{"parts":[{"text":"gate"}]}}' \
-                  "https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=${GEMINI_KEY}" 2>/dev/null || true)
-                if echo "$RESP" | grep -q '"embedding"'; then
-                  echo "[quota-gate] quota OK (try $i)"
+                KEY="$(cat /etc/gemini-key/value)"
+                RESP=$(curl -s --max-time 15 -X POST -H "Content-Type: application/json" --data '{"model":"models/gemini-embedding-001","content":{"parts":[{"text":"gate"}]}}' "https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=${KEY}" 2>/dev/null || true)
+                if echo "${RESP}" | grep -q '"embedding"'; then
+                  echo "[quota-gate] quota OK (try ${i})"
                   exit 0
                 fi
-                echo "[quota-gate] not yet (try $i) — backing off"
+                echo "[quota-gate] not yet (try ${i}) — backing off"
                 sleep 20
               done
               echo "[quota-gate] quota never opened in window — failing"
@@ -180,3 +176,7 @@ spec:
           secret:
             secretName: db-client-hindsight-tls
             defaultMode: 416
+        - name: gemini-key
+          secret:
+            secretName: hindsight-gemini-key
+            defaultMode: 384
