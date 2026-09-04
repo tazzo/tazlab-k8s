@@ -23,7 +23,7 @@ spec:
         fsGroup: 1000
       initContainers:
         - name: quota-gate
-          image: alpine:3.20@sha256:c64c687cbea9300178b30c95835354e34c4e4febc4badfe27102879de0483b5e
+          image: curlimages/curl:latest@sha256:43366cd60f226c7655181a0f7e85c468a41d182fdd2dc2c1c3b872a2b9d05d7a
           command: ["sh", "-c", "-e"]
           env:
             - name: GEMINI_KEY
@@ -35,8 +35,10 @@ spec:
             - |
               echo "[quota-gate] waiting for embedding quota window..."
               sleep 10
-              for i in $(seq 1 30); do
-                RESP=$(wget -qO- --timeout=15 --post-data='{"model":"models/gemini-embedding-001","content":{"parts":[{"text":"gate"}]}}' \
+              for i in $(seq 1 40); do
+                RESP=$(curl -s --max-time 15 -X POST \
+                  -H "Content-Type: application/json" \
+                  --data '{"model":"models/gemini-embedding-001","content":{"parts":[{"text":"gate"}]}}' \
                   "https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=${GEMINI_KEY}" 2>/dev/null || true)
                 if echo "$RESP" | grep -q '"embedding"'; then
                   echo "[quota-gate] quota OK (try $i)"
