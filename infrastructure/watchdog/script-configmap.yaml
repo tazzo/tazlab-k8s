@@ -26,7 +26,9 @@ data:
 
     ks=$(kubectl -n "$NS" get kustomizations.kustomize.toolkit.fluxcd.io -o json)
 
-    stalled=$(jq -r '
+    # NOTE: no bash here-strings/heredocs — the container runs with a read-only root
+    # filesystem, and bash implements them via temporary files. Plain pipes only.
+    stalled=$(printf '%s' "$ks" | jq -r '
       ( [ .items[]
           | select(any(.status.conditions[]?; .type == "Ready" and .status == "True"))
           | .metadata.name
@@ -35,14 +37,14 @@ data:
       | select( ( any(.status.conditions[]?; .type == "Ready" and .status == "True") ) | not )
       | select( [ .spec.dependsOn[]?.name ] | map($ready[.] // false) | all )
       | "\(.metadata.name)\t\((.status.conditions[]? | select(.type == "Ready") | .reason) // "Unknown")"
-    ' <<<"$ks")
+    ')
 
     if [ -z "$stalled" ]; then
       log "no stalled Kustomizations — nothing to do"
       exit 0
     fi
 
-    while IFS=$'\t' read -r name reason; do
+    printf '%s\n' "$stalled" | while IFS=$'\t' read -r name reason; do
       [ -n "$name" ] || continue
       if [ "$DRY_RUN" = "true" ]; then
         log "DRY-RUN would reconcile $name (reason: $reason)"
@@ -51,4 +53,4 @@ data:
       log "forcing reconcile of $name (reason: $reason)"
       kubectl -n "$NS" annotate kustomization "$name" --overwrite \
         "reconcile.fluxcd.io/requestedAt=$(date -u +%FT%TZ)" >/dev/null
-    done <<<"$stalled"
+    done
