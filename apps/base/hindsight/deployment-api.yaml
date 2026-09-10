@@ -112,6 +112,11 @@ spec:
               value: "true"
             - name: HINDSIGHT_API_LLM_REASONING_EFFORT
               value: none
+            # OpenCode Go requires a stable session id per conversation for routing and prompt
+            # caching; without it the provider answers 400 MissingSessionID and fact extraction
+            # fails silently. Static per-process UUID: satisfies routing, shares one cache bucket.
+            - name: HINDSIGHT_API_LLM_DEFAULT_HEADERS
+              value: '{"x-opencode-session":"2b1a0064-c685-4884-bf98-643401a2e0f3"}'
             - name: HINDSIGHT_API_EMBEDDINGS_PROVIDER
               value: google
             - name: HINDSIGHT_API_EMBEDDINGS_GEMINI_API_KEY
