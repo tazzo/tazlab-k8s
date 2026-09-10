@@ -7,7 +7,7 @@ spec:
   dependsOn:
     - name: infrastructure-operators-namespaces
     - name: infrastructure-operators-vso
-  interval: 1h
+  interval: 15m
   path: ./infrastructure/operators/monitoring
   postBuild:
     substituteFrom:

@@ -4,7 +4,7 @@ metadata:
   name: infrastructure-operators-data
   namespace: flux-system
 spec:
-  interval: 1h
+  interval: 15m
   path: ./infrastructure/operators/data
   postBuild:
     substituteFrom:
@@ -13,7 +13,7 @@ spec:
         optional: false
   prune: true
   wait: true
-  retryInterval: 2m
+  retryInterval: 1m
   sourceRef:
     kind: GitRepository
     name: flux-system

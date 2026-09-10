@@ -7,7 +7,7 @@ spec:
   dependsOn:
     - name: infrastructure-instances
     - name: infrastructure-operators-eso
-  interval: 1h
+  interval: 15m
   path: ./infrastructure/auth
   prune: true
   wait: true

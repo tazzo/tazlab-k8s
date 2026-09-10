@@ -7,7 +7,7 @@ spec:
   dependsOn:
     - name: infrastructure-operators-core
     - name: infrastructure-operators-namespaces
-  interval: 1h
+  interval: 15m
   path: ./infrastructure/cluster-bridge
   postBuild:
     substituteFrom:

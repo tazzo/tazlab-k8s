@@ -6,7 +6,7 @@ metadata:
 spec:
   dependsOn:
     - name: infrastructure-configs
-  interval: 1h
+  interval: 15m
   path: ./apps/cluster/hugo-wiki
   prune: true
   sourceRef:

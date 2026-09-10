@@ -4,8 +4,8 @@ metadata:
   name: apps-data-hindsight
   namespace: flux-system
 spec:
-  interval: 1h
-  retryInterval: 2m
+  interval: 15m
+  retryInterval: 1m
   timeout: 5m
   path: ./apps/cluster/hindsight
   prune: true

@@ -4,7 +4,7 @@ metadata:
   name: infrastructure-operators-reloader
   namespace: flux-system
 spec:
-  interval: 1h
+  interval: 15m
   path: ./infrastructure/operators/reloader
   prune: true
   wait: false

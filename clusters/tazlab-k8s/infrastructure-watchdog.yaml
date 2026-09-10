@@ -1,0 +1,19 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: infrastructure-watchdog
+  namespace: flux-system
+spec:
+  interval: 15m
+  path: ./infrastructure/watchdog
+  prune: true
+  # wait: true — if the watchdog itself cannot be created, we want to know (the DAG
+  # hardening must not silently fail to deploy).
+  wait: true
+  retryInterval: 1m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  timeout: 5m
+  # No dependsOn on purpose: the watchdog must be able to come up even while other
+  # parts of the DAG are stuck — that is exactly the condition it exists to repair.

@@ -9,7 +9,7 @@ spec:
     - name: infrastructure-tailscale-dns
     - name: infrastructure-operators-vso
     - name: infrastructure-operators-eso
-  interval: 1h
+  interval: 15m
   path: ./infrastructure/configs
   postBuild:
     substituteFrom:
