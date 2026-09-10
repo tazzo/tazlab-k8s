@@ -7,6 +7,15 @@ metadata:
     app: hindsight-db-extensions
     app.kubernetes.io/name: hindsight-db-extensions
 spec:
+  # GitOps-stable one-shot Job (kustomize-controller v1.7.x dry-run gotcha):
+  # without manualSelector the apiserver injects controller-uid/job-name labels
+  # into spec.template on creation; the next SSA apply then sees an immutable
+  # spec.template diff and the whole instances kustomization freezes until the
+  # Job is deleted manually. manualSelector keeps desired == live forever.
+  manualSelector: true
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: hindsight-db-extensions
   backoffLimit: 6
   template:
     metadata:
