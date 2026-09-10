@@ -8,49 +8,60 @@ data:
     #!/usr/bin/env bash
     # flux-dag-watchdog — unstick the Flux dependency DAG.
     #
-    # Why: dependents are gated by `spec.dependsOn`. After a full-cluster restart the
-    # dependency-ready event that normally re-queues a dependent can be missed, so a
-    # Kustomization stays in `DependencyNotReady` until its own `interval` elapses.
-    # With chained dependencies and hourly intervals that means hours (or days) of a
-    # frozen DAG. This watchdog detects exactly that state every few minutes and
-    # forces an immediate reconcile by setting the reconcile request annotation.
+    # Root cause this exists for: a Kustomization is gated by `spec.dependsOn`, but Flux
+    # does not re-queue a dependent when its dependency transitions to Ready if that
+    # event is missed (e.g. the dependency was already Ready when the dependent was
+    # evaluated, or the controller restarted meanwhile). The dependent then waits for its
+    # own `interval`. With chained dependencies that stalls the whole DAG for hours — the
+    # more so the longer the interval — and NO reconciliation is actually failing.
     #
-    # It only nudges objects whose dependencies are ALL Ready — i.e. work that is
-    # already described in Git and simply not being applied. Nothing is created,
-    # deleted or modified beyond the reconcile request annotation.
+    # This watchdog detects exactly that state — not Ready while every dependency IS
+    # Ready — and forces an immediate reconcile via the reconcile-request annotation.
+    # It only nudges objects already described in Git; nothing is created, deleted or
+    # changed beyond that annotation. Multiple passes per run clear several DAG levels
+    # in one go.
     set -euo pipefail
 
     NS="${NAMESPACE:-flux-system}"
     DRY_RUN="${DRY_RUN:-false}"
+    PASSES="${PASSES:-3}"
+    PASS_SLEEP="${PASS_SLEEP:-30}"
     log() { printf '[flux-dag-watchdog] %s %s\n' "$(date -u +%FT%TZ)" "$*"; }
 
-    ks=$(kubectl -n "$NS" get kustomizations.kustomize.toolkit.fluxcd.io -o json)
+    detect() {
+      # NOTE: plain pipes only — bash here-strings/heredocs need temp files and the
+      # container runs with a read-only root filesystem.
+      kubectl -n "$NS" get kustomizations.kustomize.toolkit.fluxcd.io -o json |
+        jq -r '
+          ( [ .items[]
+              | select(any(.status.conditions[]?; .type == "Ready" and .status == "True"))
+              | .metadata.name
+            ] | map({ (.): true }) | add // {} ) as $ready
+          | .items[]
+          | select( ( any(.status.conditions[]?; .type == "Ready" and .status == "True") ) | not )
+          | select( [ .spec.dependsOn[]?.name ] | map($ready[.] // false) | all )
+          | "\(.metadata.name)\t\((.status.conditions[]? | select(.type == "Ready") | .reason) // "Unknown")"
+        '
+    }
 
-    # NOTE: no bash here-strings/heredocs — the container runs with a read-only root
-    # filesystem, and bash implements them via temporary files. Plain pipes only.
-    stalled=$(printf '%s' "$ks" | jq -r '
-      ( [ .items[]
-          | select(any(.status.conditions[]?; .type == "Ready" and .status == "True"))
-          | .metadata.name
-        ] | map({ (.): true }) | add // {} ) as $ready
-      | .items[]
-      | select( ( any(.status.conditions[]?; .type == "Ready" and .status == "True") ) | not )
-      | select( [ .spec.dependsOn[]?.name ] | map($ready[.] // false) | all )
-      | "\(.metadata.name)\t\((.status.conditions[]? | select(.type == "Ready") | .reason) // "Unknown")"
-    ')
-
-    if [ -z "$stalled" ]; then
-      log "no stalled Kustomizations — nothing to do"
-      exit 0
-    fi
-
-    printf '%s\n' "$stalled" | while IFS=$'\t' read -r name reason; do
-      [ -n "$name" ] || continue
-      if [ "$DRY_RUN" = "true" ]; then
-        log "DRY-RUN would reconcile $name (reason: $reason)"
-        continue
+    for pass in $(seq 1 "$PASSES"); do
+      stalled=$(detect)
+      if [ -z "$stalled" ]; then
+        log "pass $pass/$PASSES — no stalled Kustomizations, DAG healthy"
+        exit 0
       fi
-      log "forcing reconcile of $name (reason: $reason)"
-      kubectl -n "$NS" annotate kustomization "$name" --overwrite \
-        "reconcile.fluxcd.io/requestedAt=$(date -u +%FT%TZ)" >/dev/null
+      log "pass $pass/$PASSES — stalled: $(printf '%s' "$stalled" | tr '\n' ' ')"
+      printf '%s\n' "$stalled" | while IFS=$'\t' read -r name reason; do
+        [ -n "$name" ] || continue
+        if [ "$DRY_RUN" = "true" ]; then
+          log "DRY-RUN would reconcile $name (reason: $reason)"
+          continue
+        fi
+        log "forcing reconcile of $name (reason: $reason)"
+        kubectl -n "$NS" annotate kustomization "$name" --overwrite \
+          "reconcile.fluxcd.io/requestedAt=$(date -u +%FT%TZ)" >/dev/null
+      done
+      if [ "$pass" -lt "$PASSES" ]; then
+        sleep "$PASS_SLEEP"
+      fi
     done

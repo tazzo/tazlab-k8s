@@ -7,9 +7,10 @@ metadata:
     app.kubernetes.io/name: flux-dag-watchdog
     app.kubernetes.io/part-of: flux
 spec:
-  # Five minutes is a deliberate bound: the DAG can never stay frozen longer than this
-  # window, independent of the Kustomizations' own interval (15m).
-  schedule: "*/5 * * * *"
+  # Every two minutes, with three internal passes: a frozen DAG (which is a chain of
+  # missed dependency events) is fully re-converged within a couple of runs, and the
+  # worst-case stall for any object is bounded by this schedule.
+  schedule: "*/2 * * * *"
   concurrencyPolicy: Forbid
   startingDeadlineSeconds: 120
   successfulJobsHistoryLimit: 1
@@ -17,7 +18,7 @@ spec:
   jobTemplate:
     spec:
       backoffLimit: 1
-      activeDeadlineSeconds: 240
+      activeDeadlineSeconds: 300
       template:
         metadata:
           labels:
@@ -41,6 +42,10 @@ spec:
                   value: flux-system
                 - name: DRY_RUN
                   value: "false"
+                - name: PASSES
+                  value: "3"
+                - name: PASS_SLEEP
+                  value: "30"
                 - name: HOME
                   value: /tmp
               resources:
