@@ -1,0 +1,17 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: teaching-tazlab.net-tls
+  namespace: teaching
+spec:
+  secretName: teaching-tazlab.net-tls
+  issuerRef:
+    name: letsencrypt-staging # B.11: staging first, then flip to letsencrypt-issuer
+    kind: ClusterIssuer
+  commonName: teaching.tazlab.net
+  dnsNames:
+    - teaching.tazlab.net
+  privateKey:
+    rotationPolicy: Always
+    algorithm: RSA
+    size: 2048

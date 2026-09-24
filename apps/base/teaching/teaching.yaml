@@ -1,0 +1,134 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: teaching
+  namespace: teaching
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: teaching
+  template:
+    metadata:
+      labels:
+        app: teaching
+        app.kubernetes.io/name: teaching
+    spec:
+      terminationGracePeriodSeconds: 45
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+      containers:
+        - name: teaching
+          image: tazzo/tazlab-teaching:teaching-2-8ecfeaa9e1bbaa8825c9e979d511d7ae3f5ae6f1 # {"$imagepolicy": "flux-system:teaching"}
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: OPENCODE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: teaching-opencode-key
+                  key: value
+                  optional: true
+            - name: TEACHING_LLM_MODEL
+              value: deepseek-v4.1-flash
+            - name: TEACHING_LLM_REASONING_EFFORT
+              value: none
+            - name: TEACHING_LLM_TIMEOUT
+              value: "20"
+            - name: TEACHING_LLM_MAX_CONCURRENCY
+              value: "4"
+            - name: TEACHING_LOG_LEVEL
+              value: INFO
+            # read-only rootfs: writable scratch for the PDF renderer and Python
+            - name: HOME
+              value: /tmp
+            - name: TMPDIR
+              value: /tmp
+          startupProbe:
+            httpGet:
+              path: /api/healthz
+              port: http
+            periodSeconds: 2
+            failureThreshold: 15
+          readinessProbe:
+            httpGet:
+              path: /api/healthz
+              port: http
+            periodSeconds: 5
+            failureThreshold: 2
+          livenessProbe:
+            httpGet:
+              path: /api/healthz
+              port: http
+            periodSeconds: 20
+            failureThreshold: 5
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep", "5"]
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: "2"
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: teaching
+  namespace: teaching
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+  selector:
+    app: teaching
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: teaching-ingress
+  namespace: teaching
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - teaching.tazlab.net
+      secretName: teaching-tazlab.net-tls
+  rules:
+    - host: teaching.tazlab.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: teaching
+                port:
+                  number: 80

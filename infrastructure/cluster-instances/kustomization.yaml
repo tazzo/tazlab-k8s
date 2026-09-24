@@ -6,3 +6,4 @@ resources:
   - ../automation/hugo-wiki
   - ../automation/mnemosyne-mcp
   - ../automation/homepage
+  - ../automation/teaching

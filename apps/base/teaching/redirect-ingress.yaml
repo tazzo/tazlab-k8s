@@ -1,0 +1,27 @@
+# Cleartext HTTP is redirected here. This router is deliberately separate from the
+# TLS router above: the sites' single HTTPS-only router answers 404 on http://, so a
+# redirect middleware attached to it would be a no-op. router.priority is pinned low
+# so the cert-manager HTTP-01 solver router (a longer, more specific rule) always wins
+# and certificate issuance is never redirected away.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: teaching-redirect-ingress
+  namespace: teaching
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+    traefik.ingress.kubernetes.io/router.middlewares: teaching-teaching-redirect-to-https@kubernetescrd
+    traefik.ingress.kubernetes.io/router.priority: "1"
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: teaching.tazlab.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: teaching
+                port:
+                  number: 80

@@ -15,6 +15,7 @@ spec:
     - tazlab-db
     - cloudflare-ddns
     - hindsight
+    - teaching
   method: jwt
   mount: jwt
   jwt:
