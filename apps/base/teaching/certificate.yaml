@@ -6,7 +6,7 @@ metadata:
 spec:
   secretName: teaching-tazlab.net-tls
   issuerRef:
-    name: letsencrypt-staging # B.11: staging first, then flip to letsencrypt-issuer
+    name: letsencrypt-issuer
     kind: ClusterIssuer
   commonName: teaching.tazlab.net
   dnsNames:
