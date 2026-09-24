@@ -69,6 +69,10 @@ data:
             icon: homepage.png
             href: "https://home.magellanic-gondola.ts.net"
             description: "Questo pannello"
+        - Didattica:
+            icon: mdi-school
+            href: "https://teaching.tazlab.net"
+            description: "Esercizi e problemi"
     - Monitoring:
         - Grafana:
             icon: grafana.png
