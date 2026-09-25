@@ -75,6 +75,9 @@ spec:
     - name: postgres
       databases:
         - postgres
+    - name: paperclip
+      databases:
+        - paperclip
   customTLSSecret:
     name: tazlab-db-server-tls
     items:
@@ -117,5 +120,13 @@ spec:
           - hostssl postgres pgadmin ::/0 cert
           - host postgres pgadmin 0.0.0.0/0 reject
           - host postgres pgadmin ::/0 reject
+          # paperclip (project paperclip-lxc-deployment): TLS + password, only its
+          # own database. The reject rows are scoped to the USER across every
+          # database on purpose: a database-scoped reject would leave
+          # paperclip@<other> matching the generic 10/8 rows below in cleartext.
+          - hostssl paperclip paperclip 0.0.0.0/0 md5
+          - hostssl paperclip paperclip ::/0 md5
+          - host paperclip all 0.0.0.0/0 reject
+          - host paperclip all ::/0 reject
           - host all all 10.0.0.0/8 md5
           - host all all 10.244.0.0/16 md5
