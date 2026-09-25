@@ -120,13 +120,14 @@ spec:
           - hostssl postgres pgadmin ::/0 cert
           - host postgres pgadmin 0.0.0.0/0 reject
           - host postgres pgadmin ::/0 reject
-          # paperclip (project paperclip-lxc-deployment): TLS + password, only its
-          # own database. The reject rows are scoped to the USER across every
-          # database on purpose: a database-scoped reject would leave
-          # paperclip@<other> matching the generic 10/8 rows below in cleartext.
+          # paperclip (project paperclip-lxc-deployment): TLS + password, and only
+          # its own database. pg_hba field order is (DATABASE, USER, ADDRESS), so
+          # the reject rows read `all paperclip` — database=all, user=paperclip —
+          # which is what closes the generic 10/8 rows below for this user on every
+          # other database and on non-TLS connections.
           - hostssl paperclip paperclip 0.0.0.0/0 md5
           - hostssl paperclip paperclip ::/0 md5
-          - host paperclip all 0.0.0.0/0 reject
-          - host paperclip all ::/0 reject
+          - host all paperclip 0.0.0.0/0 reject
+          - host all paperclip ::/0 reject
           - host all all 10.0.0.0/8 md5
           - host all all 10.244.0.0/16 md5
