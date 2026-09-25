@@ -13,6 +13,13 @@ spec:
     - port: 5432
       targetPort: 5432
       name: postgres
+      # Pinned on purpose: the Tailscale operator allocates this NodePort
+      # automatically (allocateLoadBalancerNodePorts), and it is the path the
+      # TazPod container uses to reach PostgreSQL without the tailnet
+      # (project paperclip-lxc-deployment). Leaving it dynamic meant a Service
+      # recreation or a cluster rebuild could silently move the port and break
+      # every out-of-cluster consumer.
+      nodePort: 32227
   selector:
     postgres-operator.crunchydata.com/cluster: tazlab-db
     postgres-operator.crunchydata.com/role: master
