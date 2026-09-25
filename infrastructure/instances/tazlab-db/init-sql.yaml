@@ -61,3 +61,8 @@ data:
     GRANT ALL ON SCHEMA public TO hindsight;
     ALTER SCHEMA public OWNER TO hindsight;
     CREATE EXTENSION IF NOT EXISTS vector;
+
+    -- Setup Paperclip DB (project paperclip-lxc-deployment)
+    \c paperclip
+    GRANT ALL ON SCHEMA public TO paperclip;
+    ALTER SCHEMA public OWNER TO paperclip;
