@@ -1,0 +1,66 @@
+# Long-lived read-only API token for the Paperclip observation identity (design task T4.2).
+#
+# Kubernetes stopped creating a token Secret for every ServiceAccount in v1.24, so this one
+# is declared explicitly: a Secret of type kubernetes.io/service-account-token carrying the
+# kubernetes.io/service-account.name annotation is the supported way to ask the control
+# plane for a token that does not expire. The token controller fills in data.token (the
+# JWT), data.ca.crt and data.namespace. kustomize-controller declares none of those fields,
+# so Flux and the controller never fight over them — and the same holds for the label the
+# API server keeps on a legacy token Secret, kubernetes.io/legacy-token-last-used, which it
+# patches on each successful use. Expect that label to appear and change: it is the
+# platform, not drift.
+#
+# Why long-lived, when the design's rule is short-lived credentials (T4b)?
+# That rule needs somewhere to mint. A TokenRequest token (`kubectl create token`, 1h
+# default, 24h maximum) can only be minted by an identity allowed to create
+# `serviceaccounts/token` — that is, by a *more* privileged credential than the one being
+# minted — or by a human at a TTY. Observation-only access is the case the rule does not
+# cover: there is no lease to bound, no state to revert, and the blast radius is the read
+# set in rbac.yaml (no Secrets, no exec, no write verb anywhere in it, verified against the
+# live role). Short-lived cluster tokens therefore stay operator-side break-glass, and this
+# standing credential is the container's normal path.
+#
+# The value never enters git. Operator step, once, after this Secret is populated:
+#   kubectl -n flux-system get secret paperclip-observer-token -o jsonpath='{.data.token}' \
+#     | base64 -d | gopass insert -f -m paperclip/k8s-token
+#
+# Check the value is non-empty before inserting: a Secret counts as "Ready" the moment it
+# exists, and the token controller writes data.token a moment later — an empty insert is
+# the one failure mode this step has. Re-running the command is safe: `-f` overwrites
+# without prompting and the token does not change unless the Secret is deleted.
+#
+# Revocation, both immediate and requiring no restart of anything:
+#   * mark invalid but keep the object — survives reconciliation, because Flux owns no
+#     labels on this Secret:
+#       kubectl -n flux-system label secret paperclip-observer-token \
+#         kubernetes.io/legacy-token-invalid-since="$(date -u +%Y-%m-%dT%H:%M:%SZ)" --overwrite
+#   * or delete the Secret, let Flux recreate the object with a fresh token, and re-run the
+#     gopass step above:
+#       kubectl -n flux-system delete secret paperclip-observer-token
+# The API server validates a legacy token against the live Secret on every request — it
+# refuses a token whose Secret is gone, is awaiting deletion, or no longer matches
+# (pkg/serviceaccount/legacy.go) — so there is no revocation gap to reason about, despite
+# the JWT carrying no expiry of its own.
+#
+# The kubeconfig the container actually uses is NOT declared here: it is rendered by the
+# container's provisioning layer (tazpod/runtimes/lxc-paperclip/ansible/, the sibling of the
+# operator container's tazpod/runtimes/lxc/ansible/). This Secret is the source of truth for
+# two of its three values:
+#   cluster.server                     : https://192.168.1.210:6443   (lab constant, not a secret)
+#   cluster.certificate-authority-data : data['ca.crt'] of this Secret (the cluster CA, the same
+#                                        one the operator's own kubeconfig trusts)
+#   user.token                         : data['token'] of this Secret, delivered into the
+#                                        container as gopass entry `paperclip/k8s-token`
+# The layer reads those from gopass / inventory variables, never from the cluster at render
+# time, and writes the file for the unprivileged `paperclip` user with mode 0600. Note that
+# the lab's *operator* k8s credentials live under `k8s/` in the store (k8s/kubeconfig,
+# k8s/talosconfig); `paperclip/k8s-token` is the agent's own, and its path is fixed by the
+# provisioning layer's contract — rename it in both places or not at all.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: paperclip-observer-token
+  namespace: flux-system
+  annotations:
+    kubernetes.io/service-account.name: paperclip-observer
+type: kubernetes.io/service-account-token
