@@ -127,11 +127,24 @@ rules:
   - apiGroups: ["resource.k8s.io"]
     resources: ["resourceclaims", "resourceclaims/status", "resourceclaimtemplates"]
     verbs: ["get", "list", "watch"]
-  # Note: the `nodes` object is NOT in this cluster's `view` (verified on v1.35.0 — the
-  # only `nodes` in the set is metrics.k8s.io). So `kubectl get nodes` is forbidden to the
-  # agent, by design of the role it was given. Node-level visibility comes from the Talos
-  # `os:reader` client certificate and the Proxmox auditor ACL instead. If kubectl-level
-  # node read is wanted later, it has to be added here as a reviewed change.
+  # Core `nodes` read is added **on purpose**, against the note this file carried in its
+  # first revision. The cluster's `view` role does not include it (verified on v1.35.0 —
+  # the only `nodes` in that set is metrics.k8s.io), and the first revision left it out
+  # and deferred node visibility to the Talos `os:reader` certificate. That deferral was
+  # the wrong trade for this identity: the maintenance agent's first real job is a
+  # cluster health report whose first section is node status ("which node is not Ready
+  # and why"), and answering it from `kubectl` should not require holding a Talos client
+  # certificate for what is a read-only, secret-free object. `metrics.k8s.io` gives
+  # resource usage, not conditions, versions or taints.
+  #
+  # What it exposes, stated so the decision can be revisited: node spec/status includes
+  # kubelet addresses, container-runtime versions, labels/annotations and conditions.
+  # Nothing secret, and nothing that lets the holder change anything — the verbs stay
+  # read-only. If this is later judged too broad, the narrower shape is a labelSelector
+  # on the rule rather than removing the rule.
+  - apiGroups: [""]
+    resources: ["nodes", "nodes/status"]
+    verbs: ["get", "list", "watch"]
   #
   # --- `flux-view-flux-system`. Source: Flux v2.7.5 gotk-components.yaml (one rule
   # upstream; split across two apiGroups lines for line length only). This is what lets
