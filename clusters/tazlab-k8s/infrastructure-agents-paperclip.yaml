@@ -1,0 +1,39 @@
+# The Paperclip container's read-only cluster identity (design task T4.2): ServiceAccount,
+# ClusterRole (`view` ∪ `flux-view-flux-system`), its binding, and the long-lived token
+# Secret the container's kubeconfig authenticates with.
+#
+# No dependsOn: this is a leaf. Nothing it creates is consumed by another Kustomization —
+# the consumer is the container, through the provisioning layer — so there is nothing to
+# order it after; and it must be able to apply while the rest of the DAG is stuck, since it
+# is one of the identities the operator uses to *diagnose* a stuck cluster.
+#
+# On the first reconcile Flux creates the three objects; `prune: true` removes them again
+# if this path disappears from Git. Every later reconcile is a no-op: the manifest declares
+# no data field, so the token the control plane writes into the Secret is not a diff, and
+# the rest is plain declarative state. To watch it:
+#   flux get kustomizations infrastructure-agents-paperclip
+#   kubectl -n flux-system get sa,secret,clusterrole,clusterrolebinding | grep paperclip
+#   kubectl auth can-i --list --as=system:serviceaccount:flux-system:paperclip-observer
+# The last command is the acceptance check: it must list only get/list/watch and no
+# `secrets`. `wait: true` proves the objects exist and nothing more — a Secret is Ready as
+# soon as it exists, so it says nothing about data.token having been written yet; that is
+# why the operator step in infrastructure/agents/paperclip/token.yaml verifies the value.
+#
+# How the credential reaches the container (owned by the provisioning layer, not by this
+# repository): server https://192.168.1.210:6443, CA from this Secret's data['ca.crt'],
+# token from this Secret's data['token'] handed over as gopass entry `paperclip/k8s-token`.
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: infrastructure-agents-paperclip
+  namespace: flux-system
+spec:
+  interval: 15m
+  path: ./infrastructure/agents/paperclip
+  prune: true
+  wait: true
+  retryInterval: 1m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  timeout: 5m
