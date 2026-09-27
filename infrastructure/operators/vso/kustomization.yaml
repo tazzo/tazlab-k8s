@@ -15,5 +15,6 @@ resources:
   - sa-vso-auth-sa-monitoring.yaml
   - sa-vso-auth-sa-hindsight.yaml
   - sa-vso-auth-sa-teaching.yaml
+  - sa-vso-auth-sa-multica.yaml
 
   # PKI VaultAuth and VaultPKISecret moved to vso-secrets/kustomization.yaml
