@@ -1,0 +1,102 @@
+# Flux image automation for the Multica control plane (T2.8).
+#
+# The chart exposes repository *and* tag for both images, so the lab's pattern
+# applies: the pinned tags in apps/base/multica/helmrelease.yaml carry the setter
+# markers and this automation is what writes them. Nothing here pins by hand.
+#
+# Coupling to respect: the chart version (apps/base/multica/ocirepository.yaml)
+# and the two image tags are one upstream release. The semver ranges below are
+# therefore bounded to the pinned minor (0.5.x) — a new upstream minor is adopted
+# deliberately, chart first, in a commit that widens all three pins together. An
+# unbounded range would let the images move under a chart that still pins the old
+# appVersion, and migrations run from the image, not from the chart.
+#
+# Registry: the lab mirrors third-party images on Docker Hub
+# (tazzo/tazlab-multica-backend, tazzo/tazlab-multica-web). Those repositories do
+# not exist yet (checked 2026-09-27: 404), so both ImageRepository objects follow
+# the upstream GHCR images today — the same source as the values they feed. When
+# the mirror workflow publishes its first tag, the two `image:` fields here and
+# the two `repository:` values in helmrelease.yaml move in the same commit.
+#
+# The mirror workflow itself does not exist yet and is not invented here: it
+# belongs in tazlab-k8s/.github/workflows/ (the repository has no workflows at
+# all today), triggered by `on: schedule` + `on: workflow_dispatch`, copying a
+# released upstream tag to Docker Hub — the lab's existing workflows (blog-src,
+# wiki.tazlab.net, teaching.tazlab.net) only *build and push*, none of them
+# imports an upstream image, so there is no pattern to reproduce. Task T0.4 of
+# the plan is still open and owns that file.
+#
+# Contract for that workflow: it must copy the upstream release tag verbatim
+# (ghcr.io/multica-ai/multica-{backend,web}:v0.5.3 -> tazzo/tazlab-multica-*:v0.5.3),
+# because the semver policies below are what read the tags. A build counter or a
+# shorthand tag would be invisible to them.
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageRepository
+metadata:
+  name: multica-backend
+  namespace: flux-system
+spec:
+  image: ghcr.io/multica-ai/multica-backend
+  # The other five pipelines poll every minute; these two point at a third-party
+  # registry, where an upstream release is a monthly event, not a build.
+  interval: 30m
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImagePolicy
+metadata:
+  name: multica-backend
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: multica-backend
+  policy:
+    semver:
+      range: ">=0.5.0 <0.6.0"
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageRepository
+metadata:
+  name: multica-web
+  namespace: flux-system
+spec:
+  image: ghcr.io/multica-ai/multica-web
+  interval: 30m
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImagePolicy
+metadata:
+  name: multica-web
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: multica-web
+  policy:
+    semver:
+      range: ">=0.5.0 <0.6.0"
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageUpdateAutomation
+metadata:
+  name: multica
+  namespace: flux-system
+spec:
+  interval: 30m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  git:
+    checkout:
+      ref:
+        branch: master
+    commit:
+      author:
+        email: fluxcdbot@tazlab.net
+        name: fluxcdbot
+      messageTemplate: 'chore: self-update multica images [skip ci]'
+    push:
+      branch: master
+  update:
+    # Both markers live in the HelmRelease of this path: one commit moves the two
+    # images of a release together.
+    path: ./apps/base/multica
+    strategy: Setters
