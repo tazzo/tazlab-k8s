@@ -45,10 +45,10 @@ spec:
     images:
       backend:
         repository: ghcr.io/multica-ai/multica-backend
-        tag: "ghcr.io/multica-ai/multica-backend:v0.5.3" # {"$imagepolicy": "flux-system:multica-backend"}
+        tag: "ghcr.io/multica-ai/multica-backend:v0.5.3" # {"$imagepolicy": "flux-system:multica-backend:tag"}
       frontend:
         repository: ghcr.io/multica-ai/multica-web
-        tag: "ghcr.io/multica-ai/multica-web:v0.5.3" # {"$imagepolicy": "flux-system:multica-web"}
+        tag: "ghcr.io/multica-ai/multica-web:v0.5.3" # {"$imagepolicy": "flux-system:multica-web:tag"}
     backend:
       # strategy: Recreate and a ReadWriteOnce uploads volume: one writer.
       replicas: 1
