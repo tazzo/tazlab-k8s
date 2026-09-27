@@ -6,9 +6,13 @@ metadata:
   annotations:
     # Innesca il backup one-off richiesto dal passo 1 del major upgrade (PGO lo
     # rileva e crea il Job). Il valore cambia a ogni backup: e' il contatore.
+    postgres-operator.crunchydata.com/allow-upgrade: "tazlab-db-upgrade"
     postgres-operator.crunchydata.com/pgbackrest-backup: "pre-upgrade-pg17-20260927-0955"
 spec:
   postgresVersion: 16
+  # Spento per il major upgrade: PGO scala a zero database e pooler. Torna false nel commit
+  # che imposta postgresVersion: 17, dopo la rimozione dell'oggetto PGUpgrade.
+  shutdown: true
   databaseInitSQL:
     name: tazlab-db-init-sql
     key: init.sql
@@ -41,9 +45,10 @@ spec:
             name: s3-backrest-creds
       repos:
       - name: repo1
-        schedules:
-          full: "0 1 * * 0"
-          differential: "0 1 * * 1-6"
+        # Sospese durante la finestra: riattivate nel post-upgrade (task 3.9).
+        # schedules:
+        #   full: "0 1 * * 0"
+        #   differential: "0 1 * * 1-6"
         s3:
           bucket: "tazlab-storage"
           endpoint: "s3.amazonaws.com"

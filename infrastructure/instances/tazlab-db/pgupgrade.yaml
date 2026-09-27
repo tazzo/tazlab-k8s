@@ -1,0 +1,22 @@
+# Oggetto transitorio che esegue il major upgrade 16 -> 17 del cluster tazlab-db.
+# Vive solo per la durata dell'operazione: va rimosso (commit successivo) PRIMA di
+# impostare spec.postgresVersion: 17, altrimenti il controller rifiuta la riconciliazione.
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PGUpgrade
+metadata:
+  name: tazlab-db-upgrade
+  namespace: tazlab-db
+spec:
+  postgresClusterName: tazlab-db
+  fromPostgresVersion: 16
+  toPostgresVersion: 17
+  # Immagine fissata esplicitamente: e' quella dichiarata dall'operatore (RELATED_IMAGE_PGUPGRADE).
+  image: registry.developers.crunchydata.com/crunchydata/crunchy-upgrade:ubi8-5.7.2-0
+  transferMethod: Link
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
