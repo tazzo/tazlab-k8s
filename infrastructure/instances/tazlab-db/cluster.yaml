@@ -6,7 +6,7 @@ metadata:
   annotations:
     # Innesca il backup one-off richiesto dal passo 1 del major upgrade (PGO lo
     # rileva e crea il Job). Il valore cambia a ogni backup: e' il contatore.
-    postgres-operator.crunchydata.com/pgbackrest-backup: "pre-upgrade-pg17-20260927-0955"
+    postgres-operator.crunchydata.com/pgbackrest-backup: "post-upgrade-pg17-20260927-1014"
 spec:
   postgresVersion: 17
   # Spento per il major upgrade: PGO scala a zero database e pooler. Torna false nel commit
