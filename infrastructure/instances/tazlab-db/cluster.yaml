@@ -77,6 +77,9 @@ spec:
     - name: paperclip
       databases:
         - paperclip
+    - name: multica
+      databases:
+        - multica
   customTLSSecret:
     name: tazlab-db-server-tls
     items:
@@ -128,5 +131,16 @@ spec:
           - hostssl paperclip paperclip ::/0 md5
           - host all paperclip 0.0.0.0/0 reject
           - host all paperclip ::/0 reject
+          # multica (project multica-agent-orchestration): certificate auth only,
+          # and only its own database. The two reject rows are what make that
+          # true: pg_hba is first-match-wins, so without them the `multica` role
+          # would still fall through to the generic `host all all 10.0.0.0/8 md5`
+          # / `10.244.0.0/16 md5` rows below and authenticate with a password.
+          # They are placed here, above those generic rows, and after the cert
+          # rows, which stay the only accepted way in.
+          - hostssl multica multica 0.0.0.0/0 cert
+          - hostssl multica multica ::/0 cert
+          - host all multica 0.0.0.0/0 reject
+          - host all multica ::/0 reject
           - host all all 10.0.0.0/8 md5
           - host all all 10.244.0.0/16 md5
