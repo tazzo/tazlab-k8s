@@ -25,7 +25,6 @@ spec:
     # Produced by the VaultStaticSecret of this namespace (VSO). The chart
     # references the Secret by name and never templates it.
     existingSecret: multica-secrets
-
     # O3 — the shared PostgreSQL cluster. With external.enabled the chart creates
     # neither Deployment, PVC nor Service for postgres; the connection arrives as
     # DATABASE_URL inside multica-secrets (certificate authentication, no password).
@@ -34,7 +33,6 @@ spec:
         enabled: true
       database: multica
       user: multica
-
     # Upstream images pinned to the chart's appVersion (v0.5.3): the tag is the
     # pin, never a moving reference. These two fields are written by the Flux
     # image automation of infrastructure/automation/multica (setter markers).
@@ -47,11 +45,10 @@ spec:
     images:
       backend:
         repository: ghcr.io/multica-ai/multica-backend
-        tag: "v0.5.3" # {"$imagepolicy": "flux-system:multica-backend"}
+        tag: "ghcr.io/multica-ai/multica-backend:v0.5.3" # {"$imagepolicy": "flux-system:multica-backend"}
       frontend:
         repository: ghcr.io/multica-ai/multica-web
-        tag: "v0.5.3" # {"$imagepolicy": "flux-system:multica-web"}
-
+        tag: "ghcr.io/multica-ai/multica-web:v0.5.3" # {"$imagepolicy": "flux-system:multica-web"}
     backend:
       # strategy: Recreate and a ReadWriteOnce uploads volume: one writer.
       replicas: 1
@@ -105,14 +102,12 @@ spec:
         limits:
           cpu: 500m
           memory: 512Mi
-
     # No Ingress. The chart has no switch per Ingress, its default class is
     # `traefik` and *.tazlab.net resolves to the public IP with Traefik listening
     # on the WAN: an Ingress here would publish the dashboard to Internet.
     # Exposure is the frontend Service, patched below.
     ingress:
       enabled: false
-
   # Four things this deployment needs cannot be expressed in `values`: the chart
   # hardcodes type ClusterIP on both Services, renders no Service annotations, no
   # extra volumes and no frontend probes. They are patched on the rendered output
