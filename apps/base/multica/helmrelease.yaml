@@ -124,12 +124,12 @@ spec:
           #    MetalLB VIP (precedente: mnemosyne-mcp, hindsight-api).
           - target:
               kind: Service
-              name: multica-frontend
+              name: multica-multica-frontend
             patch: |
               apiVersion: v1
               kind: Service
               metadata:
-                name: multica-frontend
+                name: multica-multica-frontend
                 annotations:
                   gethomepage.dev/enabled: "true"
                   gethomepage.dev/group: Developer
@@ -144,12 +144,12 @@ spec:
           # 2. Scrape port for the backend. The chart's Service carries only 8080.
           - target:
               kind: Service
-              name: multica-backend
+              name: multica-multica-backend
             patch: |
               apiVersion: v1
               kind: Service
               metadata:
-                name: multica-backend
+                name: multica-multica-backend
               spec:
                 ports:
                   - name: metrics
@@ -160,12 +160,12 @@ spec:
           #    it is set — the chart exposes no key for either).
           - target:
               kind: Deployment
-              name: multica-backend
+              name: multica-multica-backend
             patch: |
               apiVersion: apps/v1
               kind: Deployment
               metadata:
-                name: multica-backend
+                name: multica-multica-backend
               spec:
                 template:
                   spec:
@@ -194,12 +194,12 @@ spec:
           #    own. The backend keeps the chart's own probes (/healthz, /health).
           - target:
               kind: Deployment
-              name: multica-frontend
+              name: multica-multica-frontend
             patch: |
               apiVersion: apps/v1
               kind: Deployment
               metadata:
-                name: multica-frontend
+                name: multica-multica-frontend
               spec:
                 template:
                   spec:
