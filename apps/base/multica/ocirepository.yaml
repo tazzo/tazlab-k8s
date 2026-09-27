@@ -1,0 +1,12 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: multica
+  namespace: multica
+spec:
+  interval: 1h
+  # The chart is published as OCI (deploy/helm/multica of multica-ai/multica);
+  # the version is pinned, there is no moving reference (reflector does the same).
+  url: oci://ghcr.io/multica-ai/charts/multica
+  ref:
+    tag: 0.5.3

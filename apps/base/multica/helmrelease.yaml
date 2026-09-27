@@ -1,0 +1,224 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: multica
+  namespace: multica
+spec:
+  interval: 30m
+  # Cold start runs `./migrate up` before the API serves. The chart budgets 3m
+  # for the database to answer and holds liveness for 10m (startupProbe,
+  # failureThreshold 60 x 10s); the helm action timeout has to outlive that.
+  timeout: 10m
+  chartRef:
+    kind: OCIRepository
+    name: multica
+    namespace: multica
+  targetNamespace: multica
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    # Produced by the VaultStaticSecret of this namespace (VSO). The chart
+    # references the Secret by name and never templates it.
+    existingSecret: multica-secrets
+
+    # O3 — the shared PostgreSQL cluster. With external.enabled the chart creates
+    # neither Deployment, PVC nor Service for postgres; the connection arrives as
+    # DATABASE_URL inside multica-secrets (certificate authentication, no password).
+    postgres:
+      external:
+        enabled: true
+      database: multica
+      user: multica
+
+    # Upstream images pinned to the chart's appVersion (v0.5.3): the tag is the
+    # pin, never a moving reference. These two fields are written by the Flux
+    # image automation of infrastructure/automation/multica (setter markers).
+    #
+    # The lab mirrors third-party images on Docker Hub (tazzo/tazlab-multica-*).
+    # That workflow does not exist yet — checked 2026-09-27, both repositories
+    # answer 404 — so `repository` and the two ImageRepository objects point at the
+    # upstream GHCR today. When the mirror publishes its first tag, the two
+    # repositories move here and in automation.yaml in the same commit.
+    images:
+      backend:
+        repository: ghcr.io/multica-ai/multica-backend
+        tag: "v0.5.3" # {"$imagepolicy": "flux-system:multica-backend"}
+      frontend:
+        repository: ghcr.io/multica-ai/multica-web
+        tag: "v0.5.3" # {"$imagepolicy": "flux-system:multica-web"}
+
+    backend:
+      # strategy: Recreate and a ReadWriteOnce uploads volume: one writer.
+      replicas: 1
+      uploads:
+        persistence:
+          # Without S3 the backend serves /uploads from this volume (debito TD-099:
+          # no backup for it, accepted by the operator).
+          enabled: true
+          size: 5Gi
+          storageClass: tazlab-storage
+          accessModes:
+            - ReadWriteOnce
+      config:
+        # One LAN surface, no host name: the browser talks only to the frontend,
+        # which proxies /v1 /api /auth /uploads /ws to the backend same-origin.
+        # Nothing here depends on DNS, and no CORS is configured
+        # (corsAllowedOrigins stays empty: there is no second origin).
+        appUrl: http://${traefik_lb_ip}:3000
+        frontendOrigin: http://${traefik_lb_ip}:3000
+        googleRedirectUri: http://${traefik_lb_ip}:3000/auth/callback
+        # Default is http://api.multica.dev.lan — a host that does not exist here,
+        # and this is the base the browser is given for locally stored uploads.
+        localUploadBaseUrl: http://${traefik_lb_ip}:3000
+        # Anonymous self-host telemetry off (DESIGN §G): the endpoint is compiled
+        # into the binary, this switch is the only control.
+        doNotTrack: "1"
+        # allowSignup / allowedEmails / allowedEmailDomains keep the chart default:
+        # how the operator authenticates (mail relay vs. code read from the backend
+        # log) is still open in the plan (T0.6), and an allowlist written before that
+        # decision could lock the only account out. The exposure is LAN-only.
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: "1"
+          memory: 1Gi
+    frontend:
+      replicas: 1
+      config:
+        # Empty on purpose: the runtime proxy of the frontend resolves this
+        # release's backend Service. That is what keeps the backend off the LAN.
+        remoteApiUrl: ""
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        # Half the chart default (1Gi): the lab runs other Next.js standalones at
+        # 256-512Mi (homepage, teaching) and neither node is short of requests
+        # (200m/512Mi requested together with the backend).
+        limits:
+          cpu: 500m
+          memory: 512Mi
+
+    # No Ingress. The chart has no switch per Ingress, its default class is
+    # `traefik` and *.tazlab.net resolves to the public IP with Traefik listening
+    # on the WAN: an Ingress here would publish the dashboard to Internet.
+    # Exposure is the frontend Service, patched below.
+    ingress:
+      enabled: false
+
+  # Four things this deployment needs cannot be expressed in `values`: the chart
+  # hardcodes type ClusterIP on both Services, renders no Service annotations, no
+  # extra volumes and no frontend probes. They are patched on the rendered output
+  # instead of forking the chart.
+  #
+  # The patch targets are tied to the pinned chart version — they were checked
+  # against the rendered output of 0.5.3 (`helm template` + `kustomize build`).
+  # A chart bump has to re-run that render: an unmatched target is a silent no-op,
+  # not an error.
+  postRenderers:
+    - kustomize:
+        patches:
+          # 1. The only exposed surface: the frontend Service, on the shared
+          #    MetalLB VIP (precedente: mnemosyne-mcp, hindsight-api).
+          - target:
+              kind: Service
+              name: multica-frontend
+            patch: |
+              apiVersion: v1
+              kind: Service
+              metadata:
+                name: multica-frontend
+                annotations:
+                  gethomepage.dev/enabled: "true"
+                  gethomepage.dev/group: Developer
+                  gethomepage.dev/icon: mdi-robot
+                  gethomepage.dev/name: Multica
+                  gethomepage.dev/description: Agent orchestration control plane
+                  metallb.universe.tf/loadBalancerIPs: ${traefik_lb_ip}
+                  metallb.universe.tf/allow-shared-ip: tazlab-internal-dashboard
+                  metallb.universe.tf/ip-allocated-from-pool: default-pool
+              spec:
+                type: LoadBalancer
+          # 2. Scrape port for the backend. The chart's Service carries only 8080.
+          - target:
+              kind: Service
+              name: multica-backend
+            patch: |
+              apiVersion: v1
+              kind: Service
+              metadata:
+                name: multica-backend
+              spec:
+                ports:
+                  - name: metrics
+                    port: 9090
+                    targetPort: 9090
+          # 3. Certificate identity for the database and the address of the
+          #    metrics listener (the backend serves /metrics on METRICS_ADDR when
+          #    it is set — the chart exposes no key for either).
+          - target:
+              kind: Deployment
+              name: multica-backend
+            patch: |
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: multica-backend
+              spec:
+                template:
+                  spec:
+                    containers:
+                      - name: backend
+                        env:
+                          - name: METRICS_ADDR
+                            value: "0.0.0.0:9090"
+                        volumeMounts:
+                          - name: db-client-certs
+                            mountPath: /etc/certs
+                            readOnly: true
+                    volumes:
+                      - name: db-client-certs
+                        secret:
+                          # VaultPKISecret db-client-multica-tls. Its CN=multica is the
+                          # identity pg_hba accepts with `hostssl ... cert`, and the
+                          # DATABASE_URL points sslcert/sslkey/sslrootcert here.
+                          # 0400 is enough: the backend image (alpine runtime, no USER)
+                          # runs as root.
+                          secretName: db-client-multica-tls
+                          defaultMode: 0400
+          # 4. The chart renders no probe for the frontend, and the upstream image
+          #    has no health route (checked: apps/web exposes none). The socket is
+          #    therefore the only honest signal — the other apps probe a path they
+          #    own. The backend keeps the chart's own probes (/healthz, /health).
+          - target:
+              kind: Deployment
+              name: multica-frontend
+            patch: |
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: multica-frontend
+              spec:
+                template:
+                  spec:
+                    containers:
+                      - name: frontend
+                        readinessProbe:
+                          tcpSocket:
+                            port: 3000
+                          initialDelaySeconds: 10
+                          periodSeconds: 10
+                          failureThreshold: 3
+                        livenessProbe:
+                          tcpSocket:
+                            port: 3000
+                          initialDelaySeconds: 30
+                          periodSeconds: 30
+                          failureThreshold: 3
