@@ -12,7 +12,9 @@ spec:
   toPostgresVersion: 17
   # Immagine fissata esplicitamente: e' quella dichiarata dall'operatore (RELATED_IMAGE_PGUPGRADE).
   image: registry.developers.crunchydata.com/crunchydata/crunchy-upgrade:ubi8-5.7.2-0
-  transferMethod: Link
+  # Nessun `transferMethod`: il campo esiste nella CRD 6.0.x ma NON in quella installata
+  # (PGO 5.7.2) — l'API server lo rifiuta con "field not declared in schema". Il metodo
+  # predefinito e' comunque Link (hard link), che e' quello che vogliamo.
   resources:
     requests:
       cpu: 500m
