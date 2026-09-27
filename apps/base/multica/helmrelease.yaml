@@ -75,10 +75,20 @@ spec:
         # Anonymous self-host telemetry off (DESIGN §G): the endpoint is compiled
         # into the binary, this switch is the only control.
         doNotTrack: "1"
+        # The login code travels by email instead of being read from the backend
+        # log (T0.6). The chart default `noreply@multica.ai` belongs to a domain
+        # this lab does not own: as soon as RESEND_API_KEY is set, Resend refuses
+        # that sender (403, unverified domain) and the code is never delivered.
+        # `onboarding@resend.dev` is the sandbox sender of a free Resend account.
+        # It delivers only to the address the Resend account was created with —
+        # the operator's mailbox, which is also the only address that can receive
+        # mail here (tazlab.net publishes no MX record). Once a sending domain is
+        # verified in Resend this value moves to an address on that domain.
+        resendFromEmail: onboarding@resend.dev
         # allowSignup / allowedEmails / allowedEmailDomains keep the chart default:
-        # how the operator authenticates (mail relay vs. code read from the backend
-        # log) is still open in the plan (T0.6), and an allowlist written before that
-        # decision could lock the only account out. The exposure is LAN-only.
+        # an allowlist adds no restriction the mail provider does not already
+        # apply (sandbox sender: one recipient), and the exposure is LAN-only.
+        # Open signup vs. invitation-only is a separate decision.
       resources:
         requests:
           cpu: 100m
