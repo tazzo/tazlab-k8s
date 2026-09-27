@@ -3,6 +3,10 @@ kind: PostgresCluster
 metadata:
   name: tazlab-db
   namespace: tazlab-db
+  annotations:
+    # Innesca il backup one-off richiesto dal passo 1 del major upgrade (PGO lo
+    # rileva e crea il Job). Il valore cambia a ogni backup: e' il contatore.
+    postgres-operator.crunchydata.com/pgbackrest-backup: "pre-upgrade-pg17-20260927-0955"
 spec:
   postgresVersion: 16
   databaseInitSQL:
@@ -23,6 +27,12 @@ spec:
             storage: 4Gi
   backups:
     pgbackrest:
+      # Backup manuale one-off, di tipo full: e' la base di ripristino che serve
+      # prima del major upgrade (un differenziale non basterebbe).
+      manual:
+        repoName: repo1
+        options:
+          - --type=full
       global:
         repo1-path: /pgbackrest/repo1
         repo1-type: s3
