@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ocirepository.yaml
+  - helmrelease.yaml
+  # All five are listed, and redis.yaml is the one that is easy to forget: the
+  # relay's startup runs PubSubManager::new(...)?, which is fatal before the
+  # health listener opens. Without this entry Redis is not applied and the relay
+  # does not come up at all (PIN §2.3, §2.5).
+  - redis.yaml
+  - service-lan.yaml
+  - servicemonitor.yaml

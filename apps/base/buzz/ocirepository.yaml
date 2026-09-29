@@ -1,0 +1,16 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  # Declared, not derived: the release name feeds buzz.fullname, and from that
+  # name come the Deployment/Service names the rolloutRestartTargets and the
+  # `kubectl exec deploy/...` selector depend on. `buzz` contains the chart name
+  # `buzz`, so fullname is `buzz` — not `buzz-buzz`.
+  name: buzz
+  namespace: buzz
+spec:
+  interval: 1h
+  # Chart published as OCI by upstream Block; version pinned, no moving
+  # reference (same shape as apps/base/multica/ocirepository.yaml).
+  url: oci://ghcr.io/block/buzz/charts/buzz
+  ref:
+    tag: 0.1.9

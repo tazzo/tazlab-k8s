@@ -1,0 +1,38 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: buzz
+  namespace: buzz
+  labels:
+    # kube-prometheus-stack selects ServiceMonitors by this label in every
+    # namespace (serviceMonitorNamespaceSelector is empty).
+    release: kube-prometheus-stack
+spec:
+  # SELECTS THE CHART'S ClusterIP Service `buzz` — the only Service that carries
+  # the `metrics` port (9102). buzz-lan deliberately has one port only, so
+  # putting health or metrics on the LAN is not an option.
+  #
+  # The two labels below are the ones that Service really carries. Verified by
+  # rendering chart 0.1.9 with release `buzz` (helm template, 2026-09-29):
+  # `buzz.labels` emits helm.sh/chart + selectorLabels(name, instance) +
+  # version + managed-by + part-of — and NOT `app.kubernetes.io/component`.
+  # That label exists only on the pod (buzz.relaySelectorLabels) and in the
+  # Service's spec.selector.
+  #
+  # So the three-label selector that reads as "complete" (name+instance+
+  # component: relay) would match NO Service, and the result would be an object
+  # that is Ready and collects nothing — exactly the failure the multica
+  # ServiceMonitor has on this cluster (it selects instance: multica while the
+  # live Service carries instance: multica-multica: zero targets). A wrong
+  # selector is not an error, it is silence. The live proof for this one is a
+  # non-zero target count on Prometheus, checked in the Phase 2 acceptance.
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: buzz
+      app.kubernetes.io/instance: buzz
+  namespaceSelector:
+    matchNames: [buzz]
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 60s

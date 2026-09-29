@@ -1,0 +1,156 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  # See ocirepository.yaml: the release name is declared, and every object name
+  # derives from it.
+  name: buzz
+  namespace: buzz
+spec:
+  interval: 30m
+  # The first boot runs the sqlx migrations on an empty database before the
+  # health listener opens, and the chart's default startupProbe budget is
+  # 60 x 2s = 120 s. The budget is raised below (failureThreshold 300 x 2s =
+  # 10 min) so the probe does not kill a pod that is legitimately migrating;
+  # the helm action timeout has to outlive it.
+  timeout: 10m
+  chartRef:
+    kind: OCIRepository
+    name: buzz
+    namespace: buzz
+  targetNamespace: buzz
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    # ── Identity and address ────────────────────────────────────────────────
+    # THE IDENTITY OF THE DEPLOYMENT. The relay resolves its community from the
+    # Host header, before any handler, and seeds it from RELAY_URL at first
+    # start: two hosts would be two communities, and the host is written once.
+    relayUrl: ws://${traefik_lb_ip}:3010
+    # Public half of the operator's key (gopass cluster/buzz/owner-public-key).
+    # Required because relay.requireRelayMembership is true by default; the
+    # relay bootstraps the owner as a member from this value.
+    ownerPubkey: "5cc846a9492e974e3f560039d5f24909d109b0f3f6d26899b07749cba7d45b84"
+
+    # ── Image ──────────────────────────────────────────────────────────────
+    image:
+      repository: ghcr.io/block/buzz
+      # Digest, never the tag: 0.2.1 is a moving reference and the whole
+      # project is pinned to one revision (harness, CLI and relay together).
+      digest: sha256:4e31b7c7abb7d00b6f513dc559e58d2b980416f1dc400aa01bcf762cf2989cfc
+    replicaCount: 1
+    autoscaling:
+      # One schedulable node (the other is control-plane with NoSchedule) and no
+      # adapter for the custom gauge the HPA would want.
+      enabled: false
+
+    # ── Secrets ────────────────────────────────────────────────────────────
+    # Produced by the VaultStaticSecret in this namespace. The chart references
+    # the Secret by name and never templates it, so the relay identity and the
+    # connection strings are state that outlives the release.
+    secrets:
+      existingSecret: buzz-secrets
+
+    # ── Exposure (D4: private, LAN + tailnet, no Ingress) ──────────────────
+    # The chart renders no usable Service: type ClusterIP is hardcoded and the
+    # LAN surface is a separate object (service-lan.yaml) that declares ONE
+    # port. health (8080) and metrics (9102) stay inside the cluster.
+    ingress:
+      enabled: false
+    httproute:
+      enabled: false
+    service:
+      type: ClusterIP
+      port: 3000
+      healthPort: 8080
+      metricsPort: 9102
+    # The lab's own ServiceMonitor selects this ClusterIP Service, so the
+    # chart's ServiceMonitor stays off: it does not know the labels the lab's
+    # Prometheus selects on.
+    serviceMonitor:
+      enabled: false
+
+    # ── Persistence ────────────────────────────────────────────────────────
+    persistence:
+      git:
+        # Scratch emptyDir: the forge is not used (D3) and no git state lives
+        # on disk — the object store and Postgres are the sources of truth.
+        enabled: false
+        size: 1Gi
+    git:
+      # The chart default is a 7 GiB emptyDir per pod with no ephemeral-storage
+      # request at all. 1 GiB is plenty for a scratch cache nobody populates.
+      packCacheVolumeSize: 1Gi
+
+    # ── Object storage: none (D2) ──────────────────────────────────────────
+    # No s3.endpoint, no minio, no BUZZ_S3_* keys — not even empty ones. The
+    # media surface answers with an error and that is the intent. What makes
+    # the chart's S3 validation pass is secrets.existingSecret (see
+    # templates/_validate.tpl), and what keeps the relay from probing a bucket
+    # at boot is BUZZ_GIT_CONFORMANCE_PROBE=false below.
+
+    # ── Storage accounting: off ────────────────────────────────────────────
+    storageAccounting:
+      # The worker requests 20 GiB of memory: unschedulable on this node.
+      enabled: false
+      # STRING "off", not bare `off`: bare off is YAML boolean false and the
+      # chart's values.schema.json rejects it
+      # ("at '/storageAccounting/relayMode': got boolean, want string").
+      relayMode: "off"
+
+    # ── Migrations ─────────────────────────────────────────────────────────
+    migrate:
+      # Only measured path upstream; migrate.preUpgradeJob has no template in
+      # this chart version, so nothing is planned around it.
+      autoMigrate: true
+
+    relay:
+      terminationGracePeriodSeconds: 60
+      startupProbe:
+        httpGet:
+          path: /_liveness
+          port: health
+        # 300 x 2s = 600 s: the first boot migrates a fresh database and the
+        # default 120 s kills the pod mid-migration.
+        failureThreshold: 300
+        periodSeconds: 2
+      resources:
+        requests:
+          cpu: 500m
+          memory: 512Mi
+        limits:
+          cpu: "1"
+          memory: 1Gi
+      # The two things this deployment needs that the chart's values cannot
+      # express (see apps/base/multica/helmrelease.yaml for the same shape).
+      extraEnv:
+        # D2: without S3 the relay's startup conformance probe would exit the
+        # process after reaching for a bucket that does not exist.
+        - name: BUZZ_GIT_CONFORMANCE_PROBE
+          value: "false"
+        # Client certificate for tazlab-db, delivered as PEM rather than as
+        # mounted files. The relay runs as UID/GID 65532 and the route avoids
+        # the file-permission question entirely; sqlx 0.9 accepts a PEM string
+        # in these three variables (the URL parameters only take paths).
+        # ca.crt is the VaultPKISecret output and carries the intermediate plus
+        # the offline root: with sslmode=verify-full and a root CA bundle
+        # missing the offline root the handshake never completes.
+        - name: PGSSLROOTCERT
+          valueFrom:
+            secretKeyRef:
+              name: db-client-buzz-tls
+              key: ca.crt
+        - name: PGSSLCERT
+          valueFrom:
+            secretKeyRef:
+              name: db-client-buzz-tls
+              key: tls.crt
+        - name: PGSSLKEY
+          valueFrom:
+            secretKeyRef:
+              name: db-client-buzz-tls
+              key: tls.key

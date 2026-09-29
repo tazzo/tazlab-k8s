@@ -1,0 +1,26 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: apps-buzz
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: infrastructure-configs
+    # The relay's DATABASE_URL and BUZZ_RELAY_PRIVATE_KEY come from a
+    # VaultStaticSecret, and its client certificate from a VaultPKISecret: both
+    # live in infrastructure-vso-secrets. Reconciling this Kustomization first
+    # would install the release against a Secret that does not exist yet, and
+    # the chart references DATABASE_URL with a non-optional secretKeyRef.
+    - name: infrastructure-vso-secrets
+  interval: 15m
+  path: ./apps/cluster/buzz
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  timeout: 5m
+  retryInterval: 1m
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-vars

@@ -1,0 +1,49 @@
+# The only exposed surface of the relay (D4: LAN + tailnet, no public name, no
+# Ingress, no proxy in the path).
+#
+# A separate object rather than a patch of the chart's Service, because the
+# chart's Service declares THREE ports (app, health 8080, metrics 9102):
+# exposing it as-is would publish /_status and /metrics to the LAN. Here there is
+# one port, app, 3010 -> 3000.
+apiVersion: v1
+kind: Service
+metadata:
+  name: buzz-lan
+  namespace: buzz
+  labels:
+    app.kubernetes.io/name: buzz
+    app.kubernetes.io/instance: buzz
+    app.kubernetes.io/component: relay
+  annotations:
+    # Homepage registration: the dashboard shows only what is annotated
+    # (precedente: apps/base/multica/helmrelease.yaml:144-148).
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Developer
+    gethomepage.dev/icon: mdi-forum-outline
+    gethomepage.dev/name: Buzz
+    gethomepage.dev/description: Nostr relay workspace (humans and agents)
+    # ── The three MetalLB annotations, spelled out WITH the prefix ──────────
+    # MetalLB does not validate annotations: an unknown one is ignored in
+    # silence. Without metallb.universe.tf/allow-shared-ip the controller sees
+    # loadBalancerIPs but not the sharing declaration, refuses to hand out the
+    # already-taken 192.168.1.240, leaves status.loadBalancer.ingress empty and
+    # the Service stuck at <pending> — port 3010 would simply not exist, with no
+    # message pointing at the cause.
+    # Precedente: apps/base/mnemosyne-mcp/service.yaml:11-13.
+    metallb.universe.tf/loadBalancerIPs: ${traefik_lb_ip}
+    metallb.universe.tf/allow-shared-ip: tazlab-internal-dashboard
+    metallb.universe.tf/ip-allocated-from-pool: default-pool
+spec:
+  type: LoadBalancer
+  selector:
+    # The relay pod labels, written out in full and not inherited from another
+    # project: the chart's buzz.relaySelectorLabels are name/instance/component,
+    # with `instance: buzz` derived from the declared release name.
+    app.kubernetes.io/name: buzz
+    app.kubernetes.io/instance: buzz
+    app.kubernetes.io/component: relay
+  ports:
+    - name: app
+      port: 3010
+      targetPort: app
+      protocol: TCP
