@@ -17,6 +17,14 @@ spec:
     kind: OCIRepository
     name: buzz
     namespace: buzz
+  # DECLARED, NOT DERIVED. helm-controller derives the Helm release name as
+  # `<helmrelease-name>-<targetNamespace>` whenever `targetNamespace` is set —
+  # so without this line the release is `buzz-buzz`, buzz.fullname is
+  # `buzz-buzz`, and every name this project depends on (rolloutRestartTargets,
+  # `kubectl exec deploy/...`, the Service selectors, the ServiceMonitor) is
+  # wrong by a silent prefix. Verified live 2026-09-29: the first reconcile
+  # created `Deployment/buzz-buzz` and pods `buzz-buzz-6f85cc9469-*`.
+  releaseName: buzz
   targetNamespace: buzz
   install:
     remediation:
@@ -80,11 +88,18 @@ spec:
         # Scratch emptyDir: the forge is not used (D3) and no git state lives
         # on disk — the object store and Postgres are the sources of truth.
         enabled: false
-        size: 1Gi
+        # 512 MiB, not the 1 GiB first written: the single schedulable node's
+        # filesystem is 17.78 GiB with 14.9 GiB already used, and it went to
+        # DiskPressure the moment this pod landed (2026-09-29 — see
+        # retrospective.md, "the node disk"). Nothing here is a source of
+        # truth — the forge is off (D3) — so the scratch is sized to what a
+        # relay that never serves a git request actually writes.
+        size: 512Mi
     git:
       # The chart default is a 7 GiB emptyDir per pod with no ephemeral-storage
-      # request at all. 1 GiB is plenty for a scratch cache nobody populates.
-      packCacheVolumeSize: 1Gi
+      # request at all — which is how this deployment nearly pushed a shared
+      # node over its eviction threshold on the first reconcile.
+      packCacheVolumeSize: 512Mi
 
     # ── Object storage: none (D2) ──────────────────────────────────────────
     # No s3.endpoint, no minio, no BUZZ_S3_* keys — not even empty ones. The
@@ -107,6 +122,7 @@ spec:
       # Only measured path upstream; migrate.preUpgradeJob has no template in
       # this chart version, so nothing is planned around it.
       autoMigrate: true
+
 
     relay:
       terminationGracePeriodSeconds: 60
