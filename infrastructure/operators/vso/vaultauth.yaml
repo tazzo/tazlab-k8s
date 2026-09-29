@@ -17,6 +17,7 @@ spec:
     - hindsight
     - teaching
     - multica
+    - buzz
   method: jwt
   mount: jwt
   jwt:
