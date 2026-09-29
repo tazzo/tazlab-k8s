@@ -1,0 +1,70 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: buzz-db-grants
+  namespace: tazlab-db
+  labels:
+    app: buzz-db-grants
+    app.kubernetes.io/name: buzz-db-grants
+spec:
+  # GitOps-stable one-shot Job (kustomize-controller v1.7.x dry-run gotcha):
+  # without manualSelector the apiserver injects controller-uid/job-name labels
+  # into spec.template on creation; the next SSA apply then sees an immutable
+  # spec.template diff and the whole instances kustomization freezes until the
+  # Job is deleted manually. manualSelector keeps desired == live forever.
+  # Precedente: multica-db-grants-job.yaml.
+  manualSelector: true
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: buzz-db-grants
+  backoffLimit: 6
+  template:
+    metadata:
+      labels:
+        app: buzz-db-grants
+        app.kubernetes.io/name: buzz-db-grants
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: psql
+          # Digest pinned, same image as the multica grants Job
+          # (postgres:16-alpine @ 2026-08-28).
+          image: postgres@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685
+          env:
+            - name: PGHOST
+              value: tazlab-db-primary.tazlab-db.svc
+            - name: PGPORT
+              value: "5432"
+            - name: PGDATABASE
+              value: buzz
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: tazlab-db-pguser-postgres
+                  key: user
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: tazlab-db-pguser-postgres
+                  key: password
+          command: ["sh", "-c", "-e"]
+          args:
+            - |
+              # Schema grants for the live cluster path. databaseInitSQL
+              # (tazlab-db-init-sql) only runs at bootstrap, so this Job is the
+              # Flux-managed equivalent that gives the `buzz` role ownership of its
+              # own schema, exactly as init.sql does for hindsight/paperclip and as
+              # multica-db-grants-job.yaml does for multica.
+              # ONE-SHOT SAFE: at bootstrap PGO boots in parallel — wait up to 10 min
+              # for the DB (this also waits for PGO to create it from spec.users),
+              # then run the idempotent SQL (no-op if init-sql ran already).
+              i=0
+              until psql -t -c "SELECT 1" >/dev/null 2>&1; do
+                i=$((i+1))
+                [ "$i" -gt 120 ] && echo "FATAL: database not reachable in 10m" && exit 1
+                echo "waiting for database ($i)..."
+                sleep 5
+              done
+              psql -v ON_ERROR_STOP=1 -c "GRANT ALL ON SCHEMA public TO buzz;"
+              psql -v ON_ERROR_STOP=1 -c "ALTER SCHEMA public OWNER TO buzz;"
+              psql -v ON_ERROR_STOP=1 -t -c "SELECT nspname || ' owner=' || pg_get_userbyid(nspowner) FROM pg_namespace WHERE nspname = 'public';"

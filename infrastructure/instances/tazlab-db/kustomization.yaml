@@ -11,3 +11,4 @@ resources:
   - vaultpkisecret-client-tazlab-admin.yaml
   - hindsight-db-extensions-job.yaml
   - multica-db-grants-job.yaml
+  - buzz-db-grants-job.yaml

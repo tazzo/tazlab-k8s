@@ -1,0 +1,163 @@
+# Buzz's own Redis (INV-9: one shared-state instance per service, in its own pod,
+# in the same network context). The relay cannot start without it — at the pinned
+# revision `PubSubManager::new(...)?` is a fatal startup phase, called before the
+# health listener opens (PIN §2.3, §2.5).
+#
+# Ephemeral by design: everything Redis holds is TTL-bound and rebuildable
+# (presence ≤180 s, rate-limit windows, replay guard ≤120 s), so there is no PVC
+# and no backup (debate R7). `--maxmemory-policy noeviction` because no Buzz key
+# may vanish silently: the NIP-98 replay guard fails closed on errors, not on
+# evictions.
+#
+# Image pinned BY DIGEST (library/redis:7-alpine, manifest list digest): the tag
+# is a moving reference and this cluster has no image automation on purpose
+# (DESIGN.md §L, last row).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: buzz-redis
+  namespace: buzz
+  labels:
+    app.kubernetes.io/name: buzz-redis
+    app.kubernetes.io/instance: buzz
+    app.kubernetes.io/component: redis
+spec:
+  replicas: 1
+  strategy:
+    # emptyDir data: a Recreate would drop the (rebuildable) keyspace on every
+    # rollout; RollingUpdate with maxUnavailable 0 is enough for one replica.
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: buzz-redis
+  template:
+    metadata:
+      labels:
+        # The NetworkPolicy below selects on exactly this label. If the Deployment
+        # stopped declaring it, the policy would protect nothing and still report
+        # Ready — the "written but inert" failure mode this project exists to avoid.
+        app.kubernetes.io/name: buzz-redis
+        app.kubernetes.io/instance: buzz
+        app.kubernetes.io/component: redis
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: redis
+          image: redis:7-alpine@sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+          env:
+            # REDIS_PASSWORD is a key of the lab's Secret, not of the chart:
+            # the relay's Deployment reads REDIS_URL, this pod reads the password.
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: buzz-secrets
+                  key: REDIS_PASSWORD
+          command: ["/bin/sh", "-c"]
+          args:
+            - exec redis-server --requirepass "$REDIS_PASSWORD" --maxmemory 256mb --maxmemory-policy noeviction --save ""
+          ports:
+            - name: redis
+              containerPort: 6379
+              protocol: TCP
+          readinessProbe:
+            # redis-cli PING with the password, so the probe proves the password is
+            # actually in force and not just that the port answers.
+            exec:
+              command: ["sh", "-c", "redis-cli -a \"$REDIS_PASSWORD\" ping | grep -q PONG"]
+            initialDelaySeconds: 3
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          livenessProbe:
+            tcpSocket:
+              port: 6379
+            initialDelaySeconds: 10
+            periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            # Requests are the number that decides whether the node has room:
+            # the relay asks 512Mi, Redis 64Mi, on 7615204Ki allocatable.
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 384Mi
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: data
+          emptyDir:
+            sizeLimit: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: buzz-redis
+  namespace: buzz
+  labels:
+    app.kubernetes.io/name: buzz-redis
+    app.kubernetes.io/instance: buzz
+    app.kubernetes.io/component: redis
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: buzz-redis
+  ports:
+    - name: redis
+      port: 6379
+      targetPort: redis
+      protocol: TCP
+---
+# INV-9, first level: only the relay may reach the state it owns.
+#
+# DELIVERED, NOT ENFORCED: this cluster's CNI is kube-flannel with no network
+# controller, so no NetworkPolicy here is applied (DESIGN.md §E.2, risk R13, item
+# M11). The object exists because it must be in Git before the namespace hosts a
+# second pod, and because it is the prerequisite for having a real boundary the
+# day the CNI changes. The only boundary in force today is `--requirepass`.
+#
+# The live proof is the NEGATIVE test in Phase 2 (unauthorized pod must fail to
+# connect) — not "the object exists", which proves only that someone wrote YAML.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: buzz-redis-only-relay
+  namespace: buzz
+  labels:
+    app.kubernetes.io/name: buzz-redis
+    app.kubernetes.io/component: network-policy
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: buzz-redis
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        # The relay's pod labels, written out in full and not inherited from a
+        # previous project: the chart's relaySelectorLabels are name/instance/
+        # component, with `instance: buzz` derived from the declared release name.
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: buzz
+              app.kubernetes.io/instance: buzz
+              app.kubernetes.io/component: relay
+      ports:
+        - protocol: TCP
+          port: 6379

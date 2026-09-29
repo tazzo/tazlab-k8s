@@ -1,0 +1,21 @@
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  name: vso-pki-db-buzz
+  namespace: vso-system
+spec:
+  allowedNamespaces:
+  - buzz
+  jwt:
+    audiences:
+    - https://kubernetes.default.svc.cluster.local
+    # Bound to `system:serviceaccount:buzz:vso-auth-sa` by the Terraform role
+    # vso-role-db-buzz (ephemeral-castle/.../modules/vault-jwt-config/main.tf),
+    # whose policy vso-policy-db-buzz allows exactly one path:
+    # pki_int/issue/db-client-buzz.
+    role: vso-role-db-buzz
+    serviceAccount: vso-auth-sa
+    tokenExpirationSeconds: 600
+  method: jwt
+  mount: jwt
+  vaultConnectionRef: hetzner-vault-connection

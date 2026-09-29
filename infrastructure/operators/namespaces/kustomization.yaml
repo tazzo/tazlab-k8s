@@ -3,5 +3,6 @@ kind: Kustomization
 resources:
   - dex.yaml
   - hindsight.yaml
+  - buzz.yaml
   - multica.yaml
   - ../monitoring/namespace.yaml

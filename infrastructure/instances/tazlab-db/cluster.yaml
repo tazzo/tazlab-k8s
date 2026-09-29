@@ -80,6 +80,9 @@ spec:
     - name: multica
       databases:
         - multica
+    - name: buzz
+      databases:
+        - buzz
   customTLSSecret:
     name: tazlab-db-server-tls
     items:
@@ -142,5 +145,16 @@ spec:
           - hostssl multica multica ::/0 cert
           - host all multica 0.0.0.0/0 reject
           - host all multica ::/0 reject
+          # buzz (project buzz-agent-orchestration): certificate auth only, and only
+          # its own database. Same shape as the multica rows above, for the same
+          # reason: pg_hba is first-match-wins, so without the two `reject` rows the
+          # `buzz` role would fall through to the generic `host all all 10.0.0.0/8
+          # md5` rows below and authenticate with a password. Placement matters
+          # twice: above the generic rows, and after the `cert` rows, which stay
+          # the only accepted way in.
+          - hostssl buzz buzz 0.0.0.0/0 cert
+          - hostssl buzz buzz ::/0 cert
+          - host all buzz 0.0.0.0/0 reject
+          - host all buzz ::/0 reject
           - host all all 10.0.0.0/8 md5
           - host all all 10.244.0.0/16 md5
