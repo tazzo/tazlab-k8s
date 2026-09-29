@@ -95,6 +95,16 @@ spec:
             requests:
               cpu: 50m
               memory: 64Mi
+              # The request that makes the eviction ranking work on this node
+              # (see TD-105): with no ephemeral-storage request every pod is
+              # an equally ranked victim, so the pod that actually fills the
+              # disk is evicted together with pods that were innocent. 256Mi
+              # covers what this container can be configured to hold —
+              # --maxmemory 256mb plus the 128Mi data emptyDir — so Redis
+              # stays inside its own request under every value this
+              # Deployment carries, and a container that starts exceeding it
+              # is the first candidate the kubelet looks at.
+              ephemeral-storage: 256Mi
             limits:
               cpu: 500m
               memory: 384Mi

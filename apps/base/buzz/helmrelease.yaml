@@ -138,9 +138,26 @@ spec:
         requests:
           cpu: 500m
           memory: 512Mi
+          # NOT OPTIONAL, and the reason is the 2026-09-29 DiskPressure event:
+          # with no request the pod is an unranked eviction candidate, so when
+          # the node filled up kubelet picked 19 buzz pods plus arbitrary pods
+          # from other workloads. The request is the eviction floor — kubelet
+          # ranks victims by usage ABOVE request, so a pod that outgrows this
+          # number is evicted instead of a pod that stayed inside its own, and
+          # the scheduler reserves the space before the pod is admitted rather
+          # than after it has written it. 2 GiB is ~2x the scratch the chart
+          # is configured with above (512 MiB pack cache + 512 MiB git), and
+          # the whole node only has 15.76 GiB allocatable, so the request is
+          # a promise this pod can keep rather than a reservation of the disk.
+          ephemeral-storage: 2Gi
         limits:
           cpu: "1"
           memory: 1Gi
+          # No ephemeral-storage limit: a limit here would be enforced by
+          # eviction of THIS pod, which is the intent, but the kubelet does
+          # not account limits when scheduling, so the request above is the
+          # load-bearing half and the limit would only add a second way to be
+          # killed without making the disk any safer.
       # The two things this deployment needs that the chart's values cannot
       # express (see apps/base/multica/helmrelease.yaml for the same shape).
       extraEnv:
