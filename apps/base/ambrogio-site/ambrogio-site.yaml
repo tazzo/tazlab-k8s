@@ -21,6 +21,30 @@ spec:
           image: tazzo/tazlab-ambrogio-site:latest # {"$imagepolicy": "flux-system:ambrogio-site"}
           ports:
             - containerPort: 80
+          # PROGETTO §5.3: the shape is teaching.yaml:62-72 with the path changed to `/`,
+          # and no startupProbe — nginx is ready in well under a second.
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            periodSeconds: 5
+            failureThreshold: 2
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            periodSeconds: 20
+            failureThreshold: 5
+          # PROGETTO §5.4: requests are not optional (buzz/helmrelease.yaml:141-142 — a pod
+          # with no request is an unranked eviction candidate); the numbers are below the
+          # lab's smallest services, because nginx serving five files holds a few MB.
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 200m
+              memory: 64Mi
 ---
 apiVersion: v1
 kind: Service
