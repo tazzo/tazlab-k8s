@@ -18,7 +18,7 @@ spec:
         - name: web
           # The ImageUpdateAutomation pins this to the highest ambrogio-site-<N>-<sha>
           # tag; until the first image is published, :latest is what the workflow pushes.
-          image: tazzo/tazlab-ambrogio-site:ambrogio-site-5-b59008143c663e4f3c2f61782d0e00a8e77e08db # {"$imagepolicy": "flux-system:ambrogio-site"}
+          image: tazzo/tazlab-ambrogio-site:ambrogio-site-6-73e8ad079f38aa6a2dd09c0a8b9d1a8777a41414 # {"$imagepolicy": "flux-system:ambrogio-site"}
           ports:
             - containerPort: 80
           # PROGETTO §5.3: the shape is teaching.yaml:62-72 with the path changed to `/`,
