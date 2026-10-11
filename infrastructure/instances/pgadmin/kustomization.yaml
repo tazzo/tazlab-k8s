@@ -7,7 +7,7 @@ resources:
   - servers-configmap.yaml
 
 patches:
-  - path: ../../common/wait-for-db-patch.yaml
+  - path: wait-for-db-patch.yaml
     target:
       kind: Deployment
       name: pgadmin
