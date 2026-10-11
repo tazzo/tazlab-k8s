@@ -1,0 +1,48 @@
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageRepository
+metadata:
+  name: ambrogio-site
+  namespace: flux-system
+spec:
+  image: tazzo/tazlab-ambrogio-site
+  interval: 1m
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImagePolicy
+metadata:
+  name: ambrogio-site
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: ambrogio-site
+  policy:
+    numerical:
+      order: asc
+  filterTags:
+    pattern: '^ambrogio-site-(?P<value>[0-9]+)-.*$'
+    extract: '$value'
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageUpdateAutomation
+metadata:
+  name: ambrogio-site
+  namespace: flux-system
+spec:
+  interval: 1m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  git:
+    checkout:
+      ref:
+        branch: master
+    commit:
+      author:
+        email: fluxcdbot@tazlab.net
+        name: fluxcdbot
+      messageTemplate: 'chore: self-update ambrogio-site image [skip ci]'
+    push:
+      branch: master
+  update:
+    path: ./apps/base/ambrogio-site
+    strategy: Setters

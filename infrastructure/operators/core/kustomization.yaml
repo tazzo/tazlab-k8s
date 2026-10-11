@@ -8,3 +8,4 @@ resources:
   - ../hugo-blog
   - ../hugo-wiki
   - ../teaching
+  - ../ambrogio-site

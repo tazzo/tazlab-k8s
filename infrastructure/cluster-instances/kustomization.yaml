@@ -8,3 +8,4 @@ resources:
   - ../automation/homepage
   - ../automation/teaching
   - ../automation/multica
+  - ../automation/ambrogio-site

@@ -1,0 +1,17 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: ambrogio-tazlab.net-tls
+  namespace: ambrogio-site
+spec:
+  secretName: ambrogio-tazlab.net-tls
+  issuerRef:
+    name: letsencrypt-issuer
+    kind: ClusterIssuer
+  commonName: ambrogio.tazlab.net
+  dnsNames:
+    - ambrogio.tazlab.net
+  privateKey:
+    rotationPolicy: Always
+    algorithm: RSA
+    size: 2048

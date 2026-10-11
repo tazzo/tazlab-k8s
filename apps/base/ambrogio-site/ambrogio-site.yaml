@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ambrogio-site
+  namespace: ambrogio-site
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ambrogio-site
+  template:
+    metadata:
+      labels:
+        app: ambrogio-site
+        app.kubernetes.io/name: ambrogio-site
+    spec:
+      containers:
+        - name: web
+          # The ImageUpdateAutomation pins this to the highest ambrogio-site-<N>-<sha>
+          # tag; until the first image is published, :latest is what the workflow pushes.
+          image: tazzo/tazlab-ambrogio-site:latest # {"$imagepolicy": "flux-system:ambrogio-site"}
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ambrogio-site
+  namespace: ambrogio-site
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: ambrogio-site
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ambrogio-site-ingress
+  namespace: ambrogio-site
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/name: "Ambrogio"
+    gethomepage.dev/group: "Developer"
+    gethomepage.dev/icon: "mdi-robot"
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - ambrogio.tazlab.net
+      secretName: ambrogio-tazlab.net-tls
+  rules:
+    - host: ambrogio.tazlab.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ambrogio-site
+                port:
+                  number: 80
