@@ -51,7 +51,7 @@ spec:
               # Schema grants for the live cluster path. databaseInitSQL
               # (tazlab-db-init-sql) only runs at bootstrap, so this Job is the
               # Flux-managed equivalent that gives the `multica` role ownership of
-              # its own schema, exactly as init.sql does for hindsight:
+              # its own schema, exactly as init.sql does for hindsight/paperclip:
               # GRANT ALL ON SCHEMA public + ALTER SCHEMA public OWNER.
               # ONE-SHOT SAFE: at bootstrap PGO boots in parallel — wait up to 10 min
               # for the DB (this also waits for PGO to create it from spec.users),
