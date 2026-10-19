@@ -77,9 +77,6 @@ spec:
     - name: multica
       databases:
         - multica
-    - name: buzz
-      databases:
-        - buzz
   customTLSSecret:
     name: tazlab-db-server-tls
     items:
