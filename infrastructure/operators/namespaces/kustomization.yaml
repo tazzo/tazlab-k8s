@@ -3,5 +3,4 @@ kind: Kustomization
 resources:
   - dex.yaml
   - hindsight.yaml
-  - multica.yaml
   - ../monitoring/namespace.yaml
