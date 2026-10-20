@@ -8,4 +8,5 @@ resources:
   - ../hugo-blog
   - ../hugo-wiki
   - ../teaching
+  - ../halloween
   - ../ambrogio-site

@@ -7,4 +7,5 @@ resources:
   - ../automation/mnemosyne-mcp
   - ../automation/homepage
   - ../automation/teaching
+  - ../automation/halloween
   - ../automation/ambrogio-site

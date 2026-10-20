@@ -1,0 +1,9 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: halloween-redirect-to-https
+  namespace: halloween
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
