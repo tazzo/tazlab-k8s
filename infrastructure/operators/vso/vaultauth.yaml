@@ -16,7 +16,6 @@ spec:
     - cloudflare-ddns
     - hindsight
     - teaching
-    - multica
   method: jwt
   mount: jwt
   jwt:
