@@ -10,4 +10,3 @@ resources:
   - vaultpkisecret-client-pgadmin.yaml
   - vaultpkisecret-client-tazlab-admin.yaml
   - hindsight-db-extensions-job.yaml
-  - multica-db-grants-job.yaml

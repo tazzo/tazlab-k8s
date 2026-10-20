@@ -74,9 +74,6 @@ spec:
     - name: postgres
       databases:
         - postgres
-    - name: multica
-      databases:
-        - multica
   customTLSSecret:
     name: tazlab-db-server-tls
     items:
