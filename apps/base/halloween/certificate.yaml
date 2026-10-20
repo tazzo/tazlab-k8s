@@ -1,0 +1,17 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: halloween-tazlab.net-tls
+  namespace: halloween
+spec:
+  secretName: halloween-tazlab.net-tls
+  issuerRef:
+    name: letsencrypt-issuer
+    kind: ClusterIssuer
+  commonName: halloween.tazlab.net
+  dnsNames:
+    - halloween.tazlab.net
+  privateKey:
+    rotationPolicy: Always
+    algorithm: RSA
+    size: 2048

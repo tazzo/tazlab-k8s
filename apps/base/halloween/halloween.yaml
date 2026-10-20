@@ -1,0 +1,132 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: halloween
+  namespace: halloween
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: halloween
+  template:
+    metadata:
+      labels:
+        app: halloween
+        app.kubernetes.io/name: halloween
+    spec:
+      terminationGracePeriodSeconds: 45
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: halloween
+          image: tazzo/tazlab-halloween:halloween-1-eec65ffb169e51d47a2e083df65f4c663bb73740 # {"$imagepolicy": "flux-system:halloween"}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: PUBLIC_BASE_URL
+              value: https://halloween.tazlab.net
+            - name: DATA_DIR
+              value: /data
+            - name: DEBUG
+              value: "0"
+            - name: HOME
+              value: /tmp
+            - name: TMPDIR
+              value: /tmp
+          startupProbe:
+            exec:
+              command: ["sh", "-c", "touch /data/.write-test && rm -f /data/.write-test"]
+            periodSeconds: 2
+            failureThreshold: 15
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 5
+            failureThreshold: 2
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 20
+            failureThreshold: 5
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep", "5"]
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: data
+          emptyDir:
+            sizeLimit: 64Mi
+        - name: tmp
+          emptyDir:
+            sizeLimit: 64Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: halloween
+  namespace: halloween
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+  selector:
+    app: halloween
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: halloween-ingress
+  namespace: halloween
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/name: "Halloween"
+    gethomepage.dev/group: "Developer"
+    gethomepage.dev/icon: "mdi-pumpkin"
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - halloween.tazlab.net
+      secretName: halloween-tazlab.net-tls
+  rules:
+    - host: halloween.tazlab.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: halloween
+                port:
+                  number: 80

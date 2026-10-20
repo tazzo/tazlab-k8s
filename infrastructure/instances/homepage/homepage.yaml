@@ -73,6 +73,10 @@ data:
             icon: mdi-school
             href: "https://teaching.tazlab.net"
             description: "Esercizi e problemi"
+        - Halloween:
+            icon: mdi-pumpkin
+            href: "https://halloween.tazlab.net"
+            description: "La Notte Infinita"
     - Monitoring:
         - Grafana:
             icon: grafana.png
