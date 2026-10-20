@@ -26,7 +26,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: halloween
-          image: tazzo/tazlab-halloween:halloween-2-c91765e16e3dbc8604eed8dfdabe811caaf1faf3 # {"$imagepolicy": "flux-system:halloween"}
+          image: tazzo/tazlab-halloween:halloween-3-f3bc566ebea981f75c56bcdaa53b99e4a70f8740 # {"$imagepolicy": "flux-system:halloween"}
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
