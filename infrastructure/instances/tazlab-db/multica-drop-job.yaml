@@ -1,0 +1,56 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: multica-drop
+  namespace: tazlab-db
+  labels:
+    app: multica-drop
+    app.kubernetes.io/name: multica-drop
+spec:
+  manualSelector: true
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: multica-drop
+  backoffLimit: 2
+  template:
+    metadata:
+      labels:
+        app: multica-drop
+        app.kubernetes.io/name: multica-drop
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: psql
+          image: postgres@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685
+          env:
+            - name: PGHOST
+              value: tazlab-db-primary.tazlab-db.svc
+            - name: PGPORT
+              value: "5432"
+            - name: PGDATABASE
+              value: postgres
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: tazlab-db-pguser-postgres
+                  key: user
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: tazlab-db-pguser-postgres
+                  key: password
+          command: ["sh", "-c", "-e"]
+          args:
+            - |
+              # PGO does not delete users or databases on spec removal.
+              i=0
+              until psql -t -c "SELECT 1" >/dev/null 2>&1; do
+                i=$((i+1))
+                [ "$i" -gt 120 ] && echo "FATAL: database not reachable in 10m" && exit 1
+                echo "waiting for database ($i)..."
+                sleep 5
+              done
+              psql -v ON_ERROR_STOP=1 -c "DROP DATABASE IF EXISTS multica WITH (FORCE);"
+              psql -v ON_ERROR_STOP=1 -c "DO \$\$BEGIN IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'multica') THEN EXECUTE 'DROP OWNED BY multica'; END IF; END\$\$;"
+              psql -v ON_ERROR_STOP=1 -c "DROP ROLE IF EXISTS multica;"
+              psql -v ON_ERROR_STOP=1 -t -c "SELECT 'db='||count(*) FROM pg_database WHERE datname='multica'; SELECT 'role='||count(*) FROM pg_roles WHERE rolname='multica';"
