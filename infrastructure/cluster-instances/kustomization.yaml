@@ -7,5 +7,4 @@ resources:
   - ../automation/mnemosyne-mcp
   - ../automation/homepage
   - ../automation/teaching
-  - ../automation/multica
   - ../automation/ambrogio-site
