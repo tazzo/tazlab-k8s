@@ -45,5 +45,8 @@ spec:
       annotations:
         metallb.universe.tf/loadBalancerIPs: "${traefik_lb_ip}"
         metallb.universe.tf/allow-shared-ip: "tazlab-internal-dashboard"
+        # Cloud LB targets (hcloud CCM): reach the nodes on their private addresses, where the
+        # NodePorts are allowed. Empty on Proxmox, where MetalLB owns the VIP.
+        load-balancer.hetzner.cloud/use-private-ip: "${lb_use_private_ip}"
     persistence:
       enabled: false
