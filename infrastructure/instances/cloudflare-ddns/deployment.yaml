@@ -4,7 +4,10 @@ metadata:
   name: cloudflare-ddns
   namespace: cloudflare-ddns
 spec:
-  replicas: 1
+  # 1 where the cluster sits behind a dynamic WAN address (Proxmox at home), 0 where the
+  # platform has static addresses and the ingress is a cloud LB (Hetzner): there DDNS would
+  # overwrite the apex A record with a node IP and take the sites down. Set by cluster-vars.
+  replicas: ${ddns_replicas:=1}
   selector:
     matchLabels:
       app: cloudflare-ddns
