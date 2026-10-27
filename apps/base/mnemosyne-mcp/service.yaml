@@ -11,6 +11,9 @@ metadata:
     metallb.universe.tf/allow-shared-ip: tazlab-internal-dashboard
     metallb.universe.tf/ip-allocated-from-pool: default-pool
     metallb.universe.tf/loadBalancerIPs: 192.168.1.240
+    # hcloud CCM: NodePorts are only bound on the node internal IP, so the LB targets must be
+    # the private addresses or every target stays unhealthy. Ignored by MetalLB.
+    load-balancer.hetzner.cloud/use-private-ip: "true"
 spec:
   type: LoadBalancer
   ports:
