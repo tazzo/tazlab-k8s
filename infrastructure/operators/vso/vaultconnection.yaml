@@ -4,6 +4,10 @@ metadata:
   name: hetzner-vault-connection
   namespace: vso-system
 spec:
-  address: "https://lushycorp-vault.magellanic-gondola.ts.net:8200"
+  # The pod resolver does not know tailnet names: the tailscale-dns ExternalName Services map
+  # `lushycorp-vault` to the operator's egress proxy, and TLS keeps the tailnet name as SNI
+  # (the certificate is issued for the MagicDNS hostname, not for the cluster Service).
+  address: "https://lushycorp-vault.tailscale.svc.cluster.local:8200"
+  tlsServerName: lushycorp-vault.magellanic-gondola.ts.net
   skipTLSVerify: false
   caCertSecretRef: vault-ca-cert
