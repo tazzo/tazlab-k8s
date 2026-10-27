@@ -1,7 +1,7 @@
 apiVersion: secrets.hashicorp.com/v1beta1
 kind: VaultConnection
 metadata:
-  name: hetzner-vault-connection
+  name: vault
   namespace: vso-system
 spec:
   # The pod resolver does not know tailnet names: the tailscale-dns ExternalName Services map

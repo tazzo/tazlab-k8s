@@ -14,4 +14,4 @@ spec:
     tokenExpirationSeconds: 600
   method: jwt
   mount: ${vault_jwt_mount:=jwt}
-  vaultConnectionRef: hetzner-vault-connection
+  vaultConnectionRef: vault
