@@ -17,7 +17,7 @@ spec:
     - hindsight
     - teaching
   method: jwt
-  mount: jwt
+  mount: ${vault_jwt_mount:=jwt}
   jwt:
     role: vso-role-jwt
     serviceAccount: vso-auth-sa
