@@ -44,9 +44,10 @@ spec:
             name: s3-backrest-creds
       repos:
       - name: repo1
-        schedules:
-          full: "0 1 * * 0"
-          differential: "0 1 * * 1-6"
+        # Schedules suspended while the cluster is empty: the weekly full and the daily
+        # differential were appending an empty database's history to the same stanza as the
+        # Oct 2026 chain, so "the latest backup" stopped meaning "the data". Re-enable this
+        # block once the restore has landed.
         s3:
           bucket: "tazlab-storage"
           endpoint: "s3.amazonaws.com"
