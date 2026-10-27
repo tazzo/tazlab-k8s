@@ -4,7 +4,7 @@ metadata:
   name: vso-jwt-auth
   namespace: vso-system
 spec:
-  vaultConnectionRef: hetzner-vault-connection
+  vaultConnectionRef: vault
   allowedNamespaces:
     - monitoring
     - auth
