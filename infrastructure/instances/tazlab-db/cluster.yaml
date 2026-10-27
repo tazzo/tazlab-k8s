@@ -9,6 +9,27 @@ metadata:
     postgres-operator.crunchydata.com/pgbackrest-backup: "post-upgrade-pg17-20260927-1014"
 spec:
   postgresVersion: 17
+  # A rebirth on either platform (fresh volume) restores the reviewed backup set instead of
+  # coming up empty, so the two targets behave the same way. PGO reads dataSource only while
+  # it creates an instance set: a cluster with existing data is left alone. Remove this block
+  # for a major-version upgrade — PGO would try to restore while building the new instance
+  # set (the failure behind 5bbd96a) — and put it back afterwards.
+  # `postgres_restore_set` overrides the set from cluster-vars; the default is the last full
+  # chain of the October 2026 cluster (full 2026-10-25 + differential 2026-10-26).
+  dataSource:
+    pgbackrest:
+      stanza: db
+      configuration:
+        - secret:
+            name: s3-backrest-creds
+      repo:
+        name: repo1
+        s3:
+          bucket: "tazlab-storage"
+          endpoint: "s3.amazonaws.com"
+          region: "eu-central-1"
+      options:
+        - --set=${postgres_restore_set:=20261025-010018F_20261026-010015D}
   # Spento per il major upgrade: PGO scala a zero database e pooler. Torna false nel commit
   # che imposta postgresVersion: 17, dopo la rimozione dell'oggetto PGUpgrade.
   shutdown: false
