@@ -26,7 +26,7 @@ spec:
         fsGroup: 10001
       containers:
         - name: teaching
-          image: tazzo/tazlab-teaching:teaching-38-abdde8f348695a08487d28330cb5057497002d56 # {"$imagepolicy": "flux-system:teaching"}
+          image: tazzo/tazlab-teaching:teaching-39-fc794707a65ead32bb45433d057215d130212c5f # {"$imagepolicy": "flux-system:teaching"}
           imagePullPolicy: Always
           ports:
             - name: http
